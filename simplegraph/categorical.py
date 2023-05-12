@@ -1,7 +1,7 @@
 import base64
 import math
 
-from utils import DEFAULT_COLOR_PALETTE
+from simplegraph.utils import DEFAULT_COLOR_PALETTE
 
 
 def get_rounding_places(value_range, ticks):
