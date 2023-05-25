@@ -4,6 +4,20 @@ import math
 from simplegraph.utils import DEFAULT_COLOR_PALETTE
 
 
+def human_readable_number(num):
+    if num >= 1000000000:
+        value = num / 1000000000.0
+        return f'{value:.1f}B' if value != int(value) else f'{int(value)}B'
+    elif num >= 1000000:
+        value = num / 1000000.0
+        return f'{value:.1f}M' if value != int(value) else f'{int(value)}M'
+    elif num >= 1000:
+        value = num / 1000.0
+        return f'{value:.1f}K' if value != int(value) else f'{int(value)}K'
+    else:
+        return f'{num:.0f}'
+
+
 def get_rounding_places(value_range, ticks):
     lowest_tick = value_range / ticks
     exponent = math.floor(math.log10(abs(lowest_tick)))
@@ -50,7 +64,7 @@ def max_non_secondary_value(data, secondary):
     non_secondary_values = [
         value for value, index in max_values if not secondary[index]
     ]
-    return max(non_secondary_values) if non_secondary_values else 0
+    return max(non_secondary_values) if non_secondary_values else 1
 
 
 class CategoricalGraph:
@@ -82,6 +96,8 @@ class CategoricalGraph:
         x_axis_label=None,
         primary_y_axis_label=None,
         secondary_y_axis_label=None,
+        show_legend=True,
+        rotate_x_labels=True,
     ):
         self.width = width
         self.height = height
@@ -101,6 +117,8 @@ class CategoricalGraph:
         self.legend_labels = []
         self.series_types = []
         self.secondary = []
+        self.show_legend = show_legend
+        self.rotate_x_labels = rotate_x_labels
 
     def add_series(
         self,
@@ -116,9 +134,9 @@ class CategoricalGraph:
         self.secondary.append(secondary)
 
     def _draw_bar(
-        self, x, y, width, height, fill, stroke="black", stroke_width="2"
+        self, x, y, width, height, fill
     ):
-        return f'<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}" />'
+        return f'<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="{fill}" />'
 
     def _draw_dot(self, x, y, fill, radius=5, stroke="black", stroke_width="1"):
         return f'<circle cx="{x}" cy="{y}" r="{radius}" fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}" />'
@@ -167,32 +185,33 @@ class CategoricalGraph:
         svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">'
 
         # Draw legend
-        legend_x = self.x_left_padding
-        legend_y = self.y_top_padding / 2
-        legend_spacing = 5
-        legend_rect_size = 10
+        if self.show_legend:
+            legend_x = self.x_left_padding
+            legend_y = self.y_top_padding / 2
+            legend_spacing = 5
+            legend_rect_size = 10
 
-        for index, label in enumerate(self.legend_labels):
-            series_type, _ = self.series_types[index]
-            if series_type == "dot":
-                svg += self._draw_dot(
-                    legend_x + legend_rect_size / 2,
-                    legend_y + legend_rect_size / 2,
-                    radius=5,
-                    fill=self.colors[index],
-                )
-            elif series_type == "line":
-                svg += self._draw_line(
-                    legend_x,
-                    legend_y + legend_rect_size / 2,
-                    legend_x + legend_rect_size,
-                    legend_y + legend_rect_size / 2,
-                    stroke=self.colors[index],
-                )
-            else:  # series_type == "bar"
-                svg += f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" height="{legend_rect_size}" fill="{self.colors[index]}" />'
-            svg += f'<text x="{legend_x + legend_rect_size + legend_spacing}" y="{legend_y + legend_rect_size}" font-size="10" alignment-baseline="central">{label}</text>'
-            legend_x += (2 * legend_spacing) + legend_rect_size + len(label) * 6
+            for index, label in enumerate(self.legend_labels):
+                series_type, _ = self.series_types[index]
+                if series_type == "dot":
+                    svg += self._draw_dot(
+                        legend_x + legend_rect_size / 2,
+                        legend_y + legend_rect_size / 2,
+                        radius=5,
+                        fill=self.colors[index],
+                    )
+                elif series_type == "line":
+                    svg += self._draw_line(
+                        legend_x,
+                        legend_y + legend_rect_size / 2,
+                        legend_x + legend_rect_size,
+                        legend_y + legend_rect_size / 2,
+                        stroke=self.colors[index],
+                    )
+                else:  # series_type == "bar"
+                    svg += f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" height="{legend_rect_size}" fill="{self.colors[index]}" />'
+                svg += f'<text x="{legend_x + legend_rect_size + legend_spacing}" y="{legend_y + legend_rect_size}" font-size="10" alignment-baseline="central">{label}</text>'
+                legend_x += (2 * legend_spacing) + legend_rect_size + len(label) * 6
 
         # Draw series
         bar_spacing = (
@@ -314,7 +333,10 @@ class CategoricalGraph:
                 + self.bar_width * (num_bar_series - 1) / 2
             )
             y = self.height - self.y_bottom_padding + 5
-            svg += f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})">{label}</text>'
+            if label is not None and self.rotate_x_labels:
+                svg += f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})">{label}</text>'
+            elif label is not None and not self.rotate_x_labels:
+                svg += f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10">{label}</text>'
 
         # Determine the appropriate number of decimal places for rounding based on the range
         rounding_places_primary = get_rounding_places(
@@ -330,7 +352,7 @@ class CategoricalGraph:
             tick_y = (
                 self.height - self.y_bottom_padding - tick_value * scale_primary
             )
-            tick_label = f"{round(tick_value, rounding_places_primary)}"
+            tick_label = f"{human_readable_number(tick_value)}"
 
             svg += f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10">{tick_label}</text>'
             svg += f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="black" stroke-width="1" />'
@@ -351,13 +373,13 @@ class CategoricalGraph:
 
         # Draw axis labels
         if self.x_axis_label:
-            x_label_x = self.width / 2
+            x_label_x = (self.width-self.x_left_padding-self.x_right_padding) / 2 + self.x_left_padding
             x_label_y = self.height - self.y_bottom_padding / 4
             svg += f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12">{self.x_axis_label}</text>'
 
         if self.primary_y_axis_label:
             y_label_x = self.x_left_padding / 4
-            y_label_y = self.height / 2
+            y_label_y = (self.height-self.y_top_padding-self.y_bottom_padding) / 2 + self.y_top_padding
             svg += f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})">{self.primary_y_axis_label}</text>'
 
         if any(self.secondary) and self.secondary_y_axis_label:
@@ -373,48 +395,3 @@ class CategoricalGraph:
         svg_bytes = svg_str.encode("utf-8")
         encoded_svg = base64.b64encode(svg_bytes).decode("utf-8")
         return "data:image/svg+xml;base64," + encoded_svg
-
-
-if __name__ == "__main__":
-    graph = CategoricalGraph(
-        width=600,
-        height=600,
-        bar_width=40,
-        x_padding=40,
-        y_top_padding=30,
-        y_bottom_padding=60,
-    )
-
-    graph.x_labels = ["A long label", "B", "C", "D", "E"]
-    graph.x_axis_label = "X Axis"
-    graph.primary_y_axis_label = "Primary Y Axis"
-    graph.secondary_y_axis_label = "Secondary Y Axis"
-
-    graph.add_series([10, 20, 30, 40, 50], legend_label="Series 1")
-    graph.add_series(
-        [25, 35, 45, 55, 65], legend_label="Series 2", print_values=True
-    )
-    graph.add_series(
-        [1.1, 1.6, 2.2, 0.99, 1.37],
-        legend_label="Series 3",
-        series_type="dot",
-        print_values=True,
-        secondary=True,
-    )
-    graph.add_series(
-        [2.5, 1.1, 1.6, 2.2, 0.99],
-        legend_label="Series 4",
-        series_type="line",
-        print_values=True,
-        secondary=True,
-    )
-
-    encoded_svg = graph.to_base64_src()
-
-    graph.stacked = True
-    encoded_svg_stacked = graph.to_base64_src()
-
-    print(
-        f"<img src='{encoded_svg}' alt='test graph 1'>\n"
-        + f"<img src='{encoded_svg_stacked}' alt='test graph 2 (stacked)'>\n"
-    )
