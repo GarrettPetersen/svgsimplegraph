@@ -1,44 +1,6 @@
-import math
-
 from .base import BaseGraph
-
-
-def human_readable_number(num):
-    if num >= 1000000000:
-        value = num / 1000000000.0
-        return f"{value:.1f}B" if value != int(value) else f"{int(value)}B"
-    elif num >= 1000000:
-        value = num / 1000000.0
-        return f"{value:.1f}M" if value != int(value) else f"{int(value)}M"
-    elif num >= 1000:
-        value = num / 1000.0
-        return f"{value:.1f}K" if value != int(value) else f"{int(value)}K"
-    else:
-        return f"{num:.0f}"
-
-
-def get_rounding_places(value_range, ticks):
-    lowest_tick = value_range / ticks
-    exponent = math.floor(math.log10(abs(lowest_tick)))
-    return max(0, -exponent)
-
-
-def get_adjusted_max(value):
-    if value == 0:
-        return 0
-    exponent = math.floor(math.log10(abs(value)))
-    base_value = 10**exponent
-    rounding_factors = [1, 1.2, 1.5, 2, 2.5, 5]
-
-    adjusted_value = float("inf")
-    for factor in rounding_factors:
-        candidate_value = math.ceil(value / (base_value * factor)) * (
-            base_value * factor
-        )
-        if candidate_value >= value * 1.05 and candidate_value < adjusted_value:
-            adjusted_value = candidate_value
-
-    return adjusted_value
+from .utils import human_readable_number
+from .utils import get_adjusted_max
 
 
 def max_stacked_bar_height(data, series_types, secondary):
