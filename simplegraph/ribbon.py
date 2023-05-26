@@ -176,7 +176,7 @@ class RibbonGraph(BaseGraph):
                 if is_dark(color):
                     optional_fill = 'fill="white"'
                 else:
-                    optional_fill = ''
+                    optional_fill = ""
                 svg += f'<text x="{x+self.bar_width/2}" y="{(y1+y2)/2 + y_adjustment}" dy="0.35em" text-anchor="middle" font-size="10" {optional_fill}>{human_readable_number(self.data[2][index])}</text>'
 
         # Draw axis

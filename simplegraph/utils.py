@@ -49,7 +49,7 @@ def human_readable_number(num):
 
 
 def is_dark(color):
-    if color[0] == '#':
+    if color[0] == "#":
         color = color[1:]
 
     r, g, b = int(color[0:2], 16), int(color[2:4], 16), int(color[4:6], 16)
