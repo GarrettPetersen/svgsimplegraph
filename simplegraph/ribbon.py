@@ -1,6 +1,7 @@
 from .base import BaseGraph
 from .utils import human_readable_number
 from .utils import get_adjusted_max
+from .utils import get_adjusted_min
 from .utils import get_color
 from .utils import is_dark
 
@@ -89,8 +90,17 @@ class RibbonGraph(BaseGraph):
         color_series_present = True if self.num_series == 3 else False
 
         if color_series_present:
-            max_color_range = max(self.data[2])
-            min_color_range = min(self.data[2])
+            max_range = max(self.data[2])
+            min_range = min(self.data[2])
+            # Adjust max and min range to be round numbers
+            if max_range >= 0:
+                max_color_range = get_adjusted_max(max_range)
+            else:
+                max_color_range = -get_adjusted_min(-max_range)
+            if min_range >= 0:
+                min_color_range = get_adjusted_min(min_range)
+            else:
+                min_color_range = -get_adjusted_max(-min_range)
 
         adjusted_max_value_primary = get_adjusted_max(max_value)
 

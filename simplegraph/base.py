@@ -1,6 +1,6 @@
 import base64
 
-from simplegraph.utils import DEFAULT_COLOR_PALETTE
+from .utils import DEFAULT_COLOR_PALETTE
 
 
 class BaseGraph:
