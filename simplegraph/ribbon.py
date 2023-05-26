@@ -136,11 +136,11 @@ class RibbonGraph(BaseGraph):
         # Draw ribbons
         num_ribbons = len(self.data[0])
         bar_spacing = (self.width - self.x_left_padding - self.x_right_padding) / (
-            num_ribbons + 1
+            num_ribbons + 1 / 2
         )
 
         for index in range(num_ribbons):
-            x = (index + 1) * bar_spacing + self.x_left_padding
+            x = (index + 1 / 2) * bar_spacing + self.x_left_padding
             y1 = (
                 self.height
                 - self.y_bottom_padding
@@ -185,7 +185,7 @@ class RibbonGraph(BaseGraph):
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
-            x = (index + 1) * bar_spacing + self.x_left_padding + self.bar_width / 2
+            x = (index + 1 / 2) * bar_spacing + self.x_left_padding + self.bar_width / 2
             y = self.height - self.y_bottom_padding + 5
             if label is not None and self.rotate_x_labels:
                 svg += f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})">{label}</text>'
