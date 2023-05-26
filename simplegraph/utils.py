@@ -34,6 +34,28 @@ def get_adjusted_max(value):
     return adjusted_value
 
 
+def get_adjusted_min(value):
+    if value == 0:
+        return 0
+
+    sign = 1 if value >= 0 else -1
+    abs_value = abs(value)
+
+    exponent = math.floor(math.log10(abs_value))
+    base_value = 10**exponent
+    rounding_factors = [1, 1.2, 1.5, 2, 2.5, 5]
+
+    adjusted_value = float("inf")
+    for factor in rounding_factors:
+        candidate_value = math.floor(abs_value / (base_value * factor)) * (
+            base_value * factor
+        )
+        if candidate_value <= abs_value * 0.95 and candidate_value < adjusted_value:
+            adjusted_value = candidate_value
+
+    return sign * adjusted_value
+
+
 def human_readable_number(num):
     if num >= 1000000000:
         value = num / 1000000000.0
