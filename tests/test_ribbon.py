@@ -33,4 +33,4 @@ def test_ribbon_graph():
     # Check that the result is long enough to be a non-trivial SVG
     assert len(svg_base64) > 100
 
-    print(f"<img src='{svg_base64}' />")
+    print(f"\n<img src='{svg_base64}' />")
