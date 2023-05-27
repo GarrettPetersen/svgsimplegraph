@@ -36,5 +36,11 @@ def test_categorical_graph():
     graph.stacked = True
 
     stacked_base64 = graph.to_base64_src()
-
     print(f"\n<img src='{stacked_base64}' />")
+
+    graph.add_series([5, 44, 35, 56, 15], legend_label="Series 5")
+    graph.stacked = False
+
+    # Get the SVG string in base64 format
+    svg_base64 = graph.to_base64_src()
+    print(f"\n<img src='{svg_base64}' />")
