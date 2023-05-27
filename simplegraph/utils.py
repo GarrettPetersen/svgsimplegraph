@@ -69,11 +69,9 @@ def human_readable_number(num):
         value = num / 1000.0
         return f"{value:.1f}K" if value != int(value) else f"{int(value)}K"
     elif num >= 10:
-        return f"{num:.0f}"
-    elif num >= 1:
-        return f"{num:.1f}"
+        return f"{num:.1f}" if num != int(num) else f"{int(num)}"
     else:
-        return f"{num:.2f}"
+        return f"{num:.2f}" if num != int(num) else f"{int(num)}"
 
 
 def is_dark(color):
