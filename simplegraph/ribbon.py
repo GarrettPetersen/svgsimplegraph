@@ -112,8 +112,8 @@ class RibbonGraph(BaseGraph):
         svg += f"""
 <defs>
     <linearGradient id="legend_grad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" style="stop-color:{self.colors[0]}" />
-        <stop offset="100%" style="stop-color:{self.colors[1]}" />
+        <stop offset="100%" style="stop-color:{self.colors[0]}" />
+        <stop offset="0%" style="stop-color:{self.colors[1]}" />
     </linearGradient>
 </defs>"""
 
