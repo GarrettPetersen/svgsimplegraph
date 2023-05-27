@@ -57,6 +57,8 @@ def get_adjusted_min(value):
 
 
 def human_readable_number(num):
+    if num < 0:
+        return f"-{human_readable_number(-num)}"
     if num >= 1000000000:
         value = num / 1000000000.0
         return f"{value:.1f}B" if value != int(value) else f"{int(value)}B"
@@ -66,8 +68,12 @@ def human_readable_number(num):
     elif num >= 1000:
         value = num / 1000.0
         return f"{value:.1f}K" if value != int(value) else f"{int(value)}K"
-    else:
+    elif num >= 10:
         return f"{num:.0f}"
+    elif num >= 1:
+        return f"{num:.1f}"
+    else:
+        return f"{num:.2f}"
 
 
 def is_dark(color):
