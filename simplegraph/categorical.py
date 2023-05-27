@@ -102,6 +102,7 @@ class CategoricalGraph(BaseGraph):
         return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}" stroke-width="{stroke_width}" />'
 
     def render(self):
+        graph_width = self.width - self.x_left_padding - self.x_right_padding
         if self.stacked:
             max_value_primary = max(
                 max_stacked_bar_height(self.data, self.series_types, self.secondary),
@@ -119,12 +120,20 @@ class CategoricalGraph(BaseGraph):
                     [not sec for sec in self.secondary],
                 ),
             )
+            max_bar_width = graph_width / len(self.data[0])
         else:
             max_value_primary = max_non_secondary_value(self.data, self.secondary)
             max_value_secondary = max_non_secondary_value(
                 self.data, [not sec for sec in self.secondary]
             )
+            num_bars = 0
+            for type, _ in self.series_types:
+                if type == "bar":
+                    num_bars += 1
+            num_bars = max(num_bars, 1)
+            max_bar_width = graph_width / (num_bars * len(self.data[0]))
 
+        bar_width = min(max_bar_width, self.bar_width)
         adjusted_max_value_primary = get_adjusted_max(max_value_primary)
         adjusted_max_value_secondary = get_adjusted_max(max_value_secondary)
 
@@ -181,13 +190,14 @@ class CategoricalGraph(BaseGraph):
                 ]
             )
         )
-        total_bars_width = bar_series_across * self.bar_width
+        total_bars_width = bar_series_across * bar_width
 
         num_categories = len(self.data[0])
         num_series = len(self.data)
         bar_heights = [0] * num_categories
 
         for sub_index in range(num_categories):
+            bar_count = 0
             for index in range(num_series):
                 value = self.data[index][sub_index]
                 secondary_value = self.secondary[index]
@@ -198,31 +208,31 @@ class CategoricalGraph(BaseGraph):
                     x = (
                         self.x_left_padding
                         + sub_index * bar_spacing
-                        + (bar_spacing - self.bar_width) / 2
+                        + (bar_spacing - bar_width) / 2
                     )
                 else:
                     x = (
                         self.x_left_padding
                         + sub_index * bar_spacing
-                        + index * self.bar_width
+                        + bar_count * bar_width
                     )
+                    bar_count += 1
                 scale = scale_secondary if secondary_value else scale_primary
                 y = self.height - self.y_bottom_padding - value * scale
 
                 if series_type == "bar" and self.stacked:
                     bar_height = value * scale
-                    x -= self.bar_width / 2
+                    x -= bar_width / 2
                     y -= bar_heights[sub_index]
                     svg += self._draw_bar(
-                        x, y, self.bar_width, bar_height, self.colors[index]
+                        x, y, bar_width, bar_height, self.colors[index]
                     )
                     bar_heights[sub_index] += bar_height
                 elif series_type == "bar":
-                    x += self.bar_width / 2
                     svg += self._draw_bar(
                         x,
                         y,
-                        self.bar_width,
+                        bar_width,
                         value * scale,
                         self.colors[index],
                     )
@@ -231,7 +241,7 @@ class CategoricalGraph(BaseGraph):
                         self.x_left_padding
                         + sub_index * bar_spacing
                         + (bar_spacing - total_bars_width) / 2
-                        + self.bar_width * (bar_series_across - 1) / 2
+                        + bar_width * (bar_series_across - 1) / 2
                     )
                     svg += self._draw_dot(
                         center_x,
@@ -248,7 +258,7 @@ class CategoricalGraph(BaseGraph):
                     prev_x = (
                         self.x_left_padding
                         + (sub_index - 1) * bar_spacing
-                        + (bar_spacing - self.bar_width) / 2
+                        + (bar_spacing - bar_width) / 2
                     )
                     svg += self._draw_line(
                         prev_x,
@@ -264,7 +274,7 @@ class CategoricalGraph(BaseGraph):
                     elif series_type == "line":
                         value_x = x
                     else:
-                        value_x = x + self.bar_width / 2
+                        value_x = x + bar_width / 2
 
                     value_y = y - 5 if series_type == "bar" else y - 10
                     svg += f'<text x="{value_x}" y="{value_y}" text-anchor="middle" font-size="10">{value}</text>'
@@ -283,7 +293,7 @@ class CategoricalGraph(BaseGraph):
                 self.x_left_padding
                 + index * bar_spacing
                 + (bar_spacing - total_bars_width) / 2
-                + self.bar_width * (bar_series_across - 1) / 2
+                + bar_width * (bar_series_across - 1) / 2
             )
             y = self.height - self.y_bottom_padding + 5
             if label is not None and self.rotate_x_labels:
