@@ -95,8 +95,12 @@ class CategoricalGraph(BaseGraph):
             f'<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="{fill}" />'
         )
 
-    def _draw_dot(self, x, y, fill, radius=5, stroke="black", stroke_width="1"):
-        return f'<circle cx="{x}" cy="{y}" r="{radius}" fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}" />'
+    def _draw_dot(self, x, y, fill, radius=5, stroke=None, stroke_width=1):
+        if stroke is None:
+            stroke_parameter = ""
+        else:
+            stroke_parameter = f'stroke="{stroke}" stroke-width="{stroke_width}"'
+        return f'<circle cx="{x}" cy="{y}" r="{radius}" fill="{fill}" {stroke_parameter} />'
 
     def _draw_line(self, x1, y1, x2, y2, stroke="black", stroke_width="1"):
         return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}" stroke-width="{stroke_width}" />'
@@ -148,10 +152,10 @@ class CategoricalGraph(BaseGraph):
 
         # Draw legend
         if self.show_legend:
-            legend_x = self.x_left_padding
-            legend_y = self.y_top_padding / 2
             legend_spacing = 5
             legend_rect_size = 10
+            legend_x = self.width - self.x_right_padding + legend_spacing
+            legend_y = self.y_top_padding
 
             for index, label in enumerate(self.legend_labels):
                 series_type, _ = self.series_types[index]
@@ -172,8 +176,8 @@ class CategoricalGraph(BaseGraph):
                     )
                 else:  # series_type == "bar"
                     svg += f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" height="{legend_rect_size}" fill="{self.colors[index]}" />'
-                svg += f'<text x="{legend_x + legend_rect_size + legend_spacing}" y="{legend_y + legend_rect_size}" font-size="10">{label}</text>'
-                legend_x += (2 * legend_spacing) + legend_rect_size + len(label) * 6
+                svg += f'<text x="{legend_x + legend_rect_size + legend_spacing}" y="{legend_y + (2/3) * legend_rect_size}" font-size="10" alignment-baseline="middle">{label}</text>'
+                legend_y += (2 * legend_spacing) + legend_rect_size
 
         # Draw series
         bar_spacing = (self.width - self.x_left_padding - self.x_right_padding) / len(
