@@ -1,7 +1,8 @@
 import math
 
 from .base import BaseGraph
-from .utils import human_readable_number
+from .utils import hex_to_rgba
+from .utils import is_dark
 
 
 class BubbleAndArrowGraph(BaseGraph):
@@ -51,30 +52,36 @@ class BubbleAndArrowGraph(BaseGraph):
         )
         self.bubbles = []
         self.arrows = []
+        self.cx = self.width / 2
+        self.cy = self.height / 2
 
     def add_bubble(
         self,
         size,
+        inner_size=None,
         text=None,
     ):
-        self.bubbles.append((size, text))
+        self.bubbles.append((size, inner_size, text))
 
     def add_arrow(
         self,
         origin,
         destination,
         size,
-        text=None,
     ):
-        self.arrows.append((origin, destination, size, text))
+        self.arrows.append((origin, destination, size))
 
-    def _draw_dot(self, x, y, fill, radius=5, inner_radius=None):
+    def _draw_dot(self, x, y, fill, radius=5, inner_radius=None, text=None):
         dot = f'<circle cx="{x}" cy="{y}" r="{radius}" fill="{fill}" />'
         if inner_radius:
             dot += f'<circle cx="{x}" cy="{y}" r="{inner_radius}" fill="white" />'
+        if text:
+            text_color = "white" if is_dark(fill) and not inner_radius else "black"
+            dot += (
+                f'<text x="{x}" y="{y}" text-anchor="middle" '
+                + f'dominant-baseline="middle" fill="{text_color}">{text}</text>'
+            )
         return dot
-
-    import math
 
     def _draw_arrow(self, x1, y1, x2, y2, cx, cy, backoff, fill="black", width=1):
         arrow_head_length = 5
@@ -83,14 +90,8 @@ class BubbleAndArrowGraph(BaseGraph):
         x_offset = math.cos(perpendicular) * width / 2
         y_offset = math.sin(perpendicular) * width / 2
 
-        # Adjust backoff to account for curvature
-        d_start_end = math.hypot(x2 - x1, y2 - y1)
-        d_start_center = math.hypot(cx - x1, cy - y1)
-        curvature_ratio = d_start_end / d_start_center
-        adjusted_backoff = backoff * curvature_ratio
-
-        backoff_x = math.cos(direction) * adjusted_backoff
-        backoff_y = math.sin(direction) * adjusted_backoff
+        backoff_x = math.cos(direction) * backoff
+        backoff_y = math.sin(direction) * backoff
         x2 -= backoff_x
         y2 -= backoff_y
 
@@ -103,15 +104,97 @@ class BubbleAndArrowGraph(BaseGraph):
             + f"L{x_arrow_head + 1.3 * x_offset},{y_arrow_head + 1.3 * y_offset} "
             + f"L{x2},{y2} L{x_arrow_head - 1.3 * x_offset},{y_arrow_head - 1.3 * y_offset} "
             + f"L{x_arrow_head - x_offset},{y_arrow_head - y_offset}"
-            + f'Q{cx},{cy} {x1-x_offset},{y1-y_offset} z"'  # Z closes the path
-            + f'fill="{fill}" />'
+            + f'Q{cx},{cy} {x1-x_offset},{y1-y_offset} z" '  # Z closes the path
+            + f'fill="{hex_to_rgba(fill,0.5)}" />'
         )
+
+    def _calculate_positions(self):
+        inter_bubble_space = 0.1  # Proportional gap between bubbles
+
+        # Calculate radii for all bubbles without scaling
+        unscaled_bubbles = [
+            (math.sqrt(bubble[0] / math.pi),) + bubble[1:] for bubble in self.bubbles
+        ]
+
+        # Distribute bubbles evenly around a circle
+        num_bubbles = len(unscaled_bubbles)
+
+        # Compute the minimum circle radius to avoid any overlap between bubbles
+        min_circle_radius = (
+            sum((1 + inter_bubble_space) * bubble[0] for bubble in unscaled_bubbles)
+            / num_bubbles
+            / math.sin(math.pi / num_bubbles)
+        )
+        largest_radii = sorted(bubble[0] for bubble in unscaled_bubbles)[-2:]
+        min_circle_radius = max(
+            min_circle_radius, sum(largest_radii) * (1 + inter_bubble_space)
+        )
+
+        # With this circle radius, determine the diameter and add some inter-bubble space
+        min_diameter = 2 * (
+            min_circle_radius + largest_radii[-1] * (1 + inter_bubble_space)
+        )
+
+        # Now compute the scaling factor to fit this minimum circle within the canvas
+        scaling_factor = min(self.width, self.height) / min_diameter
+
+        # Apply the scaling factor to the bubbles
+        scaled_bubbles = [
+            (bubble[0] * scaling_factor,) + bubble[1:] for bubble in unscaled_bubbles
+        ]
+
+        # Also scale the circle radius
+        circle_radius = min_circle_radius * scaling_factor
+
+        # Now that we have the circle radius and scaled bubbles, we can compute the bubble positions
+        positions = []
+        for i, bubble in enumerate(scaled_bubbles):
+            angle = 2 * math.pi * i / num_bubbles  # Angle around circle
+            bx = self.cx + circle_radius * math.cos(angle)  # Bubble x position
+            by = self.cy + circle_radius * math.sin(angle)  # Bubble y position
+            positions.append(
+                (bx, by, bubble[0])
+            )  # Append bubble center coordinates and radius
+
+        return positions, scaling_factor
 
     def render(self):
         svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">'
 
-        # TODO: draw all the bubbles
-        # Draw all the arrows
-        # Curve the arrows so they go through the middle of the circle of bubbles
+        positions, scaling_factor = self._calculate_positions()
+
+        # Draw Arrows
+        for arrow in self.arrows:
+            origin = positions[arrow[0]]
+            destination = positions[arrow[1]]
+            backoff = positions[arrow[1]][2]
+            size = arrow[2] * scaling_factor
+            width = math.sqrt(size / math.pi)
+            svg += self._draw_arrow(
+                origin[0],
+                origin[1],
+                destination[0],
+                destination[1],
+                self.cx,
+                self.cy,
+                backoff,
+                width=width,
+                fill=self.colors[arrow[0]],
+            )
+
+        # Draw Bubbles
+        for i, bubble in enumerate(self.bubbles):
+            position = positions[i]
+            inner_area = bubble[1] * scaling_factor if bubble[1] else None
+            inner_radius = math.sqrt(inner_area / math.pi) if inner_area else None
+            svg += self._draw_dot(
+                position[0],
+                position[1],
+                self.colors[i],
+                radius=position[2],
+                inner_radius=inner_radius,
+                text=bubble[2],
+            )
+
         svg += "</svg>"
         return svg
