@@ -84,27 +84,37 @@ class BubbleAndArrowGraph(BaseGraph):
         return dot
 
     def _draw_arrow(self, x1, y1, x2, y2, cx, cy, backoff, fill="black", width=1):
-        arrow_head_length = 5
+        arrow_head_length = max(10, width / 5)
         direction = math.atan2(y2 - y1, x2 - x1)
         perpendicular = direction + math.pi / 2
         x_offset = math.cos(perpendicular) * width / 2
         y_offset = math.sin(perpendicular) * width / 2
 
+        # Calculate backoff
         backoff_x = math.cos(direction) * backoff
         backoff_y = math.sin(direction) * backoff
-        x2 -= backoff_x
-        y2 -= backoff_y
 
-        x_arrow_head = x2 - math.cos(direction) * arrow_head_length
-        y_arrow_head = y2 - math.sin(direction) * arrow_head_length
+        # New position of x2, y2 after backoff
+        x2_backoff = x2 - backoff_x
+        y2_backoff = y2 - backoff_y
+
+        # Arrow head with respect to the original x2, y2, but positioned at the backoff location
+        x_arrow_head = x2_backoff - math.cos(direction) * arrow_head_length
+        y_arrow_head = y2_backoff - math.sin(direction) * arrow_head_length
+
+        # Control points for each side of the arrow, adjusted by half the width in the direction perpendicular to the arrow
+        ctrl_x1 = cx + x_offset
+        ctrl_y1 = cy + y_offset
+        ctrl_x2 = cx - x_offset
+        ctrl_y2 = cy - y_offset
 
         return (
             f'<path d="M {x1+x_offset},{y1+y_offset} '
-            + f"Q{cx},{cy} {x_arrow_head + x_offset},{y_arrow_head + y_offset} "
+            + f"Q{ctrl_x1},{ctrl_y1} {x_arrow_head + x_offset},{y_arrow_head + y_offset} "
             + f"L{x_arrow_head + 1.3 * x_offset},{y_arrow_head + 1.3 * y_offset} "
-            + f"L{x2},{y2} L{x_arrow_head - 1.3 * x_offset},{y_arrow_head - 1.3 * y_offset} "
+            + f"L{x2_backoff},{y2_backoff} L{x_arrow_head - 1.3 * x_offset},{y_arrow_head - 1.3 * y_offset} "
             + f"L{x_arrow_head - x_offset},{y_arrow_head - y_offset}"
-            + f'Q{cx},{cy} {x1-x_offset},{y1-y_offset} z" '  # Z closes the path
+            + f'Q{ctrl_x2},{ctrl_y2} {x1-x_offset},{y1-y_offset} z" '  # Z closes the path
             + f'fill="{hex_to_rgba(fill,0.5)}" />'
         )
 
@@ -168,8 +178,8 @@ class BubbleAndArrowGraph(BaseGraph):
             origin = positions[arrow[0]]
             destination = positions[arrow[1]]
             backoff = positions[arrow[1]][2]
-            size = arrow[2] * scaling_factor
-            width = math.sqrt(size / math.pi)
+            size = arrow[2]
+            width = 2 * math.sqrt(size / math.pi) * scaling_factor
             svg += self._draw_arrow(
                 origin[0],
                 origin[1],
