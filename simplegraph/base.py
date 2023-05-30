@@ -21,7 +21,6 @@ class BaseGraph:
         x_left_padding=None,
         x_right_padding=None,
         colors=None,
-        stacked=False,
         num_y_ticks=5,
         x_axis_label=None,
         primary_y_axis_label=None,
@@ -36,7 +35,6 @@ class BaseGraph:
         self.x_left_padding = x_left_padding or x_padding or padding
         self.x_right_padding = x_right_padding or x_padding or padding
         self.colors = colors or DEFAULT_COLOR_PALETTE
-        self.stacked = stacked
         self.num_y_ticks = num_y_ticks
         self.x_axis_label = x_axis_label
         self.primary_y_axis_label = primary_y_axis_label

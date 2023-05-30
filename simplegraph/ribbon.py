@@ -30,6 +30,7 @@ class RibbonGraph(BaseGraph):
         primary_y_axis_label=None,
         show_legend=True,
         rotate_x_labels=True,
+        color_range=None,
     ):
         super().__init__(
             width=width,
@@ -52,6 +53,7 @@ class RibbonGraph(BaseGraph):
         self.x_labels = []
         self.print_values = []
         self.num_series = 0
+        self.color_range = color_range
 
     def add_series(
         self,
@@ -89,7 +91,10 @@ class RibbonGraph(BaseGraph):
 
         color_series_present = True if self.num_series == 3 else False
 
-        if color_series_present:
+        if color_series_present and self.color_range:
+            max_color_range = self.color_range[1]
+            min_color_range = self.color_range[0]
+        elif color_series_present:
             max_range = max(self.data[2])
             min_range = min(self.data[2])
             # Adjust max and min range to be round numbers

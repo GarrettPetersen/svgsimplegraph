@@ -7,6 +7,11 @@ def get_color(val, min_color, max_color):
     min_rgb = matplotlib.colors.hex2color(min_color)
     max_rgb = matplotlib.colors.hex2color(max_color)
 
+    if val < 0:
+        return min_color
+    elif val > 1:
+        return max_color
+
     # Compute the interpolated color's RGB values
     interpolated_rgb = [
         min_c + val * (max_c - min_c) for min_c, max_c in zip(min_rgb, max_rgb)

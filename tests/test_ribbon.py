@@ -34,3 +34,9 @@ def test_ribbon_graph():
     assert len(svg_base64) > 100
 
     print(f"\n<img src='{svg_base64}' />")
+
+    graph.color_range = (0, 20)
+
+    svg_base64 = graph.to_base64_src()
+
+    print(f"\n<img src='{svg_base64}' />")
