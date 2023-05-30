@@ -21,6 +21,13 @@ def get_color(val, min_color, max_color):
     return matplotlib.colors.rgb2hex(interpolated_rgb)
 
 
+def hex_to_rgba(hex_color, alpha=1.0):
+    r = int(hex_color[1:3], 16)
+    g = int(hex_color[3:5], 16)
+    b = int(hex_color[5:7], 16)
+    return f"rgba({r}, {g}, {b}, {alpha})"
+
+
 def get_adjusted_max(value):
     if value == 0:
         return 0
