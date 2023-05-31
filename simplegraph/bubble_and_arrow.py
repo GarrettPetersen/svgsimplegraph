@@ -140,7 +140,12 @@ class BubbleAndArrowGraph(BaseGraph):
 
         # Calculate radii for all bubbles without scaling
         unscaled_bubbles = [
-            (math.sqrt(bubble[0] / math.pi),) + bubble[1:] for bubble in self.bubbles
+            (
+                math.sqrt(bubble[0] / math.pi),
+                math.sqrt(bubble[1] / math.pi) if bubble[1] else None,
+                bubble[2],
+            )
+            for bubble in self.bubbles
         ]
 
         # Distribute bubbles evenly around a circle
@@ -167,7 +172,12 @@ class BubbleAndArrowGraph(BaseGraph):
 
         # Apply the scaling factor to the bubbles
         scaled_bubbles = [
-            (bubble[0] * scaling_factor,) + bubble[1:] for bubble in unscaled_bubbles
+            (
+                bubble[0] * scaling_factor,
+                bubble[1] * scaling_factor if bubble[1] else None,
+                bubble[2],
+            )
+            for bubble in unscaled_bubbles
         ]
 
         # Also scale the circle radius
@@ -197,7 +207,7 @@ class BubbleAndArrowGraph(BaseGraph):
             by = self.cy + circle_radius * math.sin(angle)  # Bubble y position
 
             positions.append(
-                (bx, by, bubble_size)
+                (bx, by, bubble_size, bubble[1])
             )  # Append bubble center coordinates and radius
 
             angle_accumulator += (
@@ -250,14 +260,12 @@ class BubbleAndArrowGraph(BaseGraph):
         # Draw Bubbles
         for i, bubble in enumerate(self.bubbles):
             position = positions[i]
-            inner_area = bubble[1] * scaling_factor if bubble[1] else None
-            inner_radius = math.sqrt(inner_area / math.pi) if inner_area else None
             svg += self._draw_dot(
                 position[0],
                 position[1],
                 self.colors[i],
                 radius=position[2],
-                inner_radius=inner_radius,
+                inner_radius=position[3],
                 text=bubble[2],
             )
 
