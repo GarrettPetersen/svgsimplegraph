@@ -85,7 +85,7 @@ class BubbleAndArrowGraph(BaseGraph):
 
     def _draw_arrow(self, x1, y1, x2, y2, cx, cy, backoff, fill="black", width=1):
         arrow_head_length = max(10, width / 5)
-        direction = math.atan2(y2 - y1, x2 - x1)
+        direction = math.atan2(y2 - cy, x2 - cx)
         perpendicular = direction + math.pi / 2
         x_offset = math.cos(perpendicular) * width / 2
         y_offset = math.sin(perpendicular) * width / 2
