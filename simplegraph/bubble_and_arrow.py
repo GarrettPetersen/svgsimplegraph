@@ -221,7 +221,7 @@ class BubbleAndArrowGraph(BaseGraph):
 
         positions = self._calculate_positions()
 
-        self.arrows.sort(key=lambda x: (x[0], x[1] > x[0], x[1]))
+        self.arrows.sort(key=lambda x: (x[0], x[1] < x[0], x[1]))
         prev_origin = 0
         width_of_existing_arrows = 0
         # Draw Arrows
