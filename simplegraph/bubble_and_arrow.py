@@ -52,6 +52,7 @@ class BubbleAndArrowGraph(BaseGraph):
         )
         self.bubbles = []
         self.arrows = []
+        self.total_arrow_width_from_origin = {}
         self.cx = self.width / 2
         self.cy = self.height / 2
 
@@ -69,7 +70,11 @@ class BubbleAndArrowGraph(BaseGraph):
         destination,
         size,
     ):
-        self.arrows.append((origin, destination, size))
+        if size > 0 and origin != destination:
+            self.arrows.append((origin, destination, size))
+            if origin not in self.total_arrow_width_from_origin:
+                self.total_arrow_width_from_origin[origin] = 0
+            self.total_arrow_width_from_origin[origin] += size
 
     def _draw_dot(self, x, y, fill, radius=5, inner_radius=None, text=None):
         dot = f'<circle cx="{x}" cy="{y}" r="{radius}" fill="{fill}" />'
@@ -83,7 +88,9 @@ class BubbleAndArrowGraph(BaseGraph):
             )
         return dot
 
-    def _draw_arrow(self, x1, y1, x2, y2, cx, cy, backoff, fill="black", width=1):
+    def _draw_arrow(
+        self, x1, y1, x2, y2, cx, cy, backoff, fill="black", width=1, start_offset=0
+    ):
         arrow_head_length = max(10, width / 5)
         direction_in = math.atan2(y2 - cy, x2 - cx)
         direction_mid = math.atan2(y2 - y1, x2 - x1)
@@ -95,6 +102,8 @@ class BubbleAndArrowGraph(BaseGraph):
         cy_offset = math.sin(perpendicular) * width / 2
         x_out_offset = math.cos(perpendicular_out) * width / 2
         y_out_offset = math.sin(perpendicular_out) * width / 2
+        x_out_shift = math.cos(perpendicular_out) * start_offset
+        y_out_shift = math.sin(perpendicular_out) * start_offset
         x_in_offset = math.cos(perpendicular_in) * width / 2
         y_in_offset = math.sin(perpendicular_in) * width / 2
 
@@ -117,12 +126,12 @@ class BubbleAndArrowGraph(BaseGraph):
         ctrl_y2 = cy - cy_offset
 
         return (
-            f'<path d="M {x1-x_out_offset},{y1-y_out_offset} '
+            f'<path d="M {x1-x_out_offset-x_out_shift},{y1-y_out_offset-y_out_shift} '
             + f"Q{ctrl_x1},{ctrl_y1} {x_arrow_head + x_in_offset},{y_arrow_head + y_in_offset} "
             + f"L{x_arrow_head + 1.3 * x_in_offset},{y_arrow_head + 1.3 * y_in_offset} "
             + f"L{x2_backoff},{y2_backoff} L{x_arrow_head - 1.3 * x_in_offset},{y_arrow_head - 1.3 * y_in_offset} "
             + f"L{x_arrow_head - x_in_offset},{y_arrow_head - y_in_offset}"
-            + f'Q{ctrl_x2},{ctrl_y2} {x1+x_out_offset},{y1+y_out_offset} z" '  # Z closes the path
+            + f'Q{ctrl_x2},{ctrl_y2} {x1+x_out_offset-x_out_shift},{y1+y_out_offset-x_out_shift} z" '  # Z closes the path
             + f'fill="{hex_to_rgba(fill,0.5)}" />'
         )
 
@@ -202,13 +211,29 @@ class BubbleAndArrowGraph(BaseGraph):
 
         positions, scaling_factor = self._calculate_positions()
 
+        self.arrows.sort(key=lambda x: (x[0], x[1] > x[0], x[1]))
+        prev_origin = 0
+        width_of_existing_arrows = 0
         # Draw Arrows
         for arrow in self.arrows:
             origin = positions[arrow[0]]
+            if arrow[0] != prev_origin:
+                width_of_existing_arrows = 0
+                prev_origin = arrow[0]
+            origin_bubble_diameter = 2 * origin[2]
+            origin_bubble_size = self.bubbles[arrow[0]][0]
+            size_all_arrows = self.total_arrow_width_from_origin[arrow[0]]
+            width_all_arrows = (
+                origin_bubble_diameter * size_all_arrows / origin_bubble_size
+            )
+            size = arrow[2]
+            width = width_all_arrows * size / size_all_arrows
+            start_offset = (
+                width_of_existing_arrows + (width / 2) - (width_all_arrows / 2)
+            )
+            width_of_existing_arrows += width
             destination = positions[arrow[1]]
             backoff = positions[arrow[1]][2]
-            size = arrow[2]
-            width = 2 * math.sqrt(size / math.pi) * scaling_factor
             svg += self._draw_arrow(
                 origin[0],
                 origin[1],
@@ -219,6 +244,7 @@ class BubbleAndArrowGraph(BaseGraph):
                 backoff,
                 width=width,
                 fill=self.colors[arrow[0]],
+                start_offset=start_offset,
             )
 
         # Draw Bubbles
