@@ -214,12 +214,12 @@ class BubbleAndArrowGraph(BaseGraph):
                 proportion / 2
             )  # Increase the accumulator by the proportion that this bubble represents
 
-        return positions, scaling_factor
+        return positions
 
     def render(self):
         svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">'
 
-        positions, scaling_factor = self._calculate_positions()
+        positions = self._calculate_positions()
 
         self.arrows.sort(key=lambda x: (x[0], x[1] > x[0], x[1]))
         prev_origin = 0
@@ -233,8 +233,9 @@ class BubbleAndArrowGraph(BaseGraph):
             origin_bubble_diameter = 2 * origin[2]
             origin_bubble_size = self.bubbles[arrow[0]][0]
             size_all_arrows = self.total_arrow_width_from_origin[arrow[0]]
-            width_all_arrows = (
-                origin_bubble_diameter * size_all_arrows / origin_bubble_size
+            width_all_arrows = min(
+                origin_bubble_diameter * size_all_arrows / origin_bubble_size,
+                origin_bubble_diameter,
             )
             size = arrow[2]
             width = width_all_arrows * size / size_all_arrows
