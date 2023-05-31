@@ -9,9 +9,9 @@ def test_bubble_and_arrow_graph():
         height=600,
     )
 
-    graph.add_bubble(100, 50, "Bubble 1")
-    graph.add_bubble(50, 25, "Bubble 2")
-    graph.add_bubble(25, 12.5, "Bubble 3")
+    graph.add_bubble(100, 50, "Bubble 0")
+    graph.add_bubble(50, 25, "Bubble 1")
+    graph.add_bubble(25, 12.5, "Bubble 2")
 
     graph.add_arrow(
         origin=0,
@@ -40,10 +40,10 @@ def test_bubble_and_arrow_graph():
 
     print(f"\n<img src='{svg_base64}' />")
 
-    graph.add_bubble(12.5, 6.25, "Bubble 4")
-    graph.add_bubble(6.25, 3.125, "Bubble 5")
-    graph.add_bubble(3.125, 1.5625, "Bubble 6")
-    graph.add_bubble(1.5625, 0.78125, "Bubble 7")
+    graph.add_bubble(12.5, 6.25, "Bubble 3")
+    graph.add_bubble(30, 3.125, "Bubble 4")
+    graph.add_bubble(3.125, 1.5625, "Bubble 5")
+    graph.add_bubble(1.5625, 0.78125, "Bubble 6")
 
     graph.add_arrow(
         origin=2,
@@ -58,6 +58,21 @@ def test_bubble_and_arrow_graph():
     graph.add_arrow(
         origin=4,
         destination=5,
+        size=6,
+    )
+    graph.add_arrow(
+        origin=4,
+        destination=1,
+        size=6,
+    )
+    graph.add_arrow(
+        origin=4,
+        destination=2,
+        size=6,
+    )
+    graph.add_arrow(
+        origin=4,
+        destination=6,
         size=6,
     )
     graph.add_arrow(
