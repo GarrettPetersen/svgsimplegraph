@@ -18,7 +18,7 @@ class BubbleAndArrowGraph(BaseGraph):
         self,
         width=300,
         height=200,
-        padding=20,
+        padding=10,
         x_padding=None,
         y_padding=None,
         y_top_padding=None,
@@ -297,20 +297,24 @@ class BubbleAndArrowGraph(BaseGraph):
             viewbox_width = (
                 self.most_extreme_dimensions["right"]
                 - self.most_extreme_dimensions["left"]
+                + self.x_left_padding
+                + self.x_right_padding
             )
             viewbox_height = (
                 self.most_extreme_dimensions["bottom"]
                 - self.most_extreme_dimensions["top"]
+                + self.y_top_padding
+                + self.y_bottom_padding
             )
 
             viewbox_param = (
-                f'viewBox="{self.most_extreme_dimensions["left"]} '
-                + f'{self.most_extreme_dimensions["top"]} {viewbox_width} '
+                f'viewBox="{self.most_extreme_dimensions["left"] - self.x_left_padding} '
+                + f'{self.most_extreme_dimensions["top"] - self.y_top_padding} {viewbox_width} '
                 + f'{viewbox_height}"'
             )
 
-            self.width = viewbox_width
-            self.height = viewbox_height
+            self.width = viewbox_width + self.x_left_padding + self.x_right_padding
+            self.height = viewbox_height + self.y_top_padding + self.y_bottom_padding
         svg = (
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" '
             + f'height="{self.height}" {viewbox_param}>'
