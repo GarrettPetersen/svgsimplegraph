@@ -3,6 +3,7 @@ import math
 from .base import BaseGraph
 from .utils import hex_to_rgba
 from .utils import is_dark
+from .utils import estimate_text_width
 
 
 class BubbleAndArrowGraph(BaseGraph):
@@ -31,6 +32,7 @@ class BubbleAndArrowGraph(BaseGraph):
         secondary_y_axis_label=None,
         show_legend=True,
         rotate_x_labels=True,
+        viewbox=True,
     ):
         super().__init__(
             width=width,
@@ -55,6 +57,13 @@ class BubbleAndArrowGraph(BaseGraph):
         self.total_arrow_width_from_origin = {}
         self.cx = self.width / 2
         self.cy = self.height / 2
+        self.viewbox = viewbox
+        self.most_extreme_dimensions = {
+            "left": self.width,
+            "right": 0,
+            "top": self.height,
+            "bottom": 0,
+        }
 
     def add_bubble(
         self,
@@ -77,6 +86,20 @@ class BubbleAndArrowGraph(BaseGraph):
             self.total_arrow_width_from_origin[origin] += size
 
     def _draw_dot(self, x, y, fill, radius=5, inner_radius=None, text=None):
+        if self.viewbox:
+            text_width = estimate_text_width(text, 10) if text else 0
+            self.most_extreme_dimensions["left"] = min(
+                self.most_extreme_dimensions["left"], x - radius, x - text_width / 2
+            )
+            self.most_extreme_dimensions["right"] = max(
+                self.most_extreme_dimensions["right"], x + radius, x + text_width / 2
+            )
+            self.most_extreme_dimensions["top"] = min(
+                self.most_extreme_dimensions["top"], y - radius
+            )
+            self.most_extreme_dimensions["bottom"] = max(
+                self.most_extreme_dimensions["bottom"], y + radius
+            )
         dot = f'<circle cx="{x}" cy="{y}" r="{radius}" fill="{fill}" />'
         if inner_radius:
             dot += f'<circle cx="{x}" cy="{y}" r="{inner_radius}" fill="white" />'
@@ -217,7 +240,7 @@ class BubbleAndArrowGraph(BaseGraph):
         return positions
 
     def render(self):
-        svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">'
+        svg = ""
 
         positions = self._calculate_positions()
 
@@ -270,5 +293,28 @@ class BubbleAndArrowGraph(BaseGraph):
                 text=bubble[2],
             )
 
-        svg += "</svg>"
+        if self.viewbox:
+            viewbox_width = (
+                self.most_extreme_dimensions["right"]
+                - self.most_extreme_dimensions["left"]
+            )
+            viewbox_height = (
+                self.most_extreme_dimensions["bottom"]
+                - self.most_extreme_dimensions["top"]
+            )
+
+            viewbox_param = (
+                f'viewBox="{self.most_extreme_dimensions["left"]} '
+                + f'{self.most_extreme_dimensions["top"]} {viewbox_width} '
+                + f'{viewbox_height}"'
+            )
+
+            self.width = viewbox_width
+            self.height = viewbox_height
+        svg = (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" '
+            + f'height="{self.height}" {viewbox_param}>'
+            + svg
+            + "</svg>"
+        )
         return svg

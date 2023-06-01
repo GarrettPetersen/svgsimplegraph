@@ -2,6 +2,19 @@ import math
 import matplotlib
 
 
+def estimate_text_width(text, font_size):
+    # Split the text into lines
+    lines = text.splitlines()
+
+    # Find the line with the most characters
+    max_chars = max(len(line) for line in lines)
+
+    # Assume each character is about 0.6 times the font size (this is a rough approximation)
+    estimated_width = max_chars * font_size * 0.6
+
+    return estimated_width
+
+
 def get_color(val, min_color, max_color):
     # Normalize RGB values to the [0, 1] range
     min_rgb = matplotlib.colors.hex2color(min_color)
