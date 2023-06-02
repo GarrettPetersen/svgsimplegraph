@@ -402,7 +402,7 @@ class BubbleAndArrowGraph(BaseGraph):
                 else:
                     self.text_buffer[text_to_check][1] += half_average_height
 
-                text_to_check = 0
+                text_to_check = max(text_to_check - 1, 0)
             else:
                 text_to_check += 1
             num_loops += 1
