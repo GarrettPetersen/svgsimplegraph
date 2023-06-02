@@ -2,7 +2,7 @@ import math
 import matplotlib
 
 
-def estimate_text_width(text, font_size):
+def estimate_text_dimensions(text, font_size):
     # Split the text into lines
     lines = text.splitlines()
 
@@ -12,7 +12,35 @@ def estimate_text_width(text, font_size):
     # Assume each character is about 0.6 times the font size (this is a rough approximation)
     estimated_width = max_chars * font_size * 0.6
 
-    return estimated_width
+    # The height of a single line of text is roughly equal to the font size.
+    # For multiple lines, multiply by the number of lines.
+    # Include line spacing by multiplying the font size by a factor (e.g., 1.2).
+    estimated_height = len(lines) * font_size * 1.2
+
+    return estimated_width, estimated_height
+
+
+def boxes_overlap(x1, y1, width1, height1, x2, y2, width2, height2):
+    # Calculate the corners of the boxes
+    left1, right1 = x1 - width1 / 2, x1 + width1 / 2
+    top1, bottom1 = y1 - height1 / 2, y1 + height1 / 2
+    left2, right2 = x2 - width2 / 2, x2 + width2 / 2
+    top2, bottom2 = y2 - height2 / 2, y2 + height2 / 2
+
+    # Check if the boxes overlap horizontally
+    if right1 < left2:
+        return False
+    if right2 < left1:
+        return False
+
+    # Check if the boxes overlap vertically
+    if bottom1 < top2:
+        return False
+    if bottom2 < top1:
+        return False
+
+    # If the boxes overlap both horizontally and vertically, they overlap
+    return True
 
 
 def get_color(val, min_color, max_color):
