@@ -127,7 +127,7 @@ class BubbleAndArrowGraph(BaseGraph):
         direction_in = math.atan2(y2 - cy, x2 - cx)
         direction_to_center = math.atan2(y1 - cy, x1 - cx)
         distance_to_center = math.sqrt((x1 - cx) ** 2 + (y1 - cy) ** 2)
-        ctrl_distance = distance_to_center * 1.5
+        ctrl_distance = distance_to_center
         interior_ctrl_distance = ctrl_distance - 2 * width
 
         if circular_arrow:
