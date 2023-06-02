@@ -86,8 +86,8 @@ class BubbleAndArrowGraph(BaseGraph):
             self.total_arrow_width_from_origin[origin] += size
 
     def _draw_dot(self, x, y, fill, radius=5, inner_radius=None, text=None):
+        text_width = estimate_text_width(text, 10) if text else 0
         if self.viewbox:
-            text_width = estimate_text_width(text, 10) if text else 0
             self.most_extreme_dimensions["left"] = min(
                 self.most_extreme_dimensions["left"], x - radius, x - text_width / 2
             )
@@ -104,7 +104,11 @@ class BubbleAndArrowGraph(BaseGraph):
         if inner_radius:
             dot += f'<circle cx="{x}" cy="{y}" r="{inner_radius}" fill="white" />'
         if text:
-            text_color = "white" if is_dark(fill) and not inner_radius else "black"
+            text_color = (
+                "white"
+                if is_dark(fill) and not inner_radius and text_width < radius
+                else "black"
+            )
             dot += (
                 f'<text x="{x}" y="{y}" text-anchor="middle" '
                 + f'dominant-baseline="middle" fill="{text_color}">{text}</text>'
