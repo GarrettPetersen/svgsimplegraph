@@ -28,6 +28,11 @@ def test_bubble_and_arrow_graph():
         destination=2,
         size=30,
     )
+    graph.add_arrow(
+        origin=2,
+        destination=2,
+        size=20,
+    )
 
     # Get the SVG string in base64 format
     svg_base64 = graph.to_base64_src()
@@ -40,18 +45,18 @@ def test_bubble_and_arrow_graph():
 
     print(f"\n<img src='{svg_base64}' />")
 
-    graph.add_bubble(12.5, 6.25, "Bubble 3")
+    graph.add_bubble(12.5, 6.25, "Bubble 3", label="Bubble 3")
     graph.add_bubble(30, None, "Bubble 4")
     graph.add_bubble(3.125, 1.5625, "Bubble 5")
     graph.add_bubble(1.5625, 0.78125, "Bubble 6")
 
     graph.add_arrow(
         origin=2,
-        destination=3,
+        destination="Bubble 3",
         size=10,
     )
     graph.add_arrow(
-        origin=3,
+        origin="Bubble 3",
         destination=4,
         size=10,
     )
