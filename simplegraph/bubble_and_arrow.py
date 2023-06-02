@@ -64,14 +64,20 @@ class BubbleAndArrowGraph(BaseGraph):
             "top": self.height,
             "bottom": 0,
         }
+        self.dot_labels = {}
 
     def add_bubble(
         self,
         size,
         inner_size=None,
         text=None,
+        label=None,
     ):
         self.bubbles.append((size, inner_size, text))
+        if label:
+            assert isinstance(label, str), "label must be a string"
+            assert label not in self.dot_labels, "label must be unique"
+            self.dot_labels[label] = len(self.bubbles) - 1
 
     def add_arrow(
         self,
@@ -79,11 +85,8 @@ class BubbleAndArrowGraph(BaseGraph):
         destination,
         size,
     ):
-        if size > 0 and origin != destination:
-            self.arrows.append((origin, destination, size))
-            if origin not in self.total_arrow_width_from_origin:
-                self.total_arrow_width_from_origin[origin] = 0
-            self.total_arrow_width_from_origin[origin] += size
+        if size > 0:
+            self.arrows.append([origin, destination, size])
 
     def _draw_dot(self, x, y, fill, radius=5, inner_radius=None, text=None):
         text_width = estimate_text_width(text, 10) if text else 0
@@ -109,19 +112,33 @@ class BubbleAndArrowGraph(BaseGraph):
                 if is_dark(fill) and not inner_radius and text_width < radius
                 else "black"
             )
-            dot += (
+            svg_text = (
                 f'<text x="{x}" y="{y}" text-anchor="middle" '
                 + f'dominant-baseline="middle" fill="{text_color}">{text}</text>'
             )
-        return dot
+        return dot, svg_text
 
     def _draw_arrow(
         self, x1, y1, x2, y2, cx, cy, backoff, fill="black", width=1, start_offset=0
     ):
+        circular_arrow = x1 == x2 and y1 == y2
+
         arrow_head_length = max(10, width / 5)
         direction_in = math.atan2(y2 - cy, x2 - cx)
-        direction_mid = math.atan2(y2 - y1, x2 - x1)
-        direction_out = math.atan2(y1 - cy, x1 - cx)
+        direction_to_center = math.atan2(y1 - cy, x1 - cx)
+        distance_to_center = math.sqrt((x1 - cx) ** 2 + (y1 - cy) ** 2)
+        ctrl_distance = distance_to_center * 1.5
+        interior_ctrl_distance = ctrl_distance - 2 * width
+
+        if circular_arrow:
+            # Self-pointing arrows emerge sideways
+            direction_mid = direction_to_center - math.pi / 2
+            direction_out = direction_to_center + 3 * math.pi / 4
+            direction_in += math.pi / 4
+        else:
+            direction_out = direction_to_center
+            direction_mid = math.atan2(y2 - y1, x2 - x1)
+
         perpendicular = direction_mid + math.pi / 2
         perpendicular_out = direction_out + math.pi / 2
         perpendicular_in = direction_in + math.pi / 2
@@ -145,6 +162,28 @@ class BubbleAndArrowGraph(BaseGraph):
         # Arrow head with respect to the original x2, y2, but positioned at the backoff location
         x_arrow_head = x2_backoff - math.cos(direction_in) * arrow_head_length
         y_arrow_head = y2_backoff - math.sin(direction_in) * arrow_head_length
+
+        if circular_arrow:
+            # Calculate positions of the control points along the direction_out and direction_in lines
+            ctrl_x1 = x1 + math.cos(direction_out) * ctrl_distance
+            ctrl_y1 = y1 + math.sin(direction_out) * ctrl_distance
+            ctrl_x2 = x2 - math.cos(direction_in) * ctrl_distance
+            ctrl_y2 = y2 - math.sin(direction_in) * ctrl_distance
+
+            ctrl_x1_interior = x1 + math.cos(direction_out) * interior_ctrl_distance
+            ctrl_y1_interior = y1 + math.sin(direction_out) * interior_ctrl_distance
+            ctrl_x2_interior = x2 - math.cos(direction_in) * interior_ctrl_distance
+            ctrl_y2_interior = y2 - math.sin(direction_in) * interior_ctrl_distance
+
+            return (
+                f'<path d="M {x1-x_out_offset-x_out_shift},{y1-y_out_offset-y_out_shift} '
+                + f"C{ctrl_x1},{ctrl_y1} {ctrl_x2},{ctrl_y2} {x_arrow_head - x_in_offset},{y_arrow_head - y_in_offset} "
+                + f"L{x_arrow_head - 1.3 * x_in_offset},{y_arrow_head - 1.3 * y_in_offset} "
+                + f"L{x2_backoff},{y2_backoff} L{x_arrow_head + 1.3 * x_in_offset},{y_arrow_head + 1.3 * y_in_offset} "
+                + f"L{x_arrow_head + x_in_offset},{y_arrow_head + y_in_offset} "
+                + f'C{ctrl_x2_interior},{ctrl_y2_interior} {ctrl_x1_interior},{ctrl_y1_interior} {x1+x_out_offset-x_out_shift},{y1+y_out_offset-x_out_shift} z" '  # Z closes the path
+                + f'fill="{hex_to_rgba(fill,0.5)}" />'
+            )
 
         # Control points for each side of the arrow, adjusted by half the width in the direction perpendicular to the arrow
         ctrl_x1 = cx + cx_offset
@@ -245,8 +284,19 @@ class BubbleAndArrowGraph(BaseGraph):
 
     def render(self):
         svg = ""
+        svg_text = ""
 
         positions = self._calculate_positions()
+
+        for i, arrow in enumerate(self.arrows):
+            if isinstance(arrow[0], str):
+                self.arrows[i][0] = self.dot_labels[arrow[0]]
+            if isinstance(arrow[1], str):
+                self.arrows[i][1] = self.dot_labels[arrow[1]]
+
+            if self.arrows[i][0] not in self.total_arrow_width_from_origin:
+                self.total_arrow_width_from_origin[self.arrows[i][0]] = 0
+            self.total_arrow_width_from_origin[self.arrows[i][0]] += arrow[2]
 
         self.arrows.sort(key=lambda x: (x[0], x[1] < x[0], x[1]))
         prev_origin = 0
@@ -288,7 +338,7 @@ class BubbleAndArrowGraph(BaseGraph):
         # Draw Bubbles
         for i, bubble in enumerate(self.bubbles):
             position = positions[i]
-            svg += self._draw_dot(
+            dot, text = self._draw_dot(
                 position[0],
                 position[1],
                 self.colors[i],
@@ -296,6 +346,9 @@ class BubbleAndArrowGraph(BaseGraph):
                 inner_radius=position[3],
                 text=bubble[2],
             )
+
+            svg += dot
+            svg_text += text
 
         if self.viewbox:
             viewbox_width = (
@@ -323,6 +376,7 @@ class BubbleAndArrowGraph(BaseGraph):
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" '
             + f'height="{self.height}" {viewbox_param}>'
             + svg
+            + svg_text
             + "</svg>"
         )
         return svg
