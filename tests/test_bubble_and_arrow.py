@@ -90,3 +90,18 @@ def test_bubble_and_arrow_graph():
     svg_base64 = graph.to_base64_src()
 
     print(f"\n<img src='{svg_base64}' />")
+
+    # Add a bunch of bubbles to test for overlapping text
+    graph.add_bubble(1, None, "Bubble 7")
+    graph.add_bubble(1, None, "Bubble 8")
+    graph.add_bubble(1, None, "Bubble 9")
+    graph.add_bubble(1, None, "Bubble 10")
+    graph.add_bubble(1, None, "Bubble 11")
+    graph.add_bubble(1, None, "Bubble 12")
+    graph.add_bubble(1, None, "Bubble 13")
+    graph.add_bubble(1, None, "Bubble 14")
+
+    # Get the SVG string in base64 format
+    svg_base64 = graph.to_base64_src()
+
+    print(f"\n<img src='{svg_base64}' />")

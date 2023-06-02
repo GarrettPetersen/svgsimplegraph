@@ -3,7 +3,8 @@ import math
 from .base import BaseGraph
 from .utils import hex_to_rgba
 from .utils import is_dark
-from .utils import estimate_text_width
+from .utils import estimate_text_dimensions
+from .utils import boxes_overlap
 
 
 class BubbleAndArrowGraph(BaseGraph):
@@ -65,6 +66,7 @@ class BubbleAndArrowGraph(BaseGraph):
             "bottom": 0,
         }
         self.dot_labels = {}
+        self.text_buffer = []
 
     def add_bubble(
         self,
@@ -89,13 +91,13 @@ class BubbleAndArrowGraph(BaseGraph):
             self.arrows.append([origin, destination, size])
 
     def _draw_dot(self, x, y, fill, radius=5, inner_radius=None, text=None):
-        text_width = estimate_text_width(text, 10) if text else 0
+        text_width, _ = estimate_text_dimensions(text, 10) if text else 0
         if self.viewbox:
             self.most_extreme_dimensions["left"] = min(
-                self.most_extreme_dimensions["left"], x - radius, x - text_width / 2
+                self.most_extreme_dimensions["left"], x - radius
             )
             self.most_extreme_dimensions["right"] = max(
-                self.most_extreme_dimensions["right"], x + radius, x + text_width / 2
+                self.most_extreme_dimensions["right"], x + radius
             )
             self.most_extreme_dimensions["top"] = min(
                 self.most_extreme_dimensions["top"], y - radius
@@ -112,11 +114,8 @@ class BubbleAndArrowGraph(BaseGraph):
                 if is_dark(fill) and not inner_radius and text_width < radius
                 else "black"
             )
-            svg_text = (
-                f'<text x="{x}" y="{y}" text-anchor="middle" '
-                + f'dominant-baseline="middle" fill="{text_color}">{text}</text>'
-            )
-        return dot, svg_text
+            self.text_buffer.append([x, y, text, text_color])
+        return dot
 
     def _draw_arrow(
         self, x1, y1, x2, y2, cx, cy, backoff, fill="black", width=1, start_offset=0
@@ -199,6 +198,29 @@ class BubbleAndArrowGraph(BaseGraph):
             + f"L{x_arrow_head - x_in_offset},{y_arrow_head - y_in_offset}"
             + f'Q{ctrl_x2},{ctrl_y2} {x1+x_out_offset-x_out_shift},{y1+y_out_offset-x_out_shift} z" '  # Z closes the path
             + f'fill="{hex_to_rgba(fill,0.5)}" />'
+        )
+
+    def _draw_text(self, x, y, text, fill):
+        text_width, text_height = estimate_text_dimensions(text, 10)
+        half_width = text_width / 2
+        half_height = text_height / 2
+        if self.viewbox:
+            self.most_extreme_dimensions["left"] = min(
+                self.most_extreme_dimensions["left"], x - half_width
+            )
+            self.most_extreme_dimensions["right"] = max(
+                self.most_extreme_dimensions["right"], x + half_width
+            )
+            self.most_extreme_dimensions["top"] = min(
+                self.most_extreme_dimensions["top"], y - half_height
+            )
+            self.most_extreme_dimensions["bottom"] = max(
+                self.most_extreme_dimensions["bottom"], y + half_height
+            )
+        return (
+            f'<text x="{x}" y="{y}" text-anchor="middle" '
+            + f'dominant-baseline="middle" fill="{fill}" '
+            + f'font-size="10">{text}</text>'
         )
 
     def _calculate_positions(self):
@@ -285,6 +307,7 @@ class BubbleAndArrowGraph(BaseGraph):
     def render(self):
         svg = ""
         svg_text = ""
+        self.text_buffer = []
 
         positions = self._calculate_positions()
 
@@ -338,7 +361,7 @@ class BubbleAndArrowGraph(BaseGraph):
         # Draw Bubbles
         for i, bubble in enumerate(self.bubbles):
             position = positions[i]
-            dot, text = self._draw_dot(
+            dot = self._draw_dot(
                 position[0],
                 position[1],
                 self.colors[i],
@@ -348,7 +371,45 @@ class BubbleAndArrowGraph(BaseGraph):
             )
 
             svg += dot
-            svg_text += text
+
+        # Shift labels to not overlap
+        text_to_check = 0
+        num_loops = 0
+        max_loops = len(self.text_buffer) * 10
+        while text_to_check < len(self.text_buffer) and num_loops < max_loops:
+            first_text = self.text_buffer[text_to_check]
+            other_index = (text_to_check - 1) % len(self.text_buffer)
+            other_text = self.text_buffer[other_index]
+            first_text_width, first_text_height = estimate_text_dimensions(
+                first_text[2], 10
+            )
+            other_text_width, other_text_height = estimate_text_dimensions(
+                other_text[2], 10
+            )
+            if boxes_overlap(
+                first_text[0],
+                first_text[1],
+                first_text_width,
+                first_text_height,
+                other_text[0],
+                other_text[1],
+                other_text_width,
+                other_text_height,
+            ):
+                half_average_height = (first_text_height + other_text_height) / 4
+                if first_text[1] < other_text[1]:
+                    self.text_buffer[text_to_check][1] -= half_average_height
+                else:
+                    self.text_buffer[text_to_check][1] += half_average_height
+
+                text_to_check = 0
+            else:
+                text_to_check += 1
+            num_loops += 1
+
+        # Draw Text
+        for text in self.text_buffer:
+            svg_text += self._draw_text(*text)
 
         if self.viewbox:
             viewbox_width = (
