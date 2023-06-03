@@ -39,8 +39,11 @@ def boxes_overlap(x1, y1, width1, height1, x2, y2, width2, height2):
     if bottom2 < top1:
         return False
 
-    # If the boxes overlap both horizontally and vertically, they overlap
-    return True
+    # Return the amount of vertical overlap
+    if y1 < y2:
+        return bottom1 - top2
+    else:
+        return bottom2 - top1
 
 
 def get_color(val, min_color, max_color):
