@@ -37,6 +37,7 @@ svg_base64 = graph.to_base64_src()
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
 ```
+![Example categorical graph](images/example_categorical.svg)
 
 ## Ribbon Graph
 
@@ -75,6 +76,7 @@ svg_base64 = graph.to_base64_src()
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
 ```
+![Example ribbon graph](images/example_ribbon.svg)
 
 ## Bubble and Arrow Graph
 The bubble and arrow graph is for displaying relationships between nodes in a network.
@@ -126,3 +128,4 @@ svg_base64 = graph.to_base64_src()
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
 ```
+![Example bubble and arrow graph](images/example_bubble_and_arrow.svg)
