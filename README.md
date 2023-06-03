@@ -58,6 +58,7 @@ graph = RibbonGraph(
     x_right_padding=80,
     y_top_padding=40,
     y_bottom_padding=30,
+    background_color="#404040",
 )
 
 graph.x_labels = ["A", "B", "C", "D", "E"]
