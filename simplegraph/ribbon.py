@@ -31,6 +31,8 @@ class RibbonGraph(BaseGraph):
         show_legend=True,
         rotate_x_labels=True,
         color_range=None,
+        background_color=None,
+        dark_mode=None,
     ):
         super().__init__(
             width=width,
@@ -48,12 +50,15 @@ class RibbonGraph(BaseGraph):
             primary_y_axis_label=primary_y_axis_label,
             show_legend=show_legend,
             rotate_x_labels=rotate_x_labels,
+            background_color=background_color,
+            dark_mode=dark_mode,
         )
         self.bar_width = bar_width
         self.x_labels = []
         self.print_values = []
         self.num_series = 0
         self.color_range = color_range
+        self.text_color = "#ffffff" if self.dark_mode else "#000000"
 
     def add_series(
         self,
@@ -113,8 +118,8 @@ class RibbonGraph(BaseGraph):
             self.height - self.y_top_padding - self.y_bottom_padding
         ) / adjusted_max_value_primary
 
-        svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">'
-        svg += f"""
+        svg = ""
+        svg_defs = f"""
 <defs>
     <linearGradient id="legend_grad" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" style="stop-color:{self.colors[1]}" />
@@ -133,8 +138,8 @@ class RibbonGraph(BaseGraph):
             half_bar_width = self.bar_width / 2
 
             svg += f'<path d="M{top_legend_x} {top_legend_y} h{third_graph_width} l{half_bar_width} {half_bar_width} l-{half_bar_width} {half_bar_width} h-{third_graph_width} l{half_bar_width} -{half_bar_width}" fill="{self.colors[0]}" />'
-            svg += f'<text x="{top_legend_x}" y="{top_legend_y + half_bar_width}" dy="0.35em" font-size="10" text-anchor="end">{self.legend_labels[0]}</text>'
-            svg += f'<text x="{top_legend_x+third_graph_width+half_bar_width+5}" y="{top_legend_y + half_bar_width}" dy="0.35em" font-size="10" text-anchor="start">{self.legend_labels[1]}</text>'
+            svg += f'<text x="{top_legend_x}" y="{top_legend_y + half_bar_width}" dy="0.35em" font-size="10" text-anchor="end" fill="{self.text_color}">{self.legend_labels[0]}</text>'
+            svg += f'<text x="{top_legend_x+third_graph_width+half_bar_width+5}" y="{top_legend_y + half_bar_width}" dy="0.35em" font-size="10" text-anchor="start" fill="{self.text_color}">{self.legend_labels[1]}</text>'
 
             if color_series_present:
                 right_legend_x = (
@@ -144,9 +149,9 @@ class RibbonGraph(BaseGraph):
                 right_legend_y_middle = right_legend_y + graph_height / 2
 
                 svg += f'<rect x="{right_legend_x}" y="{right_legend_y}" width="{self.bar_width}" height="{graph_height}" fill="url(#legend_grad)" />'
-                svg += f'<text x="{right_legend_x-5}" y="{right_legend_y_middle}" text-anchor="middle" font-size="10" transform="rotate(-90 {right_legend_x-5} {right_legend_y_middle})">{self.legend_labels[2]}</text>'
-                svg += f'<text x="{right_legend_x+self.bar_width+5}" y="{right_legend_y}" dy="0.35em" text-anchor="start" font-size="10">{human_readable_number(max_color_range)}</text>'
-                svg += f'<text x="{right_legend_x+self.bar_width+5}" y="{right_legend_y+graph_height}" dy="0.35em" text-anchor="start" font-size="10">{human_readable_number(min_color_range)}</text>'
+                svg += f'<text x="{right_legend_x-5}" y="{right_legend_y_middle}" text-anchor="middle" font-size="10" transform="rotate(-90 {right_legend_x-5} {right_legend_y_middle})" fill="{self.text_color}">{self.legend_labels[2]}</text>'
+                svg += f'<text x="{right_legend_x+self.bar_width+5}" y="{right_legend_y}" dy="0.35em" text-anchor="start" font-size="10" fill="{self.text_color}">{human_readable_number(max_color_range)}</text>'
+                svg += f'<text x="{right_legend_x+self.bar_width+5}" y="{right_legend_y+graph_height}" dy="0.35em" text-anchor="start" font-size="10" fill="{self.text_color}">{human_readable_number(min_color_range)}</text>'
 
         # Draw ribbons
         num_ribbons = len(self.data[0])
@@ -175,14 +180,14 @@ class RibbonGraph(BaseGraph):
             svg += self._draw_ribbon(x, y1, y2, self.bar_width, color)
             if self.print_values[0]:
                 if y1 < y2:
-                    svg += f'<text x="{x+self.bar_width/2}" y="{y1}" dy="0.35em" text-anchor="middle" font-size="10">{human_readable_number(self.data[0][index])}</text>'
+                    svg += f'<text x="{x+self.bar_width/2}" y="{y1}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[0][index])}</text>'
                 else:
-                    svg += f'<text x="{x+self.bar_width/2}" y="{y1}" dy="0.35em" text-anchor="middle" font-size="10">{human_readable_number(self.data[0][index])}</text>'
+                    svg += f'<text x="{x+self.bar_width/2}" y="{y1}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[0][index])}</text>'
             if self.print_values[1]:
                 if y2 < y1:
-                    svg += f'<text x="{x+self.bar_width/2}" y="{y2-self.bar_width/2-5}" dy="0.35em" text-anchor="middle" font-size="10">{human_readable_number(self.data[1][index])}</text>'
+                    svg += f'<text x="{x+self.bar_width/2}" y="{y2-self.bar_width/2-5}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[1][index])}</text>'
                 else:
-                    svg += f'<text x="{x+self.bar_width/2}" y="{y2+self.bar_width/2+5}" dy="0.35em" text-anchor="middle" font-size="10">{human_readable_number(self.data[1][index])}</text>'
+                    svg += f'<text x="{x+self.bar_width/2}" y="{y2+self.bar_width/2+5}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[1][index])}</text>'
             if color_series_present and self.print_values[2]:
                 if y1 < y2:
                     y_adjustment = self.bar_width / 4
@@ -195,17 +200,17 @@ class RibbonGraph(BaseGraph):
                 svg += f'<text x="{x+self.bar_width/2}" y="{(y1+y2)/2 + y_adjustment}" dy="0.35em" text-anchor="middle" font-size="10" {optional_fill}>{human_readable_number(self.data[2][index])}</text>'
 
         # Draw axis
-        svg += f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" y2="{self.height - self.y_bottom_padding}" stroke="black" stroke-width="1" />'
-        svg += f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="black" stroke-width="1" />'
+        svg += f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+        svg += f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
             x = (index + 1 / 2) * bar_spacing + self.x_left_padding + self.bar_width / 2
             y = self.height - self.y_bottom_padding + 5
             if label is not None and self.rotate_x_labels:
-                svg += f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})">{label}</text>'
+                svg += f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})" fill="{self.text_color}">{label}</text>'
             elif label is not None and not self.rotate_x_labels:
-                svg += f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10">{label}</text>'
+                svg += f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10" fill="{self.text_color}">{label}</text>'
 
         # Draw primary y-axis ticks and values
         for i in range(self.num_y_ticks + 1):
@@ -213,8 +218,8 @@ class RibbonGraph(BaseGraph):
             tick_y = self.height - self.y_bottom_padding - tick_value * scale_primary
             tick_label = f"{human_readable_number(tick_value)}"
 
-            svg += f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10">{tick_label}</text>'
-            svg += f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="black" stroke-width="1" />'
+            svg += f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10" fill="{self.text_color}">{tick_label}</text>'
+            svg += f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
 
         # Draw axis labels
         if self.x_axis_label:
@@ -222,14 +227,28 @@ class RibbonGraph(BaseGraph):
                 self.width - self.x_left_padding - self.x_right_padding
             ) / 2 + self.x_left_padding
             x_label_y = self.height - self.y_bottom_padding / 4
-            svg += f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12">{self.x_axis_label}</text>'
+            svg += f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12" fill="{self.text_color}">{self.x_axis_label}</text>'
 
         if self.primary_y_axis_label:
             y_label_x = self.x_left_padding / 4
             y_label_y = (
                 self.height - self.y_top_padding - self.y_bottom_padding
             ) / 2 + self.y_top_padding
-            svg += f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})">{self.primary_y_axis_label}</text>'
+            svg += f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})" fill="{self.text_color}">{self.primary_y_axis_label}</text>'
 
-        svg += "</svg>"
+        background_rect = ""
+        if self.background_color:
+            # Draw background with rounded corners
+            background_rect = (
+                f"<rect x='0' y='0' width='{self.width}' height='{self.height}' "
+                + f"rx='10' ry='10' fill='{self.background_color}' />"
+            )
+
+        svg = (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">'
+            + svg_defs
+            + background_rect
+            + svg
+            + "</svg>"
+        )
         return svg

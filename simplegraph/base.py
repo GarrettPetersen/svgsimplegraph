@@ -1,6 +1,7 @@
 import base64
 
 from .utils import DEFAULT_COLOR_PALETTE
+from .utils import is_dark
 
 
 class BaseGraph:
@@ -27,6 +28,8 @@ class BaseGraph:
         secondary_y_axis_label=None,
         show_legend=True,
         rotate_x_labels=True,
+        background_color=None,
+        dark_mode=None,
     ):
         self.width = width
         self.height = height
@@ -45,6 +48,12 @@ class BaseGraph:
         self.secondary = []
         self.show_legend = show_legend
         self.rotate_x_labels = rotate_x_labels
+        self.background_color = background_color
+        self.dark_mode = dark_mode
+        if dark_mode is None and background_color:
+            self.dark_mode = is_dark(background_color)
+        elif dark_mode is None:
+            self.dark_mode = False
 
     def render(self):
         # Implement the specific rendering for this subclass
