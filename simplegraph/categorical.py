@@ -293,7 +293,7 @@ class CategoricalGraph(BaseGraph):
                         value_x = x + bar_width / 2
 
                     value_y = y - 5 if series_type == "bar" else y - 10
-                    svg += f'<text x="{value_x}" y="{value_y}" text-anchor="middle" font-size="10">{value}</text>'
+                    svg += f'<text x="{value_x}" y="{value_y}" text-anchor="middle" font-size="10" fill="{self.text_color}">{value}</text>'
 
         # Draw axis
         svg += (
@@ -320,9 +320,9 @@ class CategoricalGraph(BaseGraph):
             )
             y = self.height - self.y_bottom_padding + 5
             if label is not None and self.rotate_x_labels:
-                svg += f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})">{label}</text>'
+                svg += f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})" fill="{self.text_color}">{label}</text>'
             elif label is not None and not self.rotate_x_labels:
-                svg += f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10">{label}</text>'
+                svg += f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10" fill="{self.text_color}">{label}</text>'
 
         # Draw primary y-axis ticks and values
         for i in range(self.num_y_ticks + 1):

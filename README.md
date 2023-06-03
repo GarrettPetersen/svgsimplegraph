@@ -37,6 +37,10 @@ svg_base64 = graph.to_base64_src()
 
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
+
+# Alternatively, you can get the raw SVG code with render()
+raw_svg = graph.render()
+print(raw_svg)
 ```
 ![Example categorical graph](images/example_categorical.svg)
 
@@ -77,6 +81,10 @@ svg_base64 = graph.to_base64_src()
 
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
+
+# Alternatively, you can get the raw SVG code with render()
+raw_svg = graph.render()
+print(raw_svg)
 ```
 ![Example ribbon graph](images/example_ribbon.svg)
 
@@ -92,7 +100,7 @@ from simplegraph import BubbleAndArrowGraph
 graph = BubbleAndArrowGraph(
     width=600,
     height=600,
-    background_color="#404040",
+    background_color="#ffffff",
 )
 
 # Optional str label param can be referred to later when defining arrows
@@ -130,5 +138,9 @@ svg_base64 = graph.to_base64_src()
 
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
+
+# Alternatively, you can get the raw SVG code with render()
+raw_svg = graph.render()
+print(raw_svg)
 ```
 ![Example bubble and arrow graph](images/example_bubble_and_arrow.svg)
