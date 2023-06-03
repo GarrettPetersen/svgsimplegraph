@@ -15,11 +15,12 @@ graph = CategoricalGraph(
         width=600,
         height=400,
         bar_width=30,
-        x_left_padding=40,
-        x_right_padding=120,
-        y_top_padding=10,
-        y_bottom_padding=30,
+        x_left_padding=60,
+        x_right_padding=80,
+        y_top_padding=20,
+        y_bottom_padding=40,
         stacked=False,
+        background_color="#404040",
     )
 
 graph.x_labels = ["A", "B", "C", "D", "E"]
@@ -36,7 +37,12 @@ svg_base64 = graph.to_base64_src()
 
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
+
+# Alternatively, you can get the raw SVG code with render()
+raw_svg = graph.render()
+print(raw_svg)
 ```
+![Example categorical graph](images/example_categorical.svg)
 
 ## Ribbon Graph
 
@@ -53,10 +59,11 @@ graph = RibbonGraph(
     width=600,
     height=400,
     bar_width=30,
-    x_left_padding=30,
-    x_right_padding=60,
+    x_left_padding=60,
+    x_right_padding=80,
     y_top_padding=40,
     y_bottom_padding=30,
+    background_color="#404040",
 )
 
 graph.x_labels = ["A", "B", "C", "D", "E"]
@@ -74,7 +81,12 @@ svg_base64 = graph.to_base64_src()
 
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
+
+# Alternatively, you can get the raw SVG code with render()
+raw_svg = graph.render()
+print(raw_svg)
 ```
+![Example ribbon graph](images/example_ribbon.svg)
 
 ## Bubble and Arrow Graph
 The bubble and arrow graph is for displaying relationships between nodes in a network.
@@ -88,6 +100,7 @@ from simplegraph import BubbleAndArrowGraph
 graph = BubbleAndArrowGraph(
     width=600,
     height=600,
+    background_color="#ffffff",
 )
 
 # Optional str label param can be referred to later when defining arrows
@@ -125,4 +138,9 @@ svg_base64 = graph.to_base64_src()
 
 # Print the SVG string in an img tag so your browser can display it
 print(f"\n<img src='{svg_base64}' />")
+
+# Alternatively, you can get the raw SVG code with render()
+raw_svg = graph.render()
+print(raw_svg)
 ```
+![Example bubble and arrow graph](images/example_bubble_and_arrow.svg)
