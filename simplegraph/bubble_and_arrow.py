@@ -378,7 +378,8 @@ class BubbleAndArrowGraph(BaseGraph):
         max_loops = len(self.text_buffer) * 10
         while text_to_check < len(self.text_buffer) and num_loops < max_loops:
             first_text = self.text_buffer[text_to_check]
-            for i in range(1, 3):
+            any_change = False
+            for i in [-2, -1, 1, 2]:
                 other_index = (text_to_check + i) % len(self.text_buffer)
                 other_text = self.text_buffer[other_index]
                 first_text_width, first_text_height = estimate_text_dimensions(
@@ -387,7 +388,7 @@ class BubbleAndArrowGraph(BaseGraph):
                 other_text_width, other_text_height = estimate_text_dimensions(
                     other_text[2], 10
                 )
-                if boxes_overlap(
+                vertical_overlap = boxes_overlap(
                     first_text[0],
                     first_text[1],
                     first_text_width,
@@ -396,17 +397,19 @@ class BubbleAndArrowGraph(BaseGraph):
                     other_text[1],
                     other_text_width,
                     other_text_height,
-                ):
-                    half_average_height = (first_text_height + other_text_height) / 4
+                )
+                if vertical_overlap:
                     if first_text[1] < other_text[1]:
-                        self.text_buffer[text_to_check][1] -= half_average_height
+                        self.text_buffer[text_to_check][1] -= vertical_overlap
                     else:
-                        self.text_buffer[text_to_check][1] += half_average_height
+                        self.text_buffer[text_to_check][1] += vertical_overlap
 
-                    text_to_check = max(text_to_check - 3, 0)
-                else:
-                    text_to_check += 1
-                num_loops += 1
+                    any_change = True
+            if any_change:
+                text_to_check = max(0, text_to_check - 3)
+            else:
+                text_to_check += 1
+            num_loops += 1
 
         # Draw Text
         for text in self.text_buffer:
