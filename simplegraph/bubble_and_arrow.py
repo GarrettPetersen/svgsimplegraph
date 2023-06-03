@@ -121,8 +121,8 @@ class BubbleAndArrowGraph(BaseGraph):
                 text_color = "white"
             if inner_radius and inner_radius > text_width:
                 text_color = "white" if is_dark(self.inner_fill) else "black"
-            elif radius > text_width and is_dark(fill) and not inner_radius:
-                text_color = "white"
+            elif radius > text_width and not inner_radius:
+                text_color = "white" if is_dark(fill) else "black"
             self.text_buffer.append([x, y, text, text_color])
         return dot
 
@@ -424,6 +424,7 @@ class BubbleAndArrowGraph(BaseGraph):
         for text in self.text_buffer:
             svg_text += self._draw_text(*text)
 
+        background_rect = ""
         if self.viewbox:
             viewbox_width = (
                 self.most_extreme_dimensions["right"]
@@ -446,10 +447,15 @@ class BubbleAndArrowGraph(BaseGraph):
 
             self.width = viewbox_width + self.x_left_padding + self.x_right_padding
             self.height = viewbox_height + self.y_top_padding + self.y_bottom_padding
-
-        background_rect = ""
-        if self.background_color:
-            # Draw background with rounded corners
+            if self.background_color:
+                # Draw background with rounded corners
+                background_rect = (
+                    f"<rect x='{self.most_extreme_dimensions['left'] - self.x_left_padding}' "
+                    + f"y='{self.most_extreme_dimensions['top'] - self.y_top_padding}' "
+                    + f"width='{viewbox_width}' height='{viewbox_height}' "
+                    + f"rx='10' ry='10' fill='{self.background_color}' />"
+                )
+        elif self.background_color:
             background_rect = (
                 f"<rect x='0' y='0' width='{self.width}' height='{self.height}' "
                 + f"rx='10' ry='10' fill='{self.background_color}' />"
