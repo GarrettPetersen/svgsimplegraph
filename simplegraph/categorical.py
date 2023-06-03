@@ -52,6 +52,8 @@ class CategoricalGraph(BaseGraph):
         secondary_y_axis_label=None,
         show_legend=True,
         rotate_x_labels=True,
+        background_color=None,
+        dark_mode=None,
     ):
         super().__init__(
             width=width,
@@ -70,12 +72,15 @@ class CategoricalGraph(BaseGraph):
             secondary_y_axis_label=secondary_y_axis_label,
             show_legend=show_legend,
             rotate_x_labels=rotate_x_labels,
+            background_color=background_color,
+            dark_mode=dark_mode,
         )
         self.stacked = stacked
         self.bar_width = bar_width
         self.x_labels = []
         self.series_types = []
         self.secondary = []
+        self.text_color = "#ffffff" if self.dark_mode else "#000000"
 
     def add_series(
         self,
@@ -148,7 +153,7 @@ class CategoricalGraph(BaseGraph):
             self.height - self.y_top_padding - self.y_bottom_padding
         ) / adjusted_max_value_secondary
 
-        svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">'
+        svg = ""
 
         # Draw legend
         if self.show_legend:
@@ -175,8 +180,15 @@ class CategoricalGraph(BaseGraph):
                         stroke=self.colors[index],
                     )
                 else:  # series_type == "bar"
-                    svg += f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" height="{legend_rect_size}" fill="{self.colors[index]}" />'
-                svg += f'<text x="{legend_x + legend_rect_size + legend_spacing}" y="{legend_y + (2/3) * legend_rect_size}" font-size="10" alignment-baseline="middle">{label}</text>'
+                    svg += (
+                        f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" '
+                        + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
+                    )
+                svg += (
+                    f'<text x="{legend_x + legend_rect_size + legend_spacing}" '
+                    + f'y="{legend_y + (2/3) * legend_rect_size}" font-size="10" '
+                    + f'alignment-baseline="middle" fill="{self.text_color}">{label}</text>'
+                )
                 legend_y += (2 * legend_spacing) + legend_rect_size
 
         # Draw series
@@ -284,12 +296,19 @@ class CategoricalGraph(BaseGraph):
                     svg += f'<text x="{value_x}" y="{value_y}" text-anchor="middle" font-size="10">{value}</text>'
 
         # Draw axis
-        svg += f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" y2="{self.height - self.y_bottom_padding}" stroke="black" stroke-width="1" />'
-        svg += f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="black" stroke-width="1" />'
+        svg += (
+            f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" '
+            + f'y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+        )
+        svg += (
+            f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" '
+            + f'x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" '
+            + f'stroke="{self.text_color}" stroke-width="1" />'
+        )
 
         # Draw secondary y-axis if needed
         if any(self.secondary):
-            svg += f'<line x1="{self.width - self.x_right_padding}" y1="{self.y_top_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="black" stroke-width="1" />'
+            svg += f'<line x1="{self.width - self.x_right_padding}" y1="{self.y_top_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
@@ -311,8 +330,8 @@ class CategoricalGraph(BaseGraph):
             tick_y = self.height - self.y_bottom_padding - tick_value * scale_primary
             tick_label = f"{human_readable_number(tick_value)}"
 
-            svg += f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10">{tick_label}</text>'
-            svg += f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="black" stroke-width="1" />'
+            svg += f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10" fill="{self.text_color}">{tick_label}</text>'
+            svg += f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
 
         # Draw secondary y-axis ticks and values if needed
         if any(self.secondary):
@@ -323,8 +342,8 @@ class CategoricalGraph(BaseGraph):
                 )
                 tick_label = f"{human_readable_number(tick_value)}"
 
-                svg += f'<text x="{self.width - self.x_right_padding + 5}" y="{tick_y + 3}" text-anchor="start" font-size="10">{tick_label}</text>'
-                svg += f'<line x1="{self.width - self.x_right_padding}" y1="{tick_y}" x2="{self.width - self.x_right_padding + 3}" y2="{tick_y}" stroke="black" stroke-width="1" />'
+                svg += f'<text x="{self.width - self.x_right_padding + 5}" y="{tick_y + 3}" text-anchor="start" font-size="10" fill="{self.text_color}">{tick_label}</text>'
+                svg += f'<line x1="{self.width - self.x_right_padding}" y1="{tick_y}" x2="{self.width - self.x_right_padding + 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
 
         # Draw axis labels
         if self.x_axis_label:
@@ -332,19 +351,32 @@ class CategoricalGraph(BaseGraph):
                 self.width - self.x_left_padding - self.x_right_padding
             ) / 2 + self.x_left_padding
             x_label_y = self.height - self.y_bottom_padding / 4
-            svg += f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12">{self.x_axis_label}</text>'
+            svg += f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12" fill="{self.text_color}">{self.x_axis_label}</text>'
 
         if self.primary_y_axis_label:
             y_label_x = self.x_left_padding / 4
             y_label_y = (
                 self.height - self.y_top_padding - self.y_bottom_padding
             ) / 2 + self.y_top_padding
-            svg += f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})">{self.primary_y_axis_label}</text>'
+            svg += f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})" fill="{self.text_color}">{self.primary_y_axis_label}</text>'
 
         if any(self.secondary) and self.secondary_y_axis_label:
             sec_y_label_x = self.width - self.x_right_padding / 4
             sec_y_label_y = self.height / 2
-            svg += f'<text x="{sec_y_label_x}" y="{sec_y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {sec_y_label_x} {sec_y_label_y})">{self.secondary_y_axis_label}</text>'
+            svg += f'<text x="{sec_y_label_x}" y="{sec_y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {sec_y_label_x} {sec_y_label_y})" fill="{self.text_color}">{self.secondary_y_axis_label}</text>'
 
-        svg += "</svg>"
+        background_rect = ""
+        if self.background_color:
+            # Draw background with rounded corners
+            background_rect = (
+                f"<rect x='0' y='0' width='{self.width}' height='{self.height}' "
+                + f"rx='10' ry='10' fill='{self.background_color}' />"
+            )
+
+        svg = (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">'
+            + background_rect
+            + svg
+            + "</svg>"
+        )
         return svg
