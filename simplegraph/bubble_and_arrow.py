@@ -205,7 +205,7 @@ class BubbleAndArrowGraph(BaseGraph):
             + f"L{x_arrow_head + 1.3 * x_in_offset},{y_arrow_head + 1.3 * y_in_offset} "
             + f"L{x2_backoff},{y2_backoff} L{x_arrow_head - 1.3 * x_in_offset},{y_arrow_head - 1.3 * y_in_offset} "
             + f"L{x_arrow_head - x_in_offset},{y_arrow_head - y_in_offset}"
-            + f'Q{ctrl_x2},{ctrl_y2} {x1+x_out_offset-x_out_shift},{y1+y_out_offset-x_out_shift} z" '  # Z closes the path
+            + f'Q{ctrl_x2},{ctrl_y2} {x1+x_out_offset-x_out_shift},{y1+y_out_offset-y_out_shift} z" '  # Z closes the path
             + f'fill="{hex_to_rgba(fill,0.5)}" />'
         )
 

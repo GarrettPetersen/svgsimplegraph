@@ -20,6 +20,7 @@ graph = CategoricalGraph(
         y_top_padding=10,
         y_bottom_padding=30,
         stacked=False,
+        background_color="#404040",
     )
 
 graph.x_labels = ["A", "B", "C", "D", "E"]
@@ -91,6 +92,7 @@ from simplegraph import BubbleAndArrowGraph
 graph = BubbleAndArrowGraph(
     width=600,
     height=600,
+    background_color="#404040",
 )
 
 # Optional str label param can be referred to later when defining arrows
