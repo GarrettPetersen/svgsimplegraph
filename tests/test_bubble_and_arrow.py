@@ -100,6 +100,12 @@ def test_bubble_and_arrow_graph():
     graph.add_bubble(1, None, "Bubble 12")
     graph.add_bubble(1, None, "Bubble 13")
     graph.add_bubble(1, None, "Bubble 14")
+    graph.add_bubble(1, None, "Bubble 15")
+    graph.add_bubble(1, None, "Bubble 16")
+    graph.add_bubble(1, None, "Bubble 17")
+    graph.add_bubble(1, None, "Bubble 18")
+    graph.add_bubble(1, None, "Bubble 19")
+    graph.add_bubble(1, None, "Bubble 20")
 
     # Get the SVG string in base64 format
     svg_base64 = graph.to_base64_src()
