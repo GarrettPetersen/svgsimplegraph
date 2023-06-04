@@ -37,7 +37,7 @@ class BaseGraph:
         self.y_bottom_padding = y_bottom_padding or y_padding or padding
         self.x_left_padding = x_left_padding or x_padding or padding
         self.x_right_padding = x_right_padding or x_padding or padding
-        self.colors = colors or DEFAULT_COLOR_PALETTE
+        self.colors = (colors or DEFAULT_COLOR_PALETTE).copy()
         self.num_y_ticks = num_y_ticks
         self.x_axis_label = x_axis_label
         self.primary_y_axis_label = primary_y_axis_label
@@ -54,6 +54,10 @@ class BaseGraph:
             self.dark_mode = is_dark(background_color)
         elif dark_mode is None:
             self.dark_mode = False
+
+        # Use dark colors last if in dark mode and using default color palette
+        if self.colors == DEFAULT_COLOR_PALETTE and self.dark_mode:
+            self.colors.sort(key=lambda x: is_dark(x))
 
     def render(self):
         # Implement the specific rendering for this subclass
