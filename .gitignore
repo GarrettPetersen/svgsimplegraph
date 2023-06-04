@@ -7,3 +7,6 @@ __pycache__/
 
 # Pytest cache
 .pytest_cache/
+
+# MacOS files
+.DS_Store
