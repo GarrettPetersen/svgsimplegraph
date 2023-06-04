@@ -82,6 +82,8 @@ class BubbleAndArrowGraph(BaseGraph):
         text=None,
         label=None,
     ):
+        assert size >= 0, "size cannot be negative"
+        assert inner_size is None or inner_size >= 0, "inner_size cannot be negative"
         self.bubbles.append((size, inner_size, text))
         if label:
             assert isinstance(label, str), "label must be a string"
@@ -94,6 +96,7 @@ class BubbleAndArrowGraph(BaseGraph):
         destination,
         size,
     ):
+        assert size >= 0, "size cannot be negative"
         if size > 0:
             self.arrows.append([origin, destination, size])
 
