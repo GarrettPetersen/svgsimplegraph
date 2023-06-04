@@ -317,6 +317,7 @@ class BubbleAndArrowGraph(BaseGraph):
         svg = ""
         svg_text = ""
         self.text_buffer = []
+        self.total_arrow_width_from_origin = {}
 
         positions = self._calculate_positions()
 
