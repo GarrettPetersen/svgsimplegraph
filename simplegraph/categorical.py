@@ -173,7 +173,7 @@ class CategoricalGraph(BaseGraph):
                 include_zero=True,
                 target_tick_count=self.num_y_ticks,
             )
-
+            
             primary_ticks, secondary_ticks = match_ticks(primary_ticks, secondary_ticks)
 
             adjusted_max_value_secondary = secondary_ticks[-1]
@@ -373,8 +373,16 @@ class CategoricalGraph(BaseGraph):
         )
 
         # Draw secondary y-axis if needed
-        if any(self.secondary):
+        if has_secondary:
             svg += f'<line x1="{self.width - self.x_right_padding}" y1="{self.y_top_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+            secondary_zero_line_y = (
+                self.height
+                - self.y_bottom_padding
+                + adjusted_min_value_secondary * scale_secondary
+            )
+            assert (
+                secondary_zero_line_y == zero_line_y
+            ), "Secondary y-axis not aligned with primary y-axis"
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):

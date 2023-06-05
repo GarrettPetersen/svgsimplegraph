@@ -141,13 +141,13 @@ def match_ticks(ticks1, ticks2):
     # If the first list has more ticks below zero, add ticks to the second list
     if zero_index_diff > 0:
         ticks2 = [
-            ticks2[0] - (i + 1) * (ticks2[1] - ticks2[0])
+            ticks2[0] - (zero_index_diff - i) * (ticks2[1] - ticks2[0])
             for i in range(zero_index_diff)
         ] + ticks2
     # If the second list has more ticks below zero, add ticks to the first list
     elif zero_index_diff < 0:
         ticks1 = [
-            ticks1[0] - (i + 1) * (ticks1[1] - ticks1[0])
+            ticks1[0] - (-zero_index_diff - i) * (ticks1[1] - ticks1[0])
             for i in range(-zero_index_diff)
         ] + ticks1
 
@@ -162,6 +162,17 @@ def match_ticks(ticks1, ticks2):
             ticks1[-1] + (i + 1) * (ticks1[1] - ticks1[0]) for i in range(-len_diff)
         ]
 
+    assert len(ticks1) == len(ticks2), "Tick lists must be the same length."
+    assert all(
+        ticks1[i] <= ticks1[i + 1] for i in range(len(ticks1) - 1)
+    ), "ticks1 is not in ascending order"
+    assert all(
+        ticks2[i] <= ticks2[i + 1] for i in range(len(ticks2) - 1)
+    ), "ticks2 is not in ascending order"
+    assert all([(t1 == 0) == (t2 == 0) for t1, t2 in zip(ticks1, ticks2)]), (
+        "Tick lists must have zero at the same index.\n"
+        + f"ticks1: {ticks1}, ticks2: {ticks2}"
+    )
     return ticks1, ticks2
 
 
