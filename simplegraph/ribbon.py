@@ -4,6 +4,7 @@ from .utils import get_adjusted_max
 from .utils import get_adjusted_min
 from .utils import get_color
 from .utils import is_dark
+from .utils import calculate_ticks
 
 
 class RibbonGraph(BaseGraph):
@@ -93,6 +94,7 @@ class RibbonGraph(BaseGraph):
         assert self.num_series in [2, 3], "Two or three series are required"
 
         max_value = max(self.data[0] + self.data[1])
+        min_value = min(self.data[0] + self.data[1])
 
         color_series_present = True if self.num_series == 3 else False
 
@@ -114,9 +116,19 @@ class RibbonGraph(BaseGraph):
 
         adjusted_max_value_primary = get_adjusted_max(max_value)
 
-        scale_primary = (
-            self.height - self.y_top_padding - self.y_bottom_padding
-        ) / adjusted_max_value_primary
+        primary_ticks = calculate_ticks(
+            min_value,
+            max_value,
+            include_zero=True,
+            target_tick_count=self.num_y_ticks,
+        )
+
+        adjusted_max_value = primary_ticks[-1]
+        adjusted_min_value = primary_ticks[0]
+
+        scale_primary = (self.height - self.y_top_padding - self.y_bottom_padding) / (
+            adjusted_max_value - adjusted_min_value
+        )
 
         svg = ""
         svg_defs = f"""
@@ -164,12 +176,12 @@ class RibbonGraph(BaseGraph):
             y1 = (
                 self.height
                 - self.y_bottom_padding
-                - self.data[0][index] * scale_primary
+                - (self.data[0][index] - adjusted_min_value) * scale_primary
             )
             y2 = (
                 self.height
                 - self.y_bottom_padding
-                - self.data[1][index] * scale_primary
+                - (self.data[1][index] - adjusted_min_value) * scale_primary
             )
             color = self.colors[0]
             if color_series_present:
@@ -201,7 +213,15 @@ class RibbonGraph(BaseGraph):
 
         # Draw axis
         svg += f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
-        svg += f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+        if adjusted_min_value < 0 and adjusted_max_value > 0:
+            zero_line = (
+                self.height
+                - self.y_bottom_padding
+                - (0 - adjusted_min_value) * scale_primary
+            )
+            svg += f'<line x1="{self.x_left_padding}" y1="{zero_line}" x2="{self.width - self.x_right_padding}" y2="{zero_line}" stroke="{self.text_color}" stroke-width="1" />'
+        else:
+            svg += f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
@@ -213,9 +233,12 @@ class RibbonGraph(BaseGraph):
                 svg += f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10" fill="{self.text_color}">{label}</text>'
 
         # Draw primary y-axis ticks and values
-        for i in range(self.num_y_ticks + 1):
-            tick_value = adjusted_max_value_primary * i / self.num_y_ticks
-            tick_y = self.height - self.y_bottom_padding - tick_value * scale_primary
+        for tick_value in primary_ticks:
+            tick_y = (
+                self.height
+                - self.y_bottom_padding
+                - (tick_value - adjusted_min_value) * scale_primary
+            )
             tick_label = f"{human_readable_number(tick_value)}"
 
             svg += f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10" fill="{self.text_color}">{tick_label}</text>'
