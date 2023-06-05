@@ -27,10 +27,10 @@ def stacked_bar_range(data, series_types, secondary):
         )
         for column in zip(*data)
     ]
-
     return (
-        min(stacked_negative_data),
-        max(stacked_positive_data) if non_secondary_bars_to_use else (0, 1),
+        (min(stacked_negative_data), max(stacked_positive_data))
+        if non_secondary_bars_to_use
+        else (None, None)
     )
 
 
@@ -44,7 +44,7 @@ def non_secondary_range(data, secondary):
     return (
         (min(non_secondary_values), max(non_secondary_values))
         if non_secondary_values
-        else (0, 1)
+        else (None, None)
     )
 
 
@@ -143,6 +143,14 @@ class CategoricalGraph(BaseGraph):
         max_value_secondary = None
         min_value_secondary = None
         if self.stacked:
+            bar_series_indices = [
+                i for i, series in enumerate(self.series_types) if series[0] == "bar"
+            ]
+
+            assert all(self.secondary[i] for i in bar_series_indices) or not any(
+                self.secondary[i] for i in bar_series_indices
+            ), "All stacked bar series must be either primary or secondary."
+
             min_value_primary, max_value_primary = stacked_bar_range(
                 self.data, self.series_types, self.secondary
             )
@@ -373,8 +381,16 @@ class CategoricalGraph(BaseGraph):
         )
 
         # Draw secondary y-axis if needed
-        if any(self.secondary):
+        if has_secondary:
             svg += f'<line x1="{self.width - self.x_right_padding}" y1="{self.y_top_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+            secondary_zero_line_y = (
+                self.height
+                - self.y_bottom_padding
+                + adjusted_min_value_secondary * scale_secondary
+            )
+            assert (
+                abs(secondary_zero_line_y - zero_line_y) < 1e-9
+            ), f"Secondary y-axis not aligned with primary y-axis: {secondary_zero_line_y} != {zero_line_y}"
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):

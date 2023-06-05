@@ -73,7 +73,7 @@ def hex_to_rgba(hex_color, alpha=1.0):
     return f"rgba({r}, {g}, {b}, {alpha})"
 
 
-def calculate_ticks(min_val, max_val, include_zero=False, target_tick_count=7):
+def calculate_ticks(min_val, max_val, include_zero=True, target_tick_count=7):
     if include_zero:
         min_val = min(0, min_val)
         max_val = max(0, max_val)
@@ -84,9 +84,9 @@ def calculate_ticks(min_val, max_val, include_zero=False, target_tick_count=7):
     # If all values are zero, avoid dividing by zero by returning some reasonable defaults
     if data_range == 0:
         if include_zero:
-            return [0, 1], 1
+            return [0, 1]
         else:
-            return [min_val, min_val + 1], 1
+            return [min_val, min_val + 1]
 
     # Calculate approximately how many steps we want to have
     rough_step = data_range / target_tick_count
@@ -123,6 +123,9 @@ def calculate_ticks(min_val, max_val, include_zero=False, target_tick_count=7):
     # Generate the list of ticks
     ticks = list(np.arange(axis_min, axis_max + step_size, step_size))
 
+    if include_zero:
+        assert 0 in ticks, "Zero should be included in the ticks."
+
     return ticks
 
 
@@ -141,13 +144,13 @@ def match_ticks(ticks1, ticks2):
     # If the first list has more ticks below zero, add ticks to the second list
     if zero_index_diff > 0:
         ticks2 = [
-            ticks2[0] - (i + 1) * (ticks2[1] - ticks2[0])
+            ticks2[0] - (zero_index_diff - i) * (ticks2[1] - ticks2[0])
             for i in range(zero_index_diff)
         ] + ticks2
     # If the second list has more ticks below zero, add ticks to the first list
     elif zero_index_diff < 0:
         ticks1 = [
-            ticks1[0] - (i + 1) * (ticks1[1] - ticks1[0])
+            ticks1[0] - (-zero_index_diff - i) * (ticks1[1] - ticks1[0])
             for i in range(-zero_index_diff)
         ] + ticks1
 
@@ -162,6 +165,19 @@ def match_ticks(ticks1, ticks2):
             ticks1[-1] + (i + 1) * (ticks1[1] - ticks1[0]) for i in range(-len_diff)
         ]
 
+    assert len(ticks1) == len(
+        ticks2
+    ), f"Tick lists must be the same length: {ticks1}, {ticks2}"
+    assert all(
+        ticks1[i] <= ticks1[i + 1] for i in range(len(ticks1) - 1)
+    ), f"ticks1 is not in ascending order: {ticks1}"
+    assert all(
+        ticks2[i] <= ticks2[i + 1] for i in range(len(ticks2) - 1)
+    ), f"ticks2 is not in ascending order: {ticks2}"
+    assert all([(t1 == 0) == (t2 == 0) for t1, t2 in zip(ticks1, ticks2)]), (
+        "Tick lists must have zero at the same index.\n"
+        + f"ticks1: {ticks1}, ticks2: {ticks2}"
+    )
     return ticks1, ticks2
 
 
