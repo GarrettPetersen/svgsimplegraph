@@ -126,6 +126,45 @@ def calculate_ticks(min_val, max_val, include_zero=False, target_tick_count=7):
     return ticks
 
 
+def match_ticks(ticks1, ticks2):
+    # Find zero position in both lists
+    zero_index1 = [i for i, v in enumerate(ticks1) if v == 0]
+    zero_index2 = [i for i, v in enumerate(ticks2) if v == 0]
+
+    # If zero is not present in any of the lists, raise an error
+    if not zero_index1 or not zero_index2:
+        raise ValueError("Both tick lists must contain zero.")
+
+    # Find the difference between the zero indices
+    zero_index_diff = zero_index1[0] - zero_index2[0]
+
+    # If the first list has more ticks below zero, add ticks to the second list
+    if zero_index_diff > 0:
+        ticks2 = [
+            ticks2[0] - (i + 1) * (ticks2[1] - ticks2[0])
+            for i in range(zero_index_diff)
+        ] + ticks2
+    # If the second list has more ticks below zero, add ticks to the first list
+    elif zero_index_diff < 0:
+        ticks1 = [
+            ticks1[0] - (i + 1) * (ticks1[1] - ticks1[0])
+            for i in range(-zero_index_diff)
+        ] + ticks1
+
+    # Make the lengths of the tick lists match by adding ticks above the highest value
+    len_diff = len(ticks1) - len(ticks2)
+    if len_diff > 0:
+        ticks2 += [
+            ticks2[-1] + (i + 1) * (ticks2[1] - ticks2[0]) for i in range(len_diff)
+        ]
+    elif len_diff < 0:
+        ticks1 += [
+            ticks1[-1] + (i + 1) * (ticks1[1] - ticks1[0]) for i in range(-len_diff)
+        ]
+
+    return ticks1, ticks2
+
+
 def get_adjusted_max(value):
     if value == 0:
         return 0

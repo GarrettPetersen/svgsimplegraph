@@ -1,27 +1,51 @@
 from .base import BaseGraph
 from .utils import human_readable_number
 from .utils import get_adjusted_max
+from .utils import calculate_ticks
+from .utils import match_ticks
 
 
-def max_stacked_bar_height(data, series_types, secondary):
+def stacked_bar_range(data, series_types, secondary):
     non_secondary_bars_to_use = [
         not secondary[index] and series_types[index][0] == "bar"
         for index in range(len(secondary))
     ]
 
-    stacked_data = [
-        sum(value for i, value in enumerate(column) if non_secondary_bars_to_use[i])
+    stacked_positive_data = [
+        sum(
+            max(value, 0)
+            for i, value in enumerate(column)
+            if non_secondary_bars_to_use[i]
+        )
         for column in zip(*data)
     ]
-    return max(stacked_data) if stacked_data else 0
+
+    stacked_negative_data = [
+        sum(
+            min(value, 0)
+            for i, value in enumerate(column)
+            if non_secondary_bars_to_use[i]
+        )
+        for column in zip(*data)
+    ]
+
+    return (
+        min(stacked_negative_data),
+        max(stacked_positive_data) if non_secondary_bars_to_use else 0,
+        1,
+    )
 
 
-def max_non_secondary_value(data, secondary):
+def non_secondary_range(data, secondary):
     max_values = [(max(values), index) for index, values in enumerate(data)]
     non_secondary_values = [
         value for value, index in max_values if not secondary[index]
     ]
-    return max(non_secondary_values) if non_secondary_values else 1
+    return (
+        min(non_secondary_values),
+        max(non_secondary_values) if non_secondary_values else 0,
+        1,
+    )
 
 
 class CategoricalGraph(BaseGraph):
@@ -112,46 +136,63 @@ class CategoricalGraph(BaseGraph):
 
     def render(self):
         graph_width = self.width - self.x_left_padding - self.x_right_padding
+        has_secondary = any(self.secondary)
         if self.stacked:
-            max_value_primary = max(
-                max_stacked_bar_height(self.data, self.series_types, self.secondary),
-                max_non_secondary_value(self.data, self.secondary),
+            min_value_primary, max_value_primary = stacked_bar_range(
+                self.data, self.series_types, self.secondary
+            )
+            if has_secondary:
+                min_value_secondary, max_value_secondary = stacked_bar_range(
+                    self.data, self.series_types, [not sec for sec in self.secondary]
+                )
+        else:
+            min_value_primary, max_value_primary = non_secondary_range(
+                self.data, self.secondary
+            )
+            if has_secondary:
+                min_value_secondary, max_value_secondary = non_secondary_range(
+                    self.data, [not sec for sec in self.secondary]
+                )
+
+        primary_ticks = calculate_ticks(
+            min_value_primary,
+            max_value_primary,
+            include_zero=True,
+            num_ticks=self.num_y_ticks,
+        )
+
+        if has_secondary:
+            secondary_ticks = calculate_ticks(
+                min_value_secondary,
+                max_value_secondary,
+                include_zero=True,
+                num_ticks=self.num_y_ticks,
             )
 
-            max_value_secondary = max(
-                max_stacked_bar_height(
-                    self.data,
-                    self.series_types,
-                    [not sec for sec in self.secondary],
-                ),
-                max_non_secondary_value(
-                    self.data,
-                    [not sec for sec in self.secondary],
-                ),
-            )
-            max_bar_width = graph_width / len(self.data[0])
-        else:
-            max_value_primary = max_non_secondary_value(self.data, self.secondary)
-            max_value_secondary = max_non_secondary_value(
-                self.data, [not sec for sec in self.secondary]
-            )
-            num_bars = 0
+            primary_ticks, secondary_ticks = match_ticks(primary_ticks, secondary_ticks)
+
+            adjusted_max_value_secondary = secondary_ticks[-1]
+            adjusted_min_value_secondary = secondary_ticks[0]
+
+        adjusted_max_value_primary = primary_ticks[-1]
+        adjusted_min_value_primary = primary_ticks[0]
+
+        num_bars = 0
+        if not self.stacked:
             for type, _ in self.series_types:
                 if type == "bar":
                     num_bars += 1
-            num_bars = max(num_bars, 1)
-            max_bar_width = graph_width / (num_bars * len(self.data[0]))
+        num_bars = max(num_bars, 1)
+        max_bar_width = graph_width / (num_bars * len(self.data[0]))
 
         bar_width = min(max_bar_width, self.bar_width)
-        adjusted_max_value_primary = get_adjusted_max(max_value_primary)
-        adjusted_max_value_secondary = get_adjusted_max(max_value_secondary)
 
-        scale_primary = (
-            self.height - self.y_top_padding - self.y_bottom_padding
-        ) / adjusted_max_value_primary
-        scale_secondary = (
-            self.height - self.y_top_padding - self.y_bottom_padding
-        ) / adjusted_max_value_secondary
+        scale_primary = (self.height - self.y_top_padding - self.y_bottom_padding) / (
+            adjusted_max_value_primary - adjusted_min_value_primary
+        )
+        scale_secondary = (self.height - self.y_top_padding - self.y_bottom_padding) / (
+            adjusted_max_value_secondary - adjusted_min_value_secondary
+        )
 
         svg = ""
 
