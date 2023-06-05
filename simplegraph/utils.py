@@ -1,5 +1,6 @@
 import math
 import matplotlib
+import numpy as np
 
 
 def estimate_text_dimensions(text, font_size):
@@ -70,6 +71,98 @@ def hex_to_rgba(hex_color, alpha=1.0):
     g = int(hex_color[3:5], 16)
     b = int(hex_color[5:7], 16)
     return f"rgba({r}, {g}, {b}, {alpha})"
+
+
+def calculate_ticks(min_val, max_val, include_zero=False, target_tick_count=7):
+    if include_zero:
+        min_val = min(0, min_val)
+        max_val = max(0, max_val)
+
+    # Calculate the initial range of the data
+    data_range = max_val - min_val
+
+    # If all values are zero, avoid dividing by zero by returning some reasonable defaults
+    if data_range == 0:
+        if include_zero:
+            return [0, 1], 1
+        else:
+            return [min_val, min_val + 1], 1
+
+    # Calculate approximately how many steps we want to have
+    rough_step = data_range / target_tick_count
+
+    # Calculate the magnitude of the step size (e.g., 10, 100, 0.1, etc)
+    magnitude = 10 ** (math.floor(math.log10(rough_step)))
+
+    # Calculate the most significant digit of the step size
+    msd = rough_step / magnitude
+
+    # If the most significant digit is in the range 2-5, we use a step size of 2, 2.5, or 5 by multiplying the magnitude by 2 or 2.5.
+    # If the most significant digit is higher than 5, we can just use the magnitude as the step size.
+    # If the most significant digit is lower than 2, we can use the magnitude divided by 2 as the step size.
+    if msd >= 5:
+        step_size = 5 * magnitude
+    elif msd >= 2.5:
+        step_size = 2.5 * magnitude
+    elif msd >= 2:
+        step_size = 2 * magnitude
+    else:
+        step_size = magnitude
+
+    # Calculate the new min and max values for the y-axis
+    if include_zero:
+        axis_min = 0
+        # If min_val is below zero, ensure we capture the negative range.
+        if min_val < 0:
+            axis_min = -math.ceil(abs(min_val) / step_size) * step_size
+    else:
+        axis_min = step_size * math.floor(min_val / step_size)
+
+    axis_max = step_size * math.ceil(max_val / step_size)
+
+    # Generate the list of ticks
+    ticks = list(np.arange(axis_min, axis_max + step_size, step_size))
+
+    return ticks
+
+
+def match_ticks(ticks1, ticks2):
+    # Find zero position in both lists
+    zero_index1 = [i for i, v in enumerate(ticks1) if v == 0]
+    zero_index2 = [i for i, v in enumerate(ticks2) if v == 0]
+
+    # If zero is not present in any of the lists, raise an error
+    if not zero_index1 or not zero_index2:
+        raise ValueError("Both tick lists must contain zero.")
+
+    # Find the difference between the zero indices
+    zero_index_diff = zero_index1[0] - zero_index2[0]
+
+    # If the first list has more ticks below zero, add ticks to the second list
+    if zero_index_diff > 0:
+        ticks2 = [
+            ticks2[0] - (i + 1) * (ticks2[1] - ticks2[0])
+            for i in range(zero_index_diff)
+        ] + ticks2
+    # If the second list has more ticks below zero, add ticks to the first list
+    elif zero_index_diff < 0:
+        ticks1 = [
+            ticks1[0] - (i + 1) * (ticks1[1] - ticks1[0])
+            for i in range(-zero_index_diff)
+        ] + ticks1
+
+    # Make the lengths of the tick lists match by adding ticks above the highest value
+    len_diff = len(ticks1) - len(ticks2)
+    if len_diff > 0:
+        ticks2 += [
+            ticks2[-1] + (i + 1) * (ticks2[1] - ticks2[0]) for i in range(len_diff)
+        ]
+    elif len_diff < 0:
+        ticks1 += [
+            ticks1[-1] + (i + 1) * (ticks1[1] - ticks1[0]) for i in range(-len_diff)
+        ]
+
+    return ticks1, ticks2
 
 
 def get_adjusted_max(value):

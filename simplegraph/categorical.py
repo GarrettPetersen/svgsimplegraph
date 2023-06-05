@@ -1,27 +1,51 @@
 from .base import BaseGraph
 from .utils import human_readable_number
-from .utils import get_adjusted_max
+from .utils import calculate_ticks
+from .utils import match_ticks
 
 
-def max_stacked_bar_height(data, series_types, secondary):
+def stacked_bar_range(data, series_types, secondary):
     non_secondary_bars_to_use = [
         not secondary[index] and series_types[index][0] == "bar"
         for index in range(len(secondary))
     ]
 
-    stacked_data = [
-        sum(value for i, value in enumerate(column) if non_secondary_bars_to_use[i])
+    stacked_positive_data = [
+        sum(
+            max(value, 0)
+            for i, value in enumerate(column)
+            if non_secondary_bars_to_use[i]
+        )
         for column in zip(*data)
     ]
-    return max(stacked_data) if stacked_data else 0
 
-
-def max_non_secondary_value(data, secondary):
-    max_values = [(max(values), index) for index, values in enumerate(data)]
-    non_secondary_values = [
-        value for value, index in max_values if not secondary[index]
+    stacked_negative_data = [
+        sum(
+            min(value, 0)
+            for i, value in enumerate(column)
+            if non_secondary_bars_to_use[i]
+        )
+        for column in zip(*data)
     ]
-    return max(non_secondary_values) if non_secondary_values else 1
+
+    return (
+        min(stacked_negative_data),
+        max(stacked_positive_data) if non_secondary_bars_to_use else (0, 1),
+    )
+
+
+def non_secondary_range(data, secondary):
+    non_secondary_values = [
+        value
+        for values, is_secondary in zip(data, secondary)
+        if not is_secondary
+        for value in values
+    ]
+    return (
+        (min(non_secondary_values), max(non_secondary_values))
+        if non_secondary_values
+        else (0, 1)
+    )
 
 
 class CategoricalGraph(BaseGraph):
@@ -96,6 +120,9 @@ class CategoricalGraph(BaseGraph):
         self.secondary.append(secondary)
 
     def _draw_bar(self, x, y, width, height, fill):
+        if height < 0:
+            y += height
+            height *= -1
         return (
             f'<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="{fill}" />'
         )
@@ -112,46 +139,68 @@ class CategoricalGraph(BaseGraph):
 
     def render(self):
         graph_width = self.width - self.x_left_padding - self.x_right_padding
+        has_secondary = any(self.secondary)
+        max_value_secondary = None
+        min_value_secondary = None
         if self.stacked:
-            max_value_primary = max(
-                max_stacked_bar_height(self.data, self.series_types, self.secondary),
-                max_non_secondary_value(self.data, self.secondary),
+            min_value_primary, max_value_primary = stacked_bar_range(
+                self.data, self.series_types, self.secondary
+            )
+            if has_secondary:
+                min_value_secondary, max_value_secondary = stacked_bar_range(
+                    self.data, self.series_types, [not sec for sec in self.secondary]
+                )
+        else:
+            min_value_primary, max_value_primary = non_secondary_range(
+                self.data, self.secondary
+            )
+            if has_secondary:
+                min_value_secondary, max_value_secondary = non_secondary_range(
+                    self.data, [not sec for sec in self.secondary]
+                )
+
+        primary_ticks = calculate_ticks(
+            min_value_primary,
+            max_value_primary,
+            include_zero=True,
+            target_tick_count=self.num_y_ticks,
+        )
+
+        if has_secondary:
+            secondary_ticks = calculate_ticks(
+                min_value_secondary,
+                max_value_secondary,
+                include_zero=True,
+                target_tick_count=self.num_y_ticks,
             )
 
-            max_value_secondary = max(
-                max_stacked_bar_height(
-                    self.data,
-                    self.series_types,
-                    [not sec for sec in self.secondary],
-                ),
-                max_non_secondary_value(
-                    self.data,
-                    [not sec for sec in self.secondary],
-                ),
-            )
-            max_bar_width = graph_width / len(self.data[0])
-        else:
-            max_value_primary = max_non_secondary_value(self.data, self.secondary)
-            max_value_secondary = max_non_secondary_value(
-                self.data, [not sec for sec in self.secondary]
-            )
-            num_bars = 0
+            primary_ticks, secondary_ticks = match_ticks(primary_ticks, secondary_ticks)
+
+            adjusted_max_value_secondary = secondary_ticks[-1]
+            adjusted_min_value_secondary = secondary_ticks[0]
+
+        adjusted_max_value_primary = primary_ticks[-1]
+        adjusted_min_value_primary = primary_ticks[0]
+
+        num_bars = 0
+        if not self.stacked:
             for type, _ in self.series_types:
                 if type == "bar":
                     num_bars += 1
-            num_bars = max(num_bars, 1)
-            max_bar_width = graph_width / (num_bars * len(self.data[0]))
+        num_bars = max(num_bars, 1)
+        max_bar_width = graph_width / (num_bars * len(self.data[0]))
 
         bar_width = min(max_bar_width, self.bar_width)
-        adjusted_max_value_primary = get_adjusted_max(max_value_primary)
-        adjusted_max_value_secondary = get_adjusted_max(max_value_secondary)
 
-        scale_primary = (
-            self.height - self.y_top_padding - self.y_bottom_padding
-        ) / adjusted_max_value_primary
-        scale_secondary = (
-            self.height - self.y_top_padding - self.y_bottom_padding
-        ) / adjusted_max_value_secondary
+        scale_primary = (self.height - self.y_top_padding - self.y_bottom_padding) / (
+            adjusted_max_value_primary - adjusted_min_value_primary
+        )
+        if has_secondary:
+            scale_secondary = (
+                self.height - self.y_top_padding - self.y_bottom_padding
+            ) / (adjusted_max_value_secondary - adjusted_min_value_secondary)
+        else:
+            scale_secondary = None
 
         svg = ""
 
@@ -160,6 +209,8 @@ class CategoricalGraph(BaseGraph):
             legend_spacing = 5
             legend_rect_size = 10
             legend_x = self.width - self.x_right_padding + legend_spacing
+            if has_secondary:
+                legend_x += self.x_right_padding / 3
             legend_y = self.y_top_padding
 
             for index, label in enumerate(self.legend_labels):
@@ -210,7 +261,8 @@ class CategoricalGraph(BaseGraph):
 
         num_categories = len(self.data[0])
         num_series = len(self.data)
-        bar_heights = [0] * num_categories
+        positive_bar_heights = [0] * num_categories
+        negative_bar_heights = [0] * num_categories
 
         for sub_index in range(num_categories):
             bar_count = 0
@@ -234,16 +286,25 @@ class CategoricalGraph(BaseGraph):
                     )
                     bar_count += 1
                 scale = scale_secondary if secondary_value else scale_primary
-                y = self.height - self.y_bottom_padding - value * scale
+                min_value = (
+                    adjusted_min_value_secondary
+                    if secondary_value
+                    else adjusted_min_value_primary
+                )
+                y = self.height - self.y_bottom_padding - (value - min_value) * scale
 
                 if series_type == "bar" and self.stacked:
                     bar_height = value * scale
                     x -= bar_width / 2
-                    y -= bar_heights[sub_index]
+                    if value >= 0:
+                        y -= positive_bar_heights[sub_index]
+                        positive_bar_heights[sub_index] += bar_height
+                    else:
+                        y -= negative_bar_heights[sub_index]
+                        negative_bar_heights[sub_index] += bar_height
                     svg += self._draw_bar(
                         x, y, bar_width, bar_height, self.colors[index]
                     )
-                    bar_heights[sub_index] += bar_height
                 elif series_type == "bar":
                     svg += self._draw_bar(
                         x,
@@ -269,7 +330,7 @@ class CategoricalGraph(BaseGraph):
                     prev_y = (
                         self.height
                         - self.y_bottom_padding
-                        - self.data[index][sub_index - 1] * scale
+                        - (self.data[index][sub_index - 1] - min_value) * scale
                     )
                     prev_x = (
                         self.x_left_padding
@@ -300,9 +361,14 @@ class CategoricalGraph(BaseGraph):
             f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" '
             + f'y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
         )
+        zero_line_y = (
+            self.height
+            - self.y_bottom_padding
+            + adjusted_min_value_primary * scale_primary
+        )
         svg += (
-            f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" '
-            + f'x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" '
+            f'<line x1="{self.x_left_padding}" y1="{zero_line_y}" '
+            + f'x2="{self.width - self.x_right_padding}" y2="{zero_line_y}" '
             + f'stroke="{self.text_color}" stroke-width="1" />'
         )
 
@@ -325,20 +391,24 @@ class CategoricalGraph(BaseGraph):
                 svg += f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10" fill="{self.text_color}">{label}</text>'
 
         # Draw primary y-axis ticks and values
-        for i in range(self.num_y_ticks + 1):
-            tick_value = adjusted_max_value_primary * i / self.num_y_ticks
-            tick_y = self.height - self.y_bottom_padding - tick_value * scale_primary
+        for tick_value in primary_ticks:
+            tick_y = (
+                self.height
+                - self.y_bottom_padding
+                - (tick_value - adjusted_min_value_primary) * scale_primary
+            )
             tick_label = f"{human_readable_number(tick_value)}"
 
             svg += f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10" fill="{self.text_color}">{tick_label}</text>'
             svg += f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
 
         # Draw secondary y-axis ticks and values if needed
-        if any(self.secondary):
-            for i in range(self.num_y_ticks + 1):
-                tick_value = adjusted_max_value_secondary * i / self.num_y_ticks
+        if has_secondary:
+            for tick_value in secondary_ticks:
                 tick_y = (
-                    self.height - self.y_bottom_padding - tick_value * scale_secondary
+                    self.height
+                    - self.y_bottom_padding
+                    - (tick_value - adjusted_min_value_secondary) * scale_secondary
                 )
                 tick_label = f"{human_readable_number(tick_value)}"
 
