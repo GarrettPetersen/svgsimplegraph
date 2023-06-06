@@ -323,6 +323,12 @@ class BubbleAndArrowGraph(BaseGraph):
         svg_text = ""
         self.text_buffer = []
         self.total_arrow_width_from_origin = {}
+        self.most_extreme_dimensions = {
+            "left": self.width,
+            "right": 0,
+            "top": self.height,
+            "bottom": 0,
+        }
 
         positions = self._calculate_positions()
 
