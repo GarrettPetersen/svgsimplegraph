@@ -3,6 +3,12 @@ import matplotlib
 import numpy as np
 
 
+def polar_to_cartesian(radius, angle, x=0, y=0):
+    x = x + radius * math.cos(angle)
+    y = y + radius * math.sin(angle)
+    return x, y
+
+
 def estimate_text_dimensions(text, font_size):
     # Split the text into lines
     lines = text.splitlines()
