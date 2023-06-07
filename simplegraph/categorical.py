@@ -138,6 +138,8 @@ class CategoricalGraph(BaseGraph):
         return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}" stroke-width="{stroke_width}" />'
 
     def render(self):
+        self.defs = []
+        self.svg_elements = []
         graph_width = self.width - self.x_left_padding - self.x_right_padding
         has_secondary = any(self.secondary)
         max_value_secondary = None

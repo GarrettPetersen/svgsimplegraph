@@ -54,10 +54,28 @@ class BaseGraph:
             self.dark_mode = is_dark(background_color)
         elif dark_mode is None:
             self.dark_mode = False
+        self.defs = []
+        self.svg_elements = []
 
         # Use dark colors last if in dark mode and using default color palette
         if self.colors == DEFAULT_COLOR_PALETTE and self.dark_mode:
             self.colors.sort(key=lambda x: is_dark(x))
+
+    def _generate_svg(self):
+        """
+        Generate the SVG string from the styles and elements.
+        """
+        defs_str = ""
+        if self.defs:
+            defs_str = "<defs>" + "\n".join(self.defs) + "</defs>"
+        svg_elements_str = "\n".join(self.svg_elements)
+        svg = f"""
+        <svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">
+            {defs_str}
+            {svg_elements_str}
+        </svg>
+        """
+        return svg
 
     def render(self):
         # Implement the specific rendering for this subclass

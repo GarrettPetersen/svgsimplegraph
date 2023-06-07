@@ -91,6 +91,8 @@ class RibbonGraph(BaseGraph):
             )
 
     def render(self):
+        self.defs = []
+        self.svg_elements = []
         assert self.num_series in [2, 3], "Two or three series are required"
 
         max_value = max(self.data[0] + self.data[1])

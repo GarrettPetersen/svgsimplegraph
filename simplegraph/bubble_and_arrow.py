@@ -326,6 +326,8 @@ class BubbleAndArrowGraph(BaseGraph):
             "top": self.height,
             "bottom": 0,
         }
+        self.defs = []
+        self.svg_elements = []
 
         positions = self._calculate_positions()
 
