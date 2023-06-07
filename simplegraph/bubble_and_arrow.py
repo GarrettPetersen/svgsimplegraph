@@ -5,6 +5,7 @@ from .utils import hex_to_rgba
 from .utils import is_dark
 from .utils import estimate_text_dimensions
 from .utils import boxes_overlap
+from .utils import polar_to_cartesian
 
 
 class BubbleAndArrowGraph(BaseGraph):
@@ -151,38 +152,34 @@ class BubbleAndArrowGraph(BaseGraph):
         perpendicular = direction_mid + math.pi / 2
         perpendicular_out = direction_out + math.pi / 2
         perpendicular_in = direction_in + math.pi / 2
-        cx_offset = math.cos(perpendicular) * width / 2
-        cy_offset = math.sin(perpendicular) * width / 2
-        x_out_offset = math.cos(perpendicular_out) * width / 2
-        y_out_offset = math.sin(perpendicular_out) * width / 2
-        x_out_shift = math.cos(perpendicular_out) * start_offset
-        y_out_shift = math.sin(perpendicular_out) * start_offset
-        x_in_offset = math.cos(perpendicular_in) * width / 2
-        y_in_offset = math.sin(perpendicular_in) * width / 2
+        cx_offset, cy_offset = polar_to_cartesian(perpendicular, width / 2)
+        x_out_offset, y_out_offset = polar_to_cartesian(perpendicular_out, width / 2)
+        x_out_shift, y_out_shift = polar_to_cartesian(perpendicular_out, start_offset)
+        x_in_offset, y_in_offset = polar_to_cartesian(perpendicular_in, width / 2)
 
         # Calculate backoff
-        backoff_x = math.cos(direction_in) * backoff
-        backoff_y = math.sin(direction_in) * backoff
+        backoff_x, backoff_y = polar_to_cartesian(direction_in, backoff)
 
         # New position of x2, y2 after backoff
         x2_backoff = x2 - backoff_x
         y2_backoff = y2 - backoff_y
 
         # Arrow head with respect to the original x2, y2, but positioned at the backoff location
-        x_arrow_head = x2_backoff - math.cos(direction_in) * arrow_head_length
-        y_arrow_head = y2_backoff - math.sin(direction_in) * arrow_head_length
+        x_arrow_head, y_arrow_head = polar_to_cartesian(
+            direction_in, -arrow_head_length, x2_backoff, y2_backoff
+        )
 
         if circular_arrow:
             # Calculate positions of the control points along the direction_out and direction_in lines
-            ctrl_x1 = x1 + math.cos(direction_out) * ctrl_distance
-            ctrl_y1 = y1 + math.sin(direction_out) * ctrl_distance
-            ctrl_x2 = x2 - math.cos(direction_in) * ctrl_distance
-            ctrl_y2 = y2 - math.sin(direction_in) * ctrl_distance
+            ctrl_x1, ctrl_y1 = polar_to_cartesian(direction_out, ctrl_distance, x1, y1)
+            ctrl_x2, ctrl_y2 = polar_to_cartesian(direction_in, -ctrl_distance, x2, y2)
 
-            ctrl_x1_interior = x1 + math.cos(direction_out) * interior_ctrl_distance
-            ctrl_y1_interior = y1 + math.sin(direction_out) * interior_ctrl_distance
-            ctrl_x2_interior = x2 - math.cos(direction_in) * interior_ctrl_distance
-            ctrl_y2_interior = y2 - math.sin(direction_in) * interior_ctrl_distance
+            ctrl_x1_interior, ctrl_y1_interior = polar_to_cartesian(
+                direction_out, interior_ctrl_distance, x1, y1
+            )
+            ctrl_x2_interior, ctrl_y2_interior = polar_to_cartesian(
+                direction_in, -interior_ctrl_distance, x2, y2
+            )
 
             return (
                 f"M {x1+x_out_offset},{y1+y_out_offset} "
