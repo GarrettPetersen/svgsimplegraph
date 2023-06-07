@@ -166,19 +166,19 @@ class BubbleAndArrowGraph(BaseGraph):
 
         # Arrow head with respect to the original x2, y2, but positioned at the backoff location
         x_arrow_head, y_arrow_head = polar_to_cartesian(
-            direction_in, arrow_head_length, x2_backoff, y2_backoff
+            direction_in, -arrow_head_length, x2_backoff, y2_backoff
         )
 
         if circular_arrow:
             # Calculate positions of the control points along the direction_out and direction_in lines
             ctrl_x1, ctrl_y1 = polar_to_cartesian(direction_out, ctrl_distance, x1, y1)
-            ctrl_x2, ctrl_y2 = polar_to_cartesian(direction_in, ctrl_distance, x2, y2)
+            ctrl_x2, ctrl_y2 = polar_to_cartesian(direction_in, -ctrl_distance, x2, y2)
 
             ctrl_x1_interior, ctrl_y1_interior = polar_to_cartesian(
                 direction_out, interior_ctrl_distance, x1, y1
             )
             ctrl_x2_interior, ctrl_y2_interior = polar_to_cartesian(
-                direction_in, interior_ctrl_distance, x2, y2
+                direction_in, -interior_ctrl_distance, x2, y2
             )
 
             return (

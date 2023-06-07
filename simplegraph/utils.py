@@ -3,7 +3,7 @@ import matplotlib
 import numpy as np
 
 
-def polar_to_cartesian(radius, angle, x=0, y=0):
+def polar_to_cartesian(angle, radius, x=0, y=0):
     x = x + radius * math.cos(angle)
     y = y + radius * math.sin(angle)
     return x, y
