@@ -116,8 +116,6 @@ class RibbonGraph(BaseGraph):
             else:
                 min_color_range = -get_adjusted_max(-min_range)
 
-        adjusted_max_value_primary = get_adjusted_max(max_value)
-
         primary_ticks = calculate_ticks(
             min_value,
             max_value,
@@ -158,7 +156,6 @@ class RibbonGraph(BaseGraph):
                     top_legend_y + half_bar_width,
                     fill=self.text_color,
                     anchor="end",
-                    additional_attributes={"dy": "0.35em"},
                 )
             )
             self.svg_elements.append(
@@ -168,7 +165,6 @@ class RibbonGraph(BaseGraph):
                     top_legend_y + half_bar_width,
                     fill=self.text_color,
                     anchor="start",
-                    additional_attributes={"dy": "0.35em"},
                 )
             )
 
@@ -199,7 +195,6 @@ class RibbonGraph(BaseGraph):
                         right_legend_y,
                         fill=self.text_color,
                         anchor="start",
-                        additional_attributes={"dy": "0.35em"},
                     )
                 )
                 self.svg_elements.append(
@@ -209,7 +204,6 @@ class RibbonGraph(BaseGraph):
                         right_legend_y + graph_height,
                         fill=self.text_color,
                         anchor="start",
-                        additional_attributes={"dy": "0.35em"},
                     )
                 )
 
@@ -249,7 +243,6 @@ class RibbonGraph(BaseGraph):
                             y1,
                             fill=self.text_color,
                             anchor="middle",
-                            additional_attributes={"dy": "0.35em"},
                         )
                     )
                 else:
@@ -260,7 +253,6 @@ class RibbonGraph(BaseGraph):
                             y1,
                             fill=self.text_color,
                             anchor="middle",
-                            additional_attributes={"dy": "0.35em"},
                         )
                     )
             if self.print_values[1]:
@@ -269,10 +261,9 @@ class RibbonGraph(BaseGraph):
                         self._generate_text(
                             human_readable_number(self.data[1][index]),
                             x + self.bar_width / 2,
-                            y2 - self.bar_width / 2,
+                            y2 - self.bar_width / 2 - 7,
                             fill=self.text_color,
                             anchor="middle",
-                            additional_attributes={"dy": "0.35em"},
                         )
                     )
                 else:
@@ -283,7 +274,6 @@ class RibbonGraph(BaseGraph):
                             y2 + self.bar_width / 2 + 5,
                             fill=self.text_color,
                             anchor="middle",
-                            additional_attributes={"dy": "0.35em"},
                         )
                     )
             if color_series_present and self.print_values[2]:
@@ -291,18 +281,14 @@ class RibbonGraph(BaseGraph):
                     y_adjustment = self.bar_width / 4
                 else:
                     y_adjustment = -self.bar_width / 4
-                if is_dark(color):
-                    optional_fill = 'fill="white"'
-                else:
-                    optional_fill = ""
+                text_color = "#ffffff" if is_dark(color) else "#000000"
                 self.svg_elements.append(
                     self._generate_text(
                         human_readable_number(self.data[2][index]),
                         x + self.bar_width / 2,
                         (y1 + y2) / 2 + y_adjustment,
-                        fill=self.text_color,
+                        fill=text_color,
                         anchor="middle",
-                        additional_attributes={"dy": "0.35em"},
                     )
                 )
 

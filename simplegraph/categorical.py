@@ -251,6 +251,7 @@ class CategoricalGraph(BaseGraph):
                         legend_x + legend_rect_size + legend_spacing,
                         legend_y + (2 / 3) * legend_rect_size,
                         fill=self.text_color,
+                        anchor="start",
                     )
                 )
                 legend_y += (2 * legend_spacing) + legend_rect_size

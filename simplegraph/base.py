@@ -120,9 +120,9 @@ class BaseGraph:
 
         right = left + text_width
 
-        if dominant_baseline == "bottom":
+        if dominant_baseline in ["auto", "text-bottom", "alphabetic", "ideographic"]:
             top = y - text_height
-        elif dominant_baseline == "top":
+        elif dominant_baseline in ["text-top", "hanging"]:
             top = y
         else:  # Default to middle
             top = y - text_height / 2
