@@ -385,6 +385,16 @@ class RibbonGraph(BaseGraph):
             y_label_y = (
                 self.height - self.y_top_padding - self.y_bottom_padding
             ) / 2 + self.y_top_padding
-            self.svg_elements.append(self._generate_text(self.primary_y_axis_label, y_label_x, y_label_y, font_size=12, fill=self.text_color, anchor="middle", rotation=-90))
+            self.svg_elements.append(
+                self._generate_text(
+                    self.primary_y_axis_label,
+                    y_label_x,
+                    y_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                    anchor="middle",
+                    rotation=-90,
+                )
+            )
 
         return self._generate_svg()

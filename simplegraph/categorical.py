@@ -420,11 +420,13 @@ class CategoricalGraph(BaseGraph):
             y = self.height - self.y_bottom_padding + 5
             if label is not None and self.rotate_x_labels:
                 self.svg_elements.append(
-                    self._generate_text(label, x, y, fill=self.text_color, rotation=-90)
+                    self._generate_text(
+                        label, x, y, anchor="end", fill=self.text_color, rotation=-90
+                    )
                 )
             elif label is not None and not self.rotate_x_labels:
                 self.svg_elements.append(
-                    self._generate_text(label, x, y, fill=self.text_color)
+                    self._generate_text(label, x, y + 10, fill=self.text_color)
                 )
 
         # Draw primary y-axis ticks and values
