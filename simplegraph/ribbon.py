@@ -59,7 +59,6 @@ class RibbonGraph(BaseGraph):
         self.print_values = []
         self.num_series = 0
         self.color_range = color_range
-        self.text_color = "#ffffff" if self.dark_mode else "#000000"
 
     def add_series(
         self,
@@ -153,10 +152,24 @@ class RibbonGraph(BaseGraph):
                 f'<path d="M{top_legend_x} {top_legend_y} h{third_graph_width} l{half_bar_width} {half_bar_width} l-{half_bar_width} {half_bar_width} h-{third_graph_width} l{half_bar_width} -{half_bar_width}" fill="{self.colors[0]}" />'
             )
             self.svg_elements.append(
-                f'<text x="{top_legend_x}" y="{top_legend_y + half_bar_width}" dy="0.35em" font-size="10" text-anchor="end" fill="{self.text_color}">{self.legend_labels[0]}</text>'
+                self._generate_text(
+                    self.legend_labels[0],
+                    top_legend_x,
+                    top_legend_y + half_bar_width,
+                    fill=self.text_color,
+                    anchor="end",
+                    additional_attributes={"dy": "0.35em"},
+                )
             )
             self.svg_elements.append(
-                f'<text x="{top_legend_x+third_graph_width+half_bar_width+5}" y="{top_legend_y + half_bar_width}" dy="0.35em" font-size="10" text-anchor="start" fill="{self.text_color}">{self.legend_labels[1]}</text>'
+                self._generate_text(
+                    self.legend_labels[1],
+                    top_legend_x + third_graph_width + half_bar_width + 5,
+                    top_legend_y + half_bar_width,
+                    fill=self.text_color,
+                    anchor="start",
+                    additional_attributes={"dy": "0.35em"},
+                )
             )
 
             if color_series_present:
@@ -170,13 +183,34 @@ class RibbonGraph(BaseGraph):
                     f'<rect x="{right_legend_x}" y="{right_legend_y}" width="{self.bar_width}" height="{graph_height}" fill="url(#legend_grad)" />'
                 )
                 self.svg_elements.append(
-                    f'<text x="{right_legend_x-5}" y="{right_legend_y_middle}" text-anchor="middle" font-size="10" transform="rotate(-90 {right_legend_x-5} {right_legend_y_middle})" fill="{self.text_color}">{self.legend_labels[2]}</text>'
+                    self._generate_text(
+                        self.legend_labels[2],
+                        right_legend_x - 5,
+                        right_legend_y_middle,
+                        fill=self.text_color,
+                        anchor="middle",
+                        rotation=-90,
+                    )
                 )
                 self.svg_elements.append(
-                    f'<text x="{right_legend_x+self.bar_width+5}" y="{right_legend_y}" dy="0.35em" text-anchor="start" font-size="10" fill="{self.text_color}">{human_readable_number(max_color_range)}</text>'
+                    self._generate_text(
+                        human_readable_number(max_color_range),
+                        right_legend_x + self.bar_width + 5,
+                        right_legend_y,
+                        fill=self.text_color,
+                        anchor="start",
+                        additional_attributes={"dy": "0.35em"},
+                    )
                 )
                 self.svg_elements.append(
-                    f'<text x="{right_legend_x+self.bar_width+5}" y="{right_legend_y+graph_height}" dy="0.35em" text-anchor="start" font-size="10" fill="{self.text_color}">{human_readable_number(min_color_range)}</text>'
+                    self._generate_text(
+                        human_readable_number(min_color_range),
+                        right_legend_x + self.bar_width + 5,
+                        right_legend_y + graph_height,
+                        fill=self.text_color,
+                        anchor="start",
+                        additional_attributes={"dy": "0.35em"},
+                    )
                 )
 
         # Draw ribbons
@@ -209,20 +243,48 @@ class RibbonGraph(BaseGraph):
             if self.print_values[0]:
                 if y1 < y2:
                     self.svg_elements.append(
-                        f'<text x="{x+self.bar_width/2}" y="{y1}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[0][index])}</text>'
+                        self._generate_text(
+                            human_readable_number(self.data[0][index]),
+                            x + self.bar_width / 2,
+                            y1,
+                            fill=self.text_color,
+                            anchor="middle",
+                            additional_attributes={"dy": "0.35em"},
+                        )
                     )
                 else:
                     self.svg_elements.append(
-                        f'<text x="{x+self.bar_width/2}" y="{y1}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[0][index])}</text>'
+                        self._generate_text(
+                            human_readable_number(self.data[0][index]),
+                            x + self.bar_width / 2,
+                            y1,
+                            fill=self.text_color,
+                            anchor="middle",
+                            additional_attributes={"dy": "0.35em"},
+                        )
                     )
             if self.print_values[1]:
                 if y2 < y1:
                     self.svg_elements.append(
-                        f'<text x="{x+self.bar_width/2}" y="{y2-self.bar_width/2-5}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[1][index])}</text>'
+                        self._generate_text(
+                            human_readable_number(self.data[1][index]),
+                            x + self.bar_width / 2,
+                            y2 - self.bar_width / 2,
+                            fill=self.text_color,
+                            anchor="middle",
+                            additional_attributes={"dy": "0.35em"},
+                        )
                     )
                 else:
                     self.svg_elements.append(
-                        f'<text x="{x+self.bar_width/2}" y="{y2+self.bar_width/2+5}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[1][index])}</text>'
+                        self._generate_text(
+                            human_readable_number(self.data[1][index]),
+                            x + self.bar_width / 2,
+                            y2 + self.bar_width / 2 + 5,
+                            fill=self.text_color,
+                            anchor="middle",
+                            additional_attributes={"dy": "0.35em"},
+                        )
                     )
             if color_series_present and self.print_values[2]:
                 if y1 < y2:
@@ -234,7 +296,14 @@ class RibbonGraph(BaseGraph):
                 else:
                     optional_fill = ""
                 self.svg_elements.append(
-                    f'<text x="{x+self.bar_width/2}" y="{(y1+y2)/2 + y_adjustment}" dy="0.35em" text-anchor="middle" font-size="10" {optional_fill}>{human_readable_number(self.data[2][index])}</text>'
+                    self._generate_text(
+                        human_readable_number(self.data[2][index]),
+                        x + self.bar_width / 2,
+                        (y1 + y2) / 2 + y_adjustment,
+                        fill=self.text_color,
+                        anchor="middle",
+                        additional_attributes={"dy": "0.35em"},
+                    )
                 )
 
         # Draw axis
@@ -261,11 +330,15 @@ class RibbonGraph(BaseGraph):
             y = self.height - self.y_bottom_padding + 5
             if label is not None and self.rotate_x_labels:
                 self.svg_elements.append(
-                    f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})" fill="{self.text_color}">{label}</text>'
+                    self._generate_text(
+                        label, x, y, fill=self.text_color, anchor="end", rotation=-90
+                    )
                 )
             elif label is not None and not self.rotate_x_labels:
                 self.svg_elements.append(
-                    f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10" fill="{self.text_color}">{label}</text>'
+                    self._generate_text(
+                        label, x, y + 10, fill=self.text_color, anchor="middle"
+                    )
                 )
 
         # Draw primary y-axis ticks and values
@@ -278,7 +351,13 @@ class RibbonGraph(BaseGraph):
             tick_label = f"{human_readable_number(tick_value)}"
 
             self.svg_elements.append(
-                f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10" fill="{self.text_color}">{tick_label}</text>'
+                self._generate_text(
+                    tick_label,
+                    self.x_left_padding - 5,
+                    tick_y + 3,
+                    fill=self.text_color,
+                    anchor="end",
+                )
             )
             self.svg_elements.append(
                 f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
@@ -291,7 +370,14 @@ class RibbonGraph(BaseGraph):
             ) / 2 + self.x_left_padding
             x_label_y = self.height - self.y_bottom_padding / 4
             self.svg_elements.append(
-                f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12" fill="{self.text_color}">{self.x_axis_label}</text>'
+                self._generate_text(
+                    self.x_axis_label,
+                    x_label_x,
+                    x_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                    anchor="middle",
+                )
             )
 
         if self.primary_y_axis_label:
@@ -299,16 +385,6 @@ class RibbonGraph(BaseGraph):
             y_label_y = (
                 self.height - self.y_top_padding - self.y_bottom_padding
             ) / 2 + self.y_top_padding
-            self.svg_elements.append(
-                f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})" fill="{self.text_color}">{self.primary_y_axis_label}</text>'
-            )
-
-        # TODO: Make these calculate dynamically based on elements
-        self.most_extreme_dimensions = {
-            "left": self.x_left_padding,
-            "right": self.width - self.x_right_padding,
-            "top": self.y_top_padding,
-            "bottom": self.height - self.y_bottom_padding,
-        }
+            self.svg_elements.append(self._generate_text(self.primary_y_axis_label, y_label_x, y_label_y, font_size=12, fill=self.text_color, anchor="middle", rotation=-90))
 
         return self._generate_svg()

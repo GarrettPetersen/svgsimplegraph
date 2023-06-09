@@ -203,26 +203,7 @@ class BubbleAndArrowGraph(BaseGraph):
         return f'<path d="{path}" fill="{hex_to_rgba(fill,0.5)}" />'
 
     def _draw_text(self, x, y, text, fill):
-        text_width, text_height = estimate_text_dimensions(text, 10)
-        half_width = text_width / 2
-        half_height = text_height / 2
-        self.most_extreme_dimensions["left"] = min(
-            self.most_extreme_dimensions["left"], x - half_width
-        )
-        self.most_extreme_dimensions["right"] = max(
-            self.most_extreme_dimensions["right"], x + half_width
-        )
-        self.most_extreme_dimensions["top"] = min(
-            self.most_extreme_dimensions["top"], y - half_height
-        )
-        self.most_extreme_dimensions["bottom"] = max(
-            self.most_extreme_dimensions["bottom"], y + half_height
-        )
-        return (
-            f'<text x="{x}" y="{y}" text-anchor="middle" '
-            + f'dominant-baseline="middle" fill="{fill}" '
-            + f'font-size="10">{text}</text>'
-        )
+        return self._generate_text(text, x, y, fill=fill)
 
     def _calculate_positions(self):
         inter_bubble_space = 0.1  # Proportional gap between bubbles

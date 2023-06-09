@@ -104,7 +104,6 @@ class CategoricalGraph(BaseGraph):
         self.x_labels = []
         self.series_types = []
         self.secondary = []
-        self.text_color = "#ffffff" if self.dark_mode else "#000000"
 
     def add_series(
         self,
@@ -247,9 +246,12 @@ class CategoricalGraph(BaseGraph):
                         + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
                     )
                 self.svg_elements.append(
-                    f'<text x="{legend_x + legend_rect_size + legend_spacing}" '
-                    + f'y="{legend_y + (2/3) * legend_rect_size}" font-size="10" '
-                    + f'alignment-baseline="middle" fill="{self.text_color}">{label}</text>'
+                    self._generate_text(
+                        label,
+                        legend_x + legend_rect_size + legend_spacing,
+                        legend_y + (2 / 3) * legend_rect_size,
+                        fill=self.text_color,
+                    )
                 )
                 legend_y += (2 * legend_spacing) + legend_rect_size
 
@@ -372,7 +374,9 @@ class CategoricalGraph(BaseGraph):
 
                     value_y = y - 5 if series_type == "bar" else y - 10
                     self.svg_elements.append(
-                        f'<text x="{value_x}" y="{value_y}" text-anchor="middle" font-size="10" fill="{self.text_color}">{value}</text>'
+                        self._generate_text(
+                            value, value_x, value_y, fill=self.text_color
+                        )
                     )
 
         # Draw axis
@@ -416,11 +420,11 @@ class CategoricalGraph(BaseGraph):
             y = self.height - self.y_bottom_padding + 5
             if label is not None and self.rotate_x_labels:
                 self.svg_elements.append(
-                    f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})" fill="{self.text_color}">{label}</text>'
+                    self._generate_text(label, x, y, fill=self.text_color, rotation=-90)
                 )
             elif label is not None and not self.rotate_x_labels:
                 self.svg_elements.append(
-                    f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10" fill="{self.text_color}">{label}</text>'
+                    self._generate_text(label, x, y, fill=self.text_color)
                 )
 
         # Draw primary y-axis ticks and values
@@ -433,7 +437,13 @@ class CategoricalGraph(BaseGraph):
             tick_label = f"{human_readable_number(tick_value)}"
 
             self.svg_elements.append(
-                f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10" fill="{self.text_color}">{tick_label}</text>'
+                self._generate_text(
+                    tick_label,
+                    self.x_left_padding - 5,
+                    tick_y + 3,
+                    fill=self.text_color,
+                    anchor="end",
+                )
             )
             self.svg_elements.append(
                 f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
@@ -450,7 +460,13 @@ class CategoricalGraph(BaseGraph):
                 tick_label = f"{human_readable_number(tick_value)}"
 
                 self.svg_elements.append(
-                    f'<text x="{self.width - self.x_right_padding + 5}" y="{tick_y + 3}" text-anchor="start" font-size="10" fill="{self.text_color}">{tick_label}</text>'
+                    self._generate_text(
+                        tick_label,
+                        self.width - self.x_right_padding + 5,
+                        tick_y + 3,
+                        fill=self.text_color,
+                        anchor="start",
+                    )
                 )
                 self.svg_elements.append(
                     f'<line x1="{self.width - self.x_right_padding}" y1="{tick_y}" x2="{self.width - self.x_right_padding + 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
@@ -463,7 +479,13 @@ class CategoricalGraph(BaseGraph):
             ) / 2 + self.x_left_padding
             x_label_y = self.height - self.y_bottom_padding / 4
             self.svg_elements.append(
-                f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12" fill="{self.text_color}">{self.x_axis_label}</text>'
+                self._generate_text(
+                    self.x_axis_label,
+                    x_label_x,
+                    x_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                )
             )
 
         if self.primary_y_axis_label:
@@ -472,22 +494,28 @@ class CategoricalGraph(BaseGraph):
                 self.height - self.y_top_padding - self.y_bottom_padding
             ) / 2 + self.y_top_padding
             self.svg_elements.append(
-                f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})" fill="{self.text_color}">{self.primary_y_axis_label}</text>'
+                self._generate_text(
+                    self.primary_y_axis_label,
+                    y_label_x,
+                    y_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                    rotation=-90,
+                )
             )
 
         if any(self.secondary) and self.secondary_y_axis_label:
             sec_y_label_x = self.width - self.x_right_padding / 4
             sec_y_label_y = self.height / 2
             self.svg_elements.append(
-                f'<text x="{sec_y_label_x}" y="{sec_y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {sec_y_label_x} {sec_y_label_y})" fill="{self.text_color}">{self.secondary_y_axis_label}</text>'
+                self._generate_text(
+                    self.secondary_y_axis_label,
+                    sec_y_label_x,
+                    sec_y_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                    rotation=-90,
+                )
             )
-
-        # TODO: Make these calculate dynamically based on elements
-        self.most_extreme_dimensions = {
-            "left": self.x_left_padding,
-            "right": self.width - self.x_right_padding,
-            "top": self.y_top_padding,
-            "bottom": self.height - self.y_bottom_padding,
-        }
 
         return self._generate_svg()
