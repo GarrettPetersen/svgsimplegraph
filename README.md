@@ -1,6 +1,8 @@
 # simplegraph
 
-This is a simple little graphing package for making graphs and exporting them as base64-encoded SVGs.
+This is a simple little graphing package for making graphs and exporting them as raw or base64-encoded SVGs.
+
+You can also upload the SVGs to your GitHub account as Gists, so they may be embedded in any website!
 
 ## Categorical Graph
 
@@ -144,3 +146,46 @@ raw_svg = graph.render()
 print(raw_svg)
 ```
 ![Example bubble and arrow graph](images/example_bubble_and_arrow.svg)
+
+## GitHub Gist integration
+
+The `upload_to_github_gist` function allows you to render your graph and upload it to your GitHub account as a Gist.
+
+To do this, you'll need an access token. Go to your github account and navigate to settings. Then click on Developer settings > Personal access tokens > Fine-grained tokens.
+
+Click the Generate new token button in the top right of the screen. GitHub will prompt you to login. Set a token name (something like "gist-access-token") and an expiration.
+
+Scroll down to Permissions and expand the Account permissions box. Then turn on read and write access for Gists only (you should not use this token for anything else). Finally, click the gree Generate token button at the bottom of the screen.
+
+Now you should see a screen showing your token. This is the only time Github will show you this token, so save it somewhere safe.
+
+Assuming you've done all that, you can use the token to turn your graphs into gists.
+
+```
+from simplegraph import CategoricalGraph
+
+GITHUB_ACCESS_TOKEN = "your_token_goes_here"
+
+# Create an instance of a graph
+graph = CategoricalGraph(
+    width=600,
+    height=400,
+    bar_width=30,
+    x_left_padding=60,
+    x_right_padding=80,
+    y_top_padding=20,
+    y_bottom_padding=40,
+    stacked=False,
+    background_color="#404040",
+)
+
+graph.x_labels = ["A", "B", "C", "D", "E"]
+graph.x_axis_label = "X Axis"
+graph.primary_y_axis_label = "Primary Y Axis"
+
+graph.add_series([10, 20, 30, 40, 50], legend_label="Series 1")
+
+svg_url = graph.upload_to_github_gist(GITHUB_ACCESS_TOKEN, "my_categorical_graph")
+```
+
+The `svg_url` variable now contains a string with the url of your new SVG, ready to be embedded in any website!
