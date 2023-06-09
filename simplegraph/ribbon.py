@@ -306,9 +306,9 @@ class RibbonGraph(BaseGraph):
         # TODO: Make these calculate dynamically based on elements
         self.most_extreme_dimensions = {
             "left": self.x_left_padding,
-            "right": self.x_left_padding + self.width,
+            "right": self.width - self.x_right_padding,
             "top": self.y_top_padding,
-            "bottom": self.y_top_padding + self.height,
+            "bottom": self.height - self.y_bottom_padding,
         }
 
         return self._generate_svg()
