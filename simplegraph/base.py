@@ -1,4 +1,7 @@
 import base64
+import urllib.request
+import json
+import time
 
 from .utils import DEFAULT_COLOR_PALETTE
 from .utils import is_dark
@@ -68,3 +71,44 @@ class BaseGraph:
         svg_bytes = svg_str.encode("utf-8")
         encoded_svg = base64.b64encode(svg_bytes).decode("utf-8")
         return "data:image/svg+xml;base64," + encoded_svg
+
+    def upload_to_github_gist(self, access_token, filename=None):
+        token = access_token
+        access_url = "https://api.github.com/gists"
+
+        epoch_time = int(time.time())
+
+        if not filename:
+            filename = "simplegraph"
+        filename = f"{filename}_{epoch_time}.svg"
+        description = "test image"
+        public = "true"
+
+        raw_svg = self.render()
+        json_svg = json.dumps(raw_svg)[
+            1:-1
+        ]  # escape the SVG content without adding extra quotes
+
+        data = f"""{{
+        "description": "{description}",
+        "public": {public},
+        "files": {{
+            "{filename}": {{
+            "content": "{json_svg}"
+            }}
+        }}
+        }}"""
+
+        req = urllib.request.Request(access_url)
+        req.add_header("Authorization", f"token {token}")
+        req.add_header("Content-Type", "application/json")
+
+        try:
+            response = urllib.request.urlopen(req, data=data.encode("utf-8"))
+            response_dict = json.load(response)
+            raw_url = response_dict["files"][filename]["raw_url"]
+            return raw_url
+        except urllib.error.HTTPError as e:
+            raise Exception(
+                f"An exception occurred while uploading to GitHub Gist: {e.read().decode()}"
+            )
