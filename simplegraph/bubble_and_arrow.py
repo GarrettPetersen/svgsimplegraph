@@ -34,7 +34,6 @@ class BubbleAndArrowGraph(BaseGraph):
         secondary_y_axis_label=None,
         show_legend=True,
         rotate_x_labels=True,
-        viewbox=True,
         background_color=None,
         dark_mode=None,
     ):
@@ -63,13 +62,6 @@ class BubbleAndArrowGraph(BaseGraph):
         self.total_arrow_width_from_origin = {}
         self.cx = self.width / 2
         self.cy = self.height / 2
-        self.viewbox = viewbox
-        self.most_extreme_dimensions = {
-            "left": self.width,
-            "right": 0,
-            "top": self.height,
-            "bottom": 0,
-        }
         self.dot_labels = {}
         self.text_buffer = []
         self.inner_fill = (
@@ -103,19 +95,18 @@ class BubbleAndArrowGraph(BaseGraph):
 
     def _draw_dot(self, x, y, fill, radius=5, inner_radius=None, text=None):
         text_width, _ = estimate_text_dimensions(text, 10) if text else 0
-        if self.viewbox:
-            self.most_extreme_dimensions["left"] = min(
-                self.most_extreme_dimensions["left"], x - radius
-            )
-            self.most_extreme_dimensions["right"] = max(
-                self.most_extreme_dimensions["right"], x + radius
-            )
-            self.most_extreme_dimensions["top"] = min(
-                self.most_extreme_dimensions["top"], y - radius
-            )
-            self.most_extreme_dimensions["bottom"] = max(
-                self.most_extreme_dimensions["bottom"], y + radius
-            )
+        self.most_extreme_dimensions["left"] = min(
+            self.most_extreme_dimensions["left"], x - radius
+        )
+        self.most_extreme_dimensions["right"] = max(
+            self.most_extreme_dimensions["right"], x + radius
+        )
+        self.most_extreme_dimensions["top"] = min(
+            self.most_extreme_dimensions["top"], y - radius
+        )
+        self.most_extreme_dimensions["bottom"] = max(
+            self.most_extreme_dimensions["bottom"], y + radius
+        )
         dot = f'<circle cx="{x}" cy="{y}" r="{radius}" fill="{fill}" />'
         if inner_radius:
             dot += f'<circle cx="{x}" cy="{y}" r="{inner_radius}" fill="{self.inner_fill}" />'
@@ -215,19 +206,18 @@ class BubbleAndArrowGraph(BaseGraph):
         text_width, text_height = estimate_text_dimensions(text, 10)
         half_width = text_width / 2
         half_height = text_height / 2
-        if self.viewbox:
-            self.most_extreme_dimensions["left"] = min(
-                self.most_extreme_dimensions["left"], x - half_width
-            )
-            self.most_extreme_dimensions["right"] = max(
-                self.most_extreme_dimensions["right"], x + half_width
-            )
-            self.most_extreme_dimensions["top"] = min(
-                self.most_extreme_dimensions["top"], y - half_height
-            )
-            self.most_extreme_dimensions["bottom"] = max(
-                self.most_extreme_dimensions["bottom"], y + half_height
-            )
+        self.most_extreme_dimensions["left"] = min(
+            self.most_extreme_dimensions["left"], x - half_width
+        )
+        self.most_extreme_dimensions["right"] = max(
+            self.most_extreme_dimensions["right"], x + half_width
+        )
+        self.most_extreme_dimensions["top"] = min(
+            self.most_extreme_dimensions["top"], y - half_height
+        )
+        self.most_extreme_dimensions["bottom"] = max(
+            self.most_extreme_dimensions["bottom"], y + half_height
+        )
         return (
             f'<text x="{x}" y="{y}" text-anchor="middle" '
             + f'dominant-baseline="middle" fill="{fill}" '
@@ -316,16 +306,13 @@ class BubbleAndArrowGraph(BaseGraph):
         return positions
 
     def render(self):
-        svg = ""
-        svg_text = ""
+        self._reset_graph()
+        svg = []
+        svg_text = []
         self.text_buffer = []
         self.total_arrow_width_from_origin = {}
-        self.most_extreme_dimensions = {
-            "left": self.width,
-            "right": 0,
-            "top": self.height,
-            "bottom": 0,
-        }
+        self.defs = []
+        self.svg_elements = []
 
         positions = self._calculate_positions()
 
@@ -382,7 +369,7 @@ class BubbleAndArrowGraph(BaseGraph):
             )
 
         for origin, arrows in arrows_from_origin.items():
-            svg += self._draw_arrows(arrows, self.colors[origin])
+            svg.append(self._draw_arrows(arrows, self.colors[origin]))
 
         # Draw Bubbles
         for i, bubble in enumerate(self.bubbles):
@@ -396,7 +383,7 @@ class BubbleAndArrowGraph(BaseGraph):
                 text=bubble[2],
             )
 
-            svg += dot
+            svg.append(dot)
 
         # Shift labels to not overlap
         text_to_check = 0
@@ -439,51 +426,8 @@ class BubbleAndArrowGraph(BaseGraph):
 
         # Draw Text
         for text in self.text_buffer:
-            svg_text += self._draw_text(*text)
+            svg_text.append(self._draw_text(*text))
 
-        background_rect = ""
-        if self.viewbox:
-            viewbox_width = (
-                self.most_extreme_dimensions["right"]
-                - self.most_extreme_dimensions["left"]
-                + self.x_left_padding
-                + self.x_right_padding
-            )
-            viewbox_height = (
-                self.most_extreme_dimensions["bottom"]
-                - self.most_extreme_dimensions["top"]
-                + self.y_top_padding
-                + self.y_bottom_padding
-            )
+        self.svg_elements = svg + svg_text
 
-            viewbox_param = (
-                f'viewBox="{self.most_extreme_dimensions["left"] - self.x_left_padding} '
-                + f'{self.most_extreme_dimensions["top"] - self.y_top_padding} {viewbox_width} '
-                + f'{viewbox_height}"'
-            )
-
-            self.width = viewbox_width + self.x_left_padding + self.x_right_padding
-            self.height = viewbox_height + self.y_top_padding + self.y_bottom_padding
-            if self.background_color:
-                # Draw background with rounded corners
-                background_rect = (
-                    f"<rect x='{self.most_extreme_dimensions['left'] - self.x_left_padding}' "
-                    + f"y='{self.most_extreme_dimensions['top'] - self.y_top_padding}' "
-                    + f"width='{viewbox_width}' height='{viewbox_height}' "
-                    + f"rx='10' ry='10' fill='{self.background_color}' />"
-                )
-        elif self.background_color:
-            background_rect = (
-                f"<rect x='0' y='0' width='{self.width}' height='{self.height}' "
-                + f"rx='10' ry='10' fill='{self.background_color}' />"
-            )
-
-        svg = (
-            f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" '
-            + f'height="{self.height}" {viewbox_param}>'
-            + background_rect
-            + svg
-            + svg_text
-            + "</svg>"
-        )
-        return svg
+        return self._generate_svg()
