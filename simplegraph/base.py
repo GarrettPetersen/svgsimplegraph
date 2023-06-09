@@ -64,20 +64,66 @@ class BaseGraph:
         if self.colors == DEFAULT_COLOR_PALETTE and self.dark_mode:
             self.colors.sort(key=lambda x: is_dark(x))
 
+        self.most_extreme_dimensions = {
+            "left": self.width,
+            "right": 0,
+            "top": self.height,
+            "bottom": 0,
+        }
+
+    def _reset_graph(self):
+        self.most_extreme_dimensions = {
+            "left": self.width,
+            "right": 0,
+            "top": self.height,
+            "bottom": 0,
+        }
+        self.defs = []
+        self.svg_elements = []
+
     def _generate_svg(self):
         """
         Generate the SVG string from the styles and elements.
         """
+        viewbox_width = (
+            self.most_extreme_dimensions["right"]
+            - self.most_extreme_dimensions["left"]
+            + self.x_left_padding
+            + self.x_right_padding
+        )
+
+        viewbox_height = (
+            self.most_extreme_dimensions["bottom"]
+            - self.most_extreme_dimensions["top"]
+            + self.y_top_padding
+            + self.y_bottom_padding
+        )
+
+        viewbox_left = self.most_extreme_dimensions["left"] - self.x_left_padding
+        viewbox_top = self.most_extreme_dimensions["top"] - self.y_top_padding
+
+        viewbox_param = (
+            f'viewBox="{viewbox_left} {viewbox_top} {viewbox_width} {viewbox_height}"'
+        )
+
+        background_rect = ""
+        if self.background_color:
+            background_rect = (
+                f"<rect x='{viewbox_left}' y='{viewbox_top}' width='{viewbox_width}' height='{viewbox_height}' "
+                + f"rx='10' ry='10' fill='{self.background_color}' />"
+            )
+
         defs_str = ""
         if self.defs:
             defs_str = "<defs>" + "\n".join(self.defs) + "</defs>"
         svg_elements_str = "\n".join(self.svg_elements)
-        svg = f"""
-        <svg xmlns="http://www.w3.org/2000/svg" width="{self.width}" height="{self.height}">
-            {defs_str}
-            {svg_elements_str}
-        </svg>
-        """
+        svg = (
+            f"<svg xmlns='http://www.w3.org/2000/svg' width='{viewbox_width}' height='{viewbox_height}' {viewbox_param}>"
+            + defs_str
+            + background_rect
+            + svg_elements_str
+            + "</svg>"
+        )
         return svg
 
     def render(self):

@@ -1,1 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect x='0' y='0' width='600' height='400' rx='10' ry='10' fill='#404040' /><rect x="525" y="20" width="10" height="10" fill="#e8c170" /><text x="540" y="26.666666666666664" font-size="10" alignment-baseline="middle" fill="#ffffff">Series 1</text><rect x="525" y="40" width="10" height="10" fill="#75a743" /><text x="540" y="46.666666666666664" font-size="10" alignment-baseline="middle" fill="#ffffff">Series 2</text><line x1="525" y1="65.0" x2="535" y2="65.0" stroke="#73bed3" stroke-width="1" /><text x="540" y="66.66666666666667" font-size="10" alignment-baseline="middle" fill="#ffffff">Series 3</text><circle cx="530.0" cy="85.0" r="5" fill="#4f8fba"  /><text x="540" y="86.66666666666667" font-size="10" alignment-baseline="middle" fill="#ffffff">Series 4</text><rect x="60.0" y="303.3333333333333" width="30" height="56.66666666666667" fill="#e8c170" /><rect x="90.0" y="275.0" width="30" height="85.0" fill="#75a743" /><circle cx="91.0" cy="161.66666666666666" r="5" fill="#4f8fba"  /><rect x="152.0" y="246.66666666666666" width="30" height="113.33333333333334" fill="#e8c170" /><rect x="182.0" y="218.33333333333331" width="30" height="141.66666666666669" fill="#75a743" /><line x1="91.0" y1="331.6666666666667" x2="183.0" y2="161.66666666666666" stroke="#73bed3" stroke-width="1" /><circle cx="183.0" cy="42.66666666666663" r="5" fill="#4f8fba"  /><rect x="244.0" y="190.0" width="30" height="170.0" fill="#e8c170" /><rect x="274.0" y="331.6666666666667" width="30" height="28.333333333333336" fill="#75a743" /><line x1="183.0" y1="161.66666666666666" x2="275.0" y2="303.3333333333333" stroke="#73bed3" stroke-width="1" /><circle cx="275.0" cy="218.33333333333331" r="5" fill="#4f8fba"  /><rect x="336.0" y="133.33333333333331" width="30" height="226.66666666666669" fill="#e8c170" /><rect x="366.0" y="110.66666666666666" width="30" height="249.33333333333334" fill="#75a743" /><line x1="275.0" y1="303.3333333333333" x2="367.0" y2="173.0" stroke="#73bed3" stroke-width="1" /><circle cx="367.0" cy="331.6666666666667" r="5" fill="#4f8fba"  /><rect x="428.0" y="76.66666666666663" width="30" height="283.33333333333337" fill="#e8c170" /><rect x="458.0" y="42.66666666666663" width="30" height="317.33333333333337" fill="#75a743" /><line x1="367.0" y1="173.0" x2="459.0" y2="133.33333333333331" stroke="#73bed3" stroke-width="1" /><circle cx="459.0" cy="110.66666666666666" r="5" fill="#4f8fba"  /><line x1="60" y1="20" x2="60" y2="360" stroke="#ffffff" stroke-width="1" /><line x1="60" y1="360.0" x2="520" y2="360.0" stroke="#ffffff" stroke-width="1" /><text x="91.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 91.0 365)" fill="#ffffff">A</text><text x="183.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 183.0 365)" fill="#ffffff">B</text><text x="275.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 275.0 365)" fill="#ffffff">C</text><text x="367.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 367.0 365)" fill="#ffffff">D</text><text x="459.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 459.0 365)" fill="#ffffff">E</text><text x="55" y="363.0" text-anchor="end" font-size="10" fill="#ffffff">0</text><line x1="60" y1="360.0" x2="57" y2="360.0" stroke="#ffffff" stroke-width="1" /><text x="55" y="306.3333333333333" text-anchor="end" font-size="10" fill="#ffffff">10</text><line x1="60" y1="303.3333333333333" x2="57" y2="303.3333333333333" stroke="#ffffff" stroke-width="1" /><text x="55" y="249.66666666666666" text-anchor="end" font-size="10" fill="#ffffff">20</text><line x1="60" y1="246.66666666666666" x2="57" y2="246.66666666666666" stroke="#ffffff" stroke-width="1" /><text x="55" y="193.0" text-anchor="end" font-size="10" fill="#ffffff">30</text><line x1="60" y1="190.0" x2="57" y2="190.0" stroke="#ffffff" stroke-width="1" /><text x="55" y="136.33333333333331" text-anchor="end" font-size="10" fill="#ffffff">40</text><line x1="60" y1="133.33333333333331" x2="57" y2="133.33333333333331" stroke="#ffffff" stroke-width="1" /><text x="55" y="79.66666666666663" text-anchor="end" font-size="10" fill="#ffffff">50</text><line x1="60" y1="76.66666666666663" x2="57" y2="76.66666666666663" stroke="#ffffff" stroke-width="1" /><text x="55" y="23.0" text-anchor="end" font-size="10" fill="#ffffff">60</text><line x1="60" y1="20.0" x2="57" y2="20.0" stroke="#ffffff" stroke-width="1" /><text x="290.0" y="390.0" text-anchor="middle" font-size="12" fill="#ffffff">X Axis</text><text x="15.0" y="190.0" text-anchor="middle" font-size="12" transform="rotate(-90 15.0 190.0)" fill="#ffffff">Primary Y Axis</text></svg>
+<svg xmlns='http://www.w3.org/2000/svg' width='740' height='460' viewBox="0 0 740 460"><rect x='0' y='0' width='740' height='460' rx='10' ry='10' fill='#404040' /><rect x="525" y="20" width="10" height="10" fill="#e8c170" />
+<text x="540" y="26.666666666666664" font-size="10" alignment-baseline="middle" fill="#ffffff">Series 1</text>
+<rect x="525" y="40" width="10" height="10" fill="#75a743" />
+<text x="540" y="46.666666666666664" font-size="10" alignment-baseline="middle" fill="#ffffff">Series 2</text>
+<line x1="525" y1="65.0" x2="535" y2="65.0" stroke="#73bed3" stroke-width="1" />
+<text x="540" y="66.66666666666667" font-size="10" alignment-baseline="middle" fill="#ffffff">Series 3</text>
+<circle cx="530.0" cy="85.0" r="5" fill="#4f8fba"  />
+<text x="540" y="86.66666666666667" font-size="10" alignment-baseline="middle" fill="#ffffff">Series 4</text>
+<rect x="60.0" y="303.3333333333333" width="30" height="56.66666666666667" fill="#e8c170" />
+<rect x="90.0" y="275.0" width="30" height="85.0" fill="#75a743" />
+<circle cx="91.0" cy="161.66666666666666" r="5" fill="#4f8fba"  />
+<rect x="152.0" y="246.66666666666666" width="30" height="113.33333333333334" fill="#e8c170" />
+<rect x="182.0" y="218.33333333333331" width="30" height="141.66666666666669" fill="#75a743" />
+<line x1="91.0" y1="331.6666666666667" x2="183.0" y2="161.66666666666666" stroke="#73bed3" stroke-width="1" />
+<circle cx="183.0" cy="42.66666666666663" r="5" fill="#4f8fba"  />
+<rect x="244.0" y="190.0" width="30" height="170.0" fill="#e8c170" />
+<rect x="274.0" y="331.6666666666667" width="30" height="28.333333333333336" fill="#75a743" />
+<line x1="183.0" y1="161.66666666666666" x2="275.0" y2="303.3333333333333" stroke="#73bed3" stroke-width="1" />
+<circle cx="275.0" cy="218.33333333333331" r="5" fill="#4f8fba"  />
+<rect x="336.0" y="133.33333333333331" width="30" height="226.66666666666669" fill="#e8c170" />
+<rect x="366.0" y="110.66666666666666" width="30" height="249.33333333333334" fill="#75a743" />
+<line x1="275.0" y1="303.3333333333333" x2="367.0" y2="173.0" stroke="#73bed3" stroke-width="1" />
+<circle cx="367.0" cy="331.6666666666667" r="5" fill="#4f8fba"  />
+<rect x="428.0" y="76.66666666666663" width="30" height="283.33333333333337" fill="#e8c170" />
+<rect x="458.0" y="42.66666666666663" width="30" height="317.33333333333337" fill="#75a743" />
+<line x1="367.0" y1="173.0" x2="459.0" y2="133.33333333333331" stroke="#73bed3" stroke-width="1" />
+<circle cx="459.0" cy="110.66666666666666" r="5" fill="#4f8fba"  />
+<line x1="60" y1="20" x2="60" y2="360" stroke="#ffffff" stroke-width="1" />
+<line x1="60" y1="360.0" x2="520" y2="360.0" stroke="#ffffff" stroke-width="1" />
+<text x="91.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 91.0 365)" fill="#ffffff">A</text>
+<text x="183.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 183.0 365)" fill="#ffffff">B</text>
+<text x="275.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 275.0 365)" fill="#ffffff">C</text>
+<text x="367.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 367.0 365)" fill="#ffffff">D</text>
+<text x="459.0" y="365" text-anchor="end" font-size="10" transform="rotate(-90 459.0 365)" fill="#ffffff">E</text>
+<text x="55" y="363.0" text-anchor="end" font-size="10" fill="#ffffff">0</text>
+<line x1="60" y1="360.0" x2="57" y2="360.0" stroke="#ffffff" stroke-width="1" />
+<text x="55" y="306.3333333333333" text-anchor="end" font-size="10" fill="#ffffff">10</text>
+<line x1="60" y1="303.3333333333333" x2="57" y2="303.3333333333333" stroke="#ffffff" stroke-width="1" />
+<text x="55" y="249.66666666666666" text-anchor="end" font-size="10" fill="#ffffff">20</text>
+<line x1="60" y1="246.66666666666666" x2="57" y2="246.66666666666666" stroke="#ffffff" stroke-width="1" />
+<text x="55" y="193.0" text-anchor="end" font-size="10" fill="#ffffff">30</text>
+<line x1="60" y1="190.0" x2="57" y2="190.0" stroke="#ffffff" stroke-width="1" />
+<text x="55" y="136.33333333333331" text-anchor="end" font-size="10" fill="#ffffff">40</text>
+<line x1="60" y1="133.33333333333331" x2="57" y2="133.33333333333331" stroke="#ffffff" stroke-width="1" />
+<text x="55" y="79.66666666666663" text-anchor="end" font-size="10" fill="#ffffff">50</text>
+<line x1="60" y1="76.66666666666663" x2="57" y2="76.66666666666663" stroke="#ffffff" stroke-width="1" />
+<text x="55" y="23.0" text-anchor="end" font-size="10" fill="#ffffff">60</text>
+<line x1="60" y1="20.0" x2="57" y2="20.0" stroke="#ffffff" stroke-width="1" />
+<text x="290.0" y="390.0" text-anchor="middle" font-size="12" fill="#ffffff">X Axis</text>
+<text x="15.0" y="190.0" text-anchor="middle" font-size="12" transform="rotate(-90 15.0 190.0)" fill="#ffffff">Primary Y Axis</text></svg>
