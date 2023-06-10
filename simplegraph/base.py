@@ -2,9 +2,11 @@ import base64
 import urllib.request
 import json
 import time
+import math
 
 from .utils import DEFAULT_COLOR_PALETTE
 from .utils import is_dark
+from .utils import estimate_text_dimensions
 
 
 class BaseGraph:
@@ -33,6 +35,9 @@ class BaseGraph:
         rotate_x_labels=True,
         background_color=None,
         dark_mode=None,
+        title=None,
+        title_font_size=None,
+        element_spacing=None,
     ):
         self.width = width
         self.height = height
@@ -57,12 +62,17 @@ class BaseGraph:
             self.dark_mode = is_dark(background_color)
         elif dark_mode is None:
             self.dark_mode = False
+        self.title = title
+        self.title_font_size = title_font_size or 16
         self.defs = []
         self.svg_elements = []
+        self.element_spacing = element_spacing or 10
 
         # Use dark colors last if in dark mode and using default color palette
         if self.colors == DEFAULT_COLOR_PALETTE and self.dark_mode:
             self.colors.sort(key=lambda x: is_dark(x))
+
+        self.text_color = "#ffffff" if self.dark_mode else "#000000"
 
         self.most_extreme_dimensions = {
             "left": self.width,
@@ -70,6 +80,97 @@ class BaseGraph:
             "top": self.height,
             "bottom": 0,
         }
+
+    def _generate_text(
+        self,
+        text,
+        x,
+        y,
+        font_size=10,
+        fill=None,
+        anchor="middle",
+        dominant_baseline="middle",
+        rotation=None,
+        additional_attributes=None,
+    ):
+        if not fill:
+            fill = self.text_color
+        # Start building the SVG text element
+        text_element = f'<text x="{x}" y="{y}" font-size="{font_size}" fill="{fill}"'
+
+        # Add optional attributes
+        if anchor:
+            text_element += f' text-anchor="{anchor}"'
+        if dominant_baseline:
+            text_element += f' dominant-baseline="{dominant_baseline}"'
+        if rotation:
+            text_element += f' transform="rotate({rotation} {x} {y})"'
+        if additional_attributes:
+            text_element += " " + " ".join(
+                [f'{k}="{v}"' for k, v in additional_attributes.items()]
+            )
+
+        # Close the opening tag and add the text content
+        text_element += f">{text}</text>"
+
+        # Estimate the text dimensions
+        text_width, text_height = estimate_text_dimensions(text, font_size)
+
+        # Adjust the bounding box coordinates according to the anchor and dominant-baseline
+        if anchor == "end":
+            left = x - text_width
+        elif anchor == "start":
+            left = x
+        else:  # Default to middle
+            left = x - text_width / 2
+
+        right = left + text_width
+
+        if dominant_baseline in ["auto", "text-bottom", "alphabetic", "ideographic"]:
+            top = y - text_height
+        elif dominant_baseline in ["text-top", "hanging"]:
+            top = y
+        else:  # Default to middle
+            top = y - text_height / 2
+
+        bottom = top + text_height
+
+        if rotation:
+            # Rotate each corner of the bounding box
+            corners = [(left, top), (right, top), (right, bottom), (left, bottom)]
+            rotation_radians = math.radians(rotation)
+            rotated_corners = [
+                (
+                    x
+                    + (cx - x) * math.cos(rotation_radians)
+                    - (cy - y) * math.sin(rotation_radians),
+                    y
+                    + (cx - x) * math.sin(rotation_radians)
+                    + (cy - y) * math.cos(rotation_radians),
+                )
+                for cx, cy in corners
+            ]
+
+            # Recalculate the bounding box from the rotated corners
+            xs, ys = zip(*rotated_corners)
+            left, right = min(xs), max(xs)
+            top, bottom = min(ys), max(ys)
+
+        # Update the most extreme dimensions
+        self.most_extreme_dimensions["left"] = min(
+            self.most_extreme_dimensions["left"], left
+        )
+        self.most_extreme_dimensions["right"] = max(
+            self.most_extreme_dimensions["right"], right
+        )
+        self.most_extreme_dimensions["top"] = min(
+            self.most_extreme_dimensions["top"], top
+        )
+        self.most_extreme_dimensions["bottom"] = max(
+            self.most_extreme_dimensions["bottom"], bottom
+        )
+
+        return text_element
 
     def _reset_graph(self):
         self.most_extreme_dimensions = {
@@ -85,6 +186,23 @@ class BaseGraph:
         """
         Generate the SVG string from the styles and elements.
         """
+        if self.title:
+            title_x_position = self.width / 2
+            title_y_position = (
+                min(0, self.most_extreme_dimensions["top"]) - self.element_spacing
+            )
+            self.svg_elements.append(
+                self._generate_text(
+                    self.title,
+                    title_x_position,
+                    title_y_position,
+                    font_size=self.title_font_size,
+                    fill=self.text_color,
+                    anchor="middle",
+                    dominant_baseline="text-top",
+                )
+            )
+
         viewbox_width = (
             self.most_extreme_dimensions["right"]
             - self.most_extreme_dimensions["left"]

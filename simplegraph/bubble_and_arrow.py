@@ -20,7 +20,7 @@ class BubbleAndArrowGraph(BaseGraph):
         self,
         width=300,
         height=200,
-        padding=10,
+        padding=20,
         x_padding=None,
         y_padding=None,
         y_top_padding=None,
@@ -36,6 +36,9 @@ class BubbleAndArrowGraph(BaseGraph):
         rotate_x_labels=True,
         background_color=None,
         dark_mode=None,
+        title=None,
+        title_font_size=None,
+        element_spacing=None,
     ):
         super().__init__(
             width=width,
@@ -56,6 +59,9 @@ class BubbleAndArrowGraph(BaseGraph):
             rotate_x_labels=rotate_x_labels,
             background_color=background_color,
             dark_mode=dark_mode,
+            title=title,
+            title_font_size=title_font_size,
+            element_spacing=element_spacing,
         )
         self.bubbles = []
         self.arrows = []
@@ -203,26 +209,7 @@ class BubbleAndArrowGraph(BaseGraph):
         return f'<path d="{path}" fill="{hex_to_rgba(fill,0.5)}" />'
 
     def _draw_text(self, x, y, text, fill):
-        text_width, text_height = estimate_text_dimensions(text, 10)
-        half_width = text_width / 2
-        half_height = text_height / 2
-        self.most_extreme_dimensions["left"] = min(
-            self.most_extreme_dimensions["left"], x - half_width
-        )
-        self.most_extreme_dimensions["right"] = max(
-            self.most_extreme_dimensions["right"], x + half_width
-        )
-        self.most_extreme_dimensions["top"] = min(
-            self.most_extreme_dimensions["top"], y - half_height
-        )
-        self.most_extreme_dimensions["bottom"] = max(
-            self.most_extreme_dimensions["bottom"], y + half_height
-        )
-        return (
-            f'<text x="{x}" y="{y}" text-anchor="middle" '
-            + f'dominant-baseline="middle" fill="{fill}" '
-            + f'font-size="10">{text}</text>'
-        )
+        return self._generate_text(text, x, y, fill=fill)
 
     def _calculate_positions(self):
         inter_bubble_space = 0.1  # Proportional gap between bubbles
@@ -252,9 +239,7 @@ class BubbleAndArrowGraph(BaseGraph):
         )
 
         # With this circle radius, determine the diameter and add some inter-bubble space
-        min_diameter = 2 * (
-            min_circle_radius + largest_radii[-1] * (1 + inter_bubble_space)
-        )
+        min_diameter = 2 * min_circle_radius
 
         # Now compute the scaling factor to fit this minimum circle within the canvas
         scaling_factor = min(self.width, self.height) / min_diameter

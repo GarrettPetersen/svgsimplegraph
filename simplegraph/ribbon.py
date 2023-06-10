@@ -34,6 +34,9 @@ class RibbonGraph(BaseGraph):
         color_range=None,
         background_color=None,
         dark_mode=None,
+        title=None,
+        title_font_size=None,
+        element_spacing=None,
     ):
         super().__init__(
             width=width,
@@ -53,13 +56,15 @@ class RibbonGraph(BaseGraph):
             rotate_x_labels=rotate_x_labels,
             background_color=background_color,
             dark_mode=dark_mode,
+            title=title,
+            title_font_size=title_font_size,
+            element_spacing=element_spacing,
         )
         self.bar_width = bar_width
         self.x_labels = []
         self.print_values = []
         self.num_series = 0
         self.color_range = color_range
-        self.text_color = "#ffffff" if self.dark_mode else "#000000"
 
     def add_series(
         self,
@@ -117,8 +122,6 @@ class RibbonGraph(BaseGraph):
             else:
                 min_color_range = -get_adjusted_max(-min_range)
 
-        adjusted_max_value_primary = get_adjusted_max(max_value)
-
         primary_ticks = calculate_ticks(
             min_value,
             max_value,
@@ -129,9 +132,7 @@ class RibbonGraph(BaseGraph):
         adjusted_max_value = primary_ticks[-1]
         adjusted_min_value = primary_ticks[0]
 
-        scale_primary = (self.height - self.y_top_padding - self.y_bottom_padding) / (
-            adjusted_max_value - adjusted_min_value
-        )
+        scale_primary = (self.height) / (adjusted_max_value - adjusted_min_value)
 
         self.defs.append(
             "<linearGradient id='legend_grad' x1='0%' y1='0%' x2='0%' y2='100%'>"
@@ -141,61 +142,87 @@ class RibbonGraph(BaseGraph):
 
         # Draw legend
         if self.show_legend:
-            third_graph_width = (
-                self.width - self.x_left_padding - self.x_right_padding
-            ) / 3
-            graph_height = self.height - self.y_top_padding - self.y_bottom_padding
-            top_legend_x = self.x_left_padding + third_graph_width
-            top_legend_y = (self.y_top_padding / 2) - (self.bar_width / 2)
+            third_graph_width = (self.width) / 3
+            top_legend_x = third_graph_width
             half_bar_width = self.bar_width / 2
+            top_legend_y = -self.bar_width - self.element_spacing
 
             self.svg_elements.append(
                 f'<path d="M{top_legend_x} {top_legend_y} h{third_graph_width} l{half_bar_width} {half_bar_width} l-{half_bar_width} {half_bar_width} h-{third_graph_width} l{half_bar_width} -{half_bar_width}" fill="{self.colors[0]}" />'
             )
-            self.svg_elements.append(
-                f'<text x="{top_legend_x}" y="{top_legend_y + half_bar_width}" dy="0.35em" font-size="10" text-anchor="end" fill="{self.text_color}">{self.legend_labels[0]}</text>'
+            self.most_extreme_dimensions["top"] = min(
+                top_legend_y - half_bar_width, self.most_extreme_dimensions["top"]
             )
             self.svg_elements.append(
-                f'<text x="{top_legend_x+third_graph_width+half_bar_width+5}" y="{top_legend_y + half_bar_width}" dy="0.35em" font-size="10" text-anchor="start" fill="{self.text_color}">{self.legend_labels[1]}</text>'
+                self._generate_text(
+                    self.legend_labels[0],
+                    top_legend_x,
+                    top_legend_y + half_bar_width,
+                    fill=self.text_color,
+                    anchor="end",
+                )
+            )
+            self.svg_elements.append(
+                self._generate_text(
+                    self.legend_labels[1],
+                    top_legend_x + third_graph_width + half_bar_width + 5,
+                    top_legend_y + half_bar_width,
+                    fill=self.text_color,
+                    anchor="start",
+                )
             )
 
             if color_series_present:
                 right_legend_x = (
-                    self.width - (self.x_right_padding / 2) - (self.bar_width / 2)
+                    max(self.width, self.most_extreme_dimensions["right"])
+                    + self.element_spacing
                 )
-                right_legend_y = self.y_top_padding
-                right_legend_y_middle = right_legend_y + graph_height / 2
+                right_legend_y = 0
+                right_legend_y_middle = right_legend_y + self.height / 2
 
                 self.svg_elements.append(
-                    f'<rect x="{right_legend_x}" y="{right_legend_y}" width="{self.bar_width}" height="{graph_height}" fill="url(#legend_grad)" />'
+                    f'<rect x="{right_legend_x}" y="{right_legend_y}" width="{self.bar_width}" height="{self.height}" fill="url(#legend_grad)" />'
                 )
                 self.svg_elements.append(
-                    f'<text x="{right_legend_x-5}" y="{right_legend_y_middle}" text-anchor="middle" font-size="10" transform="rotate(-90 {right_legend_x-5} {right_legend_y_middle})" fill="{self.text_color}">{self.legend_labels[2]}</text>'
+                    self._generate_text(
+                        self.legend_labels[2],
+                        right_legend_x - 5,
+                        right_legend_y_middle,
+                        fill=self.text_color,
+                        anchor="middle",
+                        rotation=-90,
+                    )
                 )
                 self.svg_elements.append(
-                    f'<text x="{right_legend_x+self.bar_width+5}" y="{right_legend_y}" dy="0.35em" text-anchor="start" font-size="10" fill="{self.text_color}">{human_readable_number(max_color_range)}</text>'
+                    self._generate_text(
+                        human_readable_number(max_color_range),
+                        right_legend_x + self.bar_width + 5,
+                        right_legend_y,
+                        fill=self.text_color,
+                        anchor="start",
+                    )
                 )
                 self.svg_elements.append(
-                    f'<text x="{right_legend_x+self.bar_width+5}" y="{right_legend_y+graph_height}" dy="0.35em" text-anchor="start" font-size="10" fill="{self.text_color}">{human_readable_number(min_color_range)}</text>'
+                    self._generate_text(
+                        human_readable_number(min_color_range),
+                        right_legend_x + self.bar_width + 5,
+                        right_legend_y + self.height,
+                        fill=self.text_color,
+                        anchor="start",
+                    )
                 )
 
         # Draw ribbons
         num_ribbons = len(self.data[0])
-        bar_spacing = (self.width - self.x_left_padding - self.x_right_padding) / (
-            num_ribbons + 1 / 2
-        )
+        bar_spacing = (self.width) / (num_ribbons + 1 / 2)
 
         for index in range(num_ribbons):
-            x = (index + 1 / 2) * bar_spacing + self.x_left_padding
+            x = (index + 1 / 2) * bar_spacing
             y1 = (
-                self.height
-                - self.y_bottom_padding
-                - (self.data[0][index] - adjusted_min_value) * scale_primary
+                self.height - (self.data[0][index] - adjusted_min_value) * scale_primary
             )
             y2 = (
-                self.height
-                - self.y_bottom_padding
-                - (self.data[1][index] - adjusted_min_value) * scale_primary
+                self.height - (self.data[1][index] - adjusted_min_value) * scale_primary
             )
             color = self.colors[0]
             if color_series_present:
@@ -209,106 +236,143 @@ class RibbonGraph(BaseGraph):
             if self.print_values[0]:
                 if y1 < y2:
                     self.svg_elements.append(
-                        f'<text x="{x+self.bar_width/2}" y="{y1}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[0][index])}</text>'
+                        self._generate_text(
+                            human_readable_number(self.data[0][index]),
+                            x + self.bar_width / 2,
+                            y1,
+                            fill=self.text_color,
+                            anchor="middle",
+                        )
                     )
                 else:
                     self.svg_elements.append(
-                        f'<text x="{x+self.bar_width/2}" y="{y1}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[0][index])}</text>'
+                        self._generate_text(
+                            human_readable_number(self.data[0][index]),
+                            x + self.bar_width / 2,
+                            y1,
+                            fill=self.text_color,
+                            anchor="middle",
+                        )
                     )
             if self.print_values[1]:
                 if y2 < y1:
                     self.svg_elements.append(
-                        f'<text x="{x+self.bar_width/2}" y="{y2-self.bar_width/2-5}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[1][index])}</text>'
+                        self._generate_text(
+                            human_readable_number(self.data[1][index]),
+                            x + self.bar_width / 2,
+                            y2 - self.bar_width / 2 - 7,
+                            fill=self.text_color,
+                            anchor="middle",
+                        )
                     )
                 else:
                     self.svg_elements.append(
-                        f'<text x="{x+self.bar_width/2}" y="{y2+self.bar_width/2+5}" dy="0.35em" text-anchor="middle" font-size="10" fill="{self.text_color}">{human_readable_number(self.data[1][index])}</text>'
+                        self._generate_text(
+                            human_readable_number(self.data[1][index]),
+                            x + self.bar_width / 2,
+                            y2 + self.bar_width / 2 + 5,
+                            fill=self.text_color,
+                            anchor="middle",
+                        )
                     )
             if color_series_present and self.print_values[2]:
                 if y1 < y2:
                     y_adjustment = self.bar_width / 4
                 else:
                     y_adjustment = -self.bar_width / 4
-                if is_dark(color):
-                    optional_fill = 'fill="white"'
-                else:
-                    optional_fill = ""
+                text_color = "#ffffff" if is_dark(color) else "#000000"
                 self.svg_elements.append(
-                    f'<text x="{x+self.bar_width/2}" y="{(y1+y2)/2 + y_adjustment}" dy="0.35em" text-anchor="middle" font-size="10" {optional_fill}>{human_readable_number(self.data[2][index])}</text>'
+                    self._generate_text(
+                        human_readable_number(self.data[2][index]),
+                        x + self.bar_width / 2,
+                        (y1 + y2) / 2 + y_adjustment,
+                        fill=text_color,
+                        anchor="middle",
+                    )
                 )
 
         # Draw axis
         self.svg_elements.append(
-            f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+            f'<line x1="0" y1="0" x2="0" y2="{self.height}" stroke="{self.text_color}" stroke-width="1" />'
         )
         if adjusted_min_value < 0 and adjusted_max_value > 0:
-            zero_line = (
-                self.height
-                - self.y_bottom_padding
-                - (0 - adjusted_min_value) * scale_primary
-            )
+            zero_line = self.height - (0 - adjusted_min_value) * scale_primary
             self.svg_elements.append(
-                f'<line x1="{self.x_left_padding}" y1="{zero_line}" x2="{self.width - self.x_right_padding}" y2="{zero_line}" stroke="{self.text_color}" stroke-width="1" />'
+                f'<line x1="0" y1="{zero_line}" x2="{self.width}" y2="{zero_line}" stroke="{self.text_color}" stroke-width="1" />'
             )
         else:
             self.svg_elements.append(
-                f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+                f'<line x1="0" y1="{self.height}" x2="{self.width}" y2="{self.height}" stroke="{self.text_color}" stroke-width="1" />'
             )
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
-            x = (index + 1 / 2) * bar_spacing + self.x_left_padding + self.bar_width / 2
-            y = self.height - self.y_bottom_padding + 5
+            x = (index + 1 / 2) * bar_spacing + self.bar_width / 2
+            y = self.height + 5
             if label is not None and self.rotate_x_labels:
                 self.svg_elements.append(
-                    f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})" fill="{self.text_color}">{label}</text>'
+                    self._generate_text(
+                        label, x, y, fill=self.text_color, anchor="end", rotation=-90
+                    )
                 )
             elif label is not None and not self.rotate_x_labels:
                 self.svg_elements.append(
-                    f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10" fill="{self.text_color}">{label}</text>'
+                    self._generate_text(
+                        label, x, y + 10, fill=self.text_color, anchor="middle"
+                    )
                 )
 
         # Draw primary y-axis ticks and values
         for tick_value in primary_ticks:
-            tick_y = (
-                self.height
-                - self.y_bottom_padding
-                - (tick_value - adjusted_min_value) * scale_primary
-            )
+            tick_y = self.height - (tick_value - adjusted_min_value) * scale_primary
             tick_label = f"{human_readable_number(tick_value)}"
 
             self.svg_elements.append(
-                f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10" fill="{self.text_color}">{tick_label}</text>'
+                self._generate_text(
+                    tick_label,
+                    -5,
+                    tick_y + 3,
+                    fill=self.text_color,
+                    anchor="end",
+                )
             )
             self.svg_elements.append(
-                f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
+                f'<line x1="0" y1="{tick_y}" x2="-3" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
             )
 
         # Draw axis labels
         if self.x_axis_label:
-            x_label_x = (
-                self.width - self.x_left_padding - self.x_right_padding
-            ) / 2 + self.x_left_padding
-            x_label_y = self.height - self.y_bottom_padding / 4
+            x_label_x = (self.width) / 2
+            x_label_y = (
+                max(self.height, self.most_extreme_dimensions["bottom"])
+                + 2 * self.element_spacing
+            )
             self.svg_elements.append(
-                f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12" fill="{self.text_color}">{self.x_axis_label}</text>'
+                self._generate_text(
+                    self.x_axis_label,
+                    x_label_x,
+                    x_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                    anchor="middle",
+                )
             )
 
         if self.primary_y_axis_label:
-            y_label_x = self.x_left_padding / 4
-            y_label_y = (
-                self.height - self.y_top_padding - self.y_bottom_padding
-            ) / 2 + self.y_top_padding
-            self.svg_elements.append(
-                f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})" fill="{self.text_color}">{self.primary_y_axis_label}</text>'
+            y_label_x = (
+                min(0, self.most_extreme_dimensions["left"]) - self.element_spacing
             )
-
-        # TODO: Make these calculate dynamically based on elements
-        self.most_extreme_dimensions = {
-            "left": self.x_left_padding,
-            "right": self.width - self.x_right_padding,
-            "top": self.y_top_padding,
-            "bottom": self.height - self.y_bottom_padding,
-        }
+            y_label_y = (self.height) / 2
+            self.svg_elements.append(
+                self._generate_text(
+                    self.primary_y_axis_label,
+                    y_label_x,
+                    y_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                    anchor="middle",
+                    rotation=-90,
+                )
+            )
 
         return self._generate_svg()

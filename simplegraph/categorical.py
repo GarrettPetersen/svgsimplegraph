@@ -78,6 +78,9 @@ class CategoricalGraph(BaseGraph):
         rotate_x_labels=True,
         background_color=None,
         dark_mode=None,
+        title=None,
+        title_font_size=None,
+        element_spacing=None,
     ):
         super().__init__(
             width=width,
@@ -98,13 +101,15 @@ class CategoricalGraph(BaseGraph):
             rotate_x_labels=rotate_x_labels,
             background_color=background_color,
             dark_mode=dark_mode,
+            title=title,
+            title_font_size=title_font_size,
+            element_spacing=element_spacing,
         )
         self.stacked = stacked
         self.bar_width = bar_width
         self.x_labels = []
         self.series_types = []
         self.secondary = []
-        self.text_color = "#ffffff" if self.dark_mode else "#000000"
 
     def add_series(
         self,
@@ -139,7 +144,7 @@ class CategoricalGraph(BaseGraph):
 
     def render(self):
         self._reset_graph()
-        graph_width = self.width - self.x_left_padding - self.x_right_padding
+        graph_width = self.width
         has_secondary = any(self.secondary)
         max_value_secondary = None
         min_value_secondary = None
@@ -201,24 +206,270 @@ class CategoricalGraph(BaseGraph):
 
         bar_width = min(max_bar_width, self.bar_width)
 
-        scale_primary = (self.height - self.y_top_padding - self.y_bottom_padding) / (
+        scale_primary = (self.height) / (
             adjusted_max_value_primary - adjusted_min_value_primary
         )
         if has_secondary:
-            scale_secondary = (
-                self.height - self.y_top_padding - self.y_bottom_padding
-            ) / (adjusted_max_value_secondary - adjusted_min_value_secondary)
+            scale_secondary = (self.height) / (
+                adjusted_max_value_secondary - adjusted_min_value_secondary
+            )
         else:
             scale_secondary = None
+
+        # Draw series
+        bar_spacing = (self.width) / len(self.data[0])
+        bar_series_across = (
+            1
+            if self.stacked
+            else len(
+                [
+                    series_type
+                    for series_type, _ in self.series_types
+                    if series_type == "bar"
+                ]
+            )
+        )
+        total_bars_width = bar_series_across * bar_width
+
+        num_categories = len(self.data[0])
+        num_series = len(self.data)
+        positive_bar_heights = [0] * num_categories
+        negative_bar_heights = [0] * num_categories
+
+        for sub_index in range(num_categories):
+            bar_count = 0
+            for index in range(num_series):
+                value = self.data[index][sub_index]
+                secondary_value = self.secondary[index]
+
+                series_type, print_values = self.series_types[index]
+
+                if series_type == "dot" or series_type == "line" or self.stacked:
+                    x = sub_index * bar_spacing + (bar_spacing - bar_width) / 2
+                else:
+                    x = sub_index * bar_spacing + bar_count * bar_width
+                    bar_count += 1
+                scale = scale_secondary if secondary_value else scale_primary
+                min_value = (
+                    adjusted_min_value_secondary
+                    if secondary_value
+                    else adjusted_min_value_primary
+                )
+                y = self.height - (value - min_value) * scale
+
+                if series_type == "bar" and self.stacked:
+                    bar_height = value * scale
+                    x -= bar_width / 2
+                    if value >= 0:
+                        y -= positive_bar_heights[sub_index]
+                        positive_bar_heights[sub_index] += bar_height
+                    else:
+                        y -= negative_bar_heights[sub_index]
+                        negative_bar_heights[sub_index] += bar_height
+                    self.svg_elements.append(
+                        self._draw_bar(x, y, bar_width, bar_height, self.colors[index])
+                    )
+                elif series_type == "bar":
+                    self.svg_elements.append(
+                        self._draw_bar(
+                            x,
+                            y,
+                            bar_width,
+                            value * scale,
+                            self.colors[index],
+                        )
+                    )
+                elif series_type == "dot":
+                    center_x = (
+                        sub_index * bar_spacing
+                        + (bar_spacing - total_bars_width) / 2
+                        + bar_width * (bar_series_across - 1) / 2
+                    )
+                    self.svg_elements.append(
+                        self._draw_dot(
+                            center_x,
+                            y,
+                            radius=5,
+                            fill=self.colors[index],
+                        )
+                    )
+                elif series_type == "line" and sub_index > 0:
+                    prev_y = (
+                        self.height
+                        - (self.data[index][sub_index - 1] - min_value) * scale
+                    )
+                    prev_x = (sub_index - 1) * bar_spacing + (
+                        bar_spacing - bar_width
+                    ) / 2
+                    self.svg_elements.append(
+                        self._draw_line(
+                            prev_x,
+                            prev_y,
+                            x,
+                            y,
+                            stroke=self.colors[index],
+                        )
+                    )
+
+                if print_values:
+                    if series_type == "dot":
+                        value_x = center_x
+                    elif series_type == "line":
+                        value_x = x
+                    else:
+                        value_x = x + bar_width / 2
+
+                    value_y = y - 5 if series_type == "bar" else y - 10
+                    self.svg_elements.append(
+                        self._generate_text(
+                            value, value_x, value_y, fill=self.text_color
+                        )
+                    )
+
+        # Draw axis
+        self.svg_elements.append(
+            f'<line x1="0" y1="0" x2="0" y2="{self.height}" stroke="{self.text_color}" stroke-width="1" />'
+        )
+        zero_line_y = self.height + adjusted_min_value_primary * scale_primary
+        self.svg_elements.append(
+            f'<line x1="0" y1="{zero_line_y}" '
+            + f'x2="{self.width}" y2="{zero_line_y}" '
+            + f'stroke="{self.text_color}" stroke-width="1" />'
+        )
+
+        # Draw secondary y-axis if needed
+        if has_secondary:
+            self.svg_elements.append(
+                f'<line x1="{self.width}" y1="0" x2="{self.width}" y2="{self.height}" stroke="{self.text_color}" stroke-width="1" />'
+            )
+            secondary_zero_line_y = (
+                self.height + adjusted_min_value_secondary * scale_secondary
+            )
+            assert (
+                abs(secondary_zero_line_y - zero_line_y) < 1e-9
+            ), f"Secondary y-axis not aligned with primary y-axis: {secondary_zero_line_y} != {zero_line_y}"
+
+        # Draw x tick labels
+        for index, label in enumerate(self.x_labels):
+            x = (
+                index * bar_spacing
+                + (bar_spacing - total_bars_width) / 2
+                + bar_width * (bar_series_across - 1) / 2
+            )
+            y = self.height + 5
+            if label is not None and self.rotate_x_labels:
+                self.svg_elements.append(
+                    self._generate_text(
+                        label, x, y, anchor="end", fill=self.text_color, rotation=-90
+                    )
+                )
+            elif label is not None and not self.rotate_x_labels:
+                self.svg_elements.append(
+                    self._generate_text(label, x, y + 10, fill=self.text_color)
+                )
+
+        # Draw primary y-axis ticks and values
+        for tick_value in primary_ticks:
+            tick_y = (
+                self.height - (tick_value - adjusted_min_value_primary) * scale_primary
+            )
+            tick_label = f"{human_readable_number(tick_value)}"
+
+            self.svg_elements.append(
+                self._generate_text(
+                    tick_label,
+                    -5,
+                    tick_y + 3,
+                    fill=self.text_color,
+                    anchor="end",
+                )
+            )
+            self.svg_elements.append(
+                f'<line x1="0" y1="{tick_y}" x2="-3" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
+            )
+
+        # Draw secondary y-axis ticks and values if needed
+        if has_secondary:
+            for tick_value in secondary_ticks:
+                tick_y = (
+                    self.height
+                    - (tick_value - adjusted_min_value_secondary) * scale_secondary
+                )
+                tick_label = f"{human_readable_number(tick_value)}"
+
+                self.svg_elements.append(
+                    self._generate_text(
+                        tick_label,
+                        self.width + 5,
+                        tick_y + 3,
+                        fill=self.text_color,
+                        anchor="start",
+                    )
+                )
+                self.svg_elements.append(
+                    f'<line x1="{self.width}" y1="{tick_y}" x2="{self.width + 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
+                )
+
+        # Draw axis labels
+        if self.x_axis_label:
+            x_label_x = (self.width) / 2
+            x_label_y = (
+                max(self.height, self.most_extreme_dimensions["bottom"])
+                + 2 * self.element_spacing
+            )
+            self.svg_elements.append(
+                self._generate_text(
+                    self.x_axis_label,
+                    x_label_x,
+                    x_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                )
+            )
+
+        if self.primary_y_axis_label:
+            y_label_x = (
+                min(0, self.most_extreme_dimensions["left"]) - self.element_spacing
+            )
+            y_label_y = (self.height) / 2
+            self.svg_elements.append(
+                self._generate_text(
+                    self.primary_y_axis_label,
+                    y_label_x,
+                    y_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                    rotation=-90,
+                )
+            )
+
+        if any(self.secondary) and self.secondary_y_axis_label:
+            sec_y_label_x = (
+                max(self.width, self.most_extreme_dimensions["right"])
+                + self.element_spacing
+            )
+            sec_y_label_y = self.height / 2
+            self.svg_elements.append(
+                self._generate_text(
+                    self.secondary_y_axis_label,
+                    sec_y_label_x,
+                    sec_y_label_y,
+                    font_size=12,
+                    fill=self.text_color,
+                    rotation=-90,
+                )
+            )
 
         # Draw legend
         if self.show_legend:
             legend_spacing = 5
             legend_rect_size = 10
-            legend_x = self.width - self.x_right_padding + legend_spacing
+            legend_x = (
+                max(self.width, self.most_extreme_dimensions["right"]) + legend_spacing
+            )
             if has_secondary:
-                legend_x += self.x_right_padding / 3
-            legend_y = self.y_top_padding
+                legend_x += 10
+            legend_y = 0
 
             for index, label in enumerate(self.legend_labels):
                 series_type, _ = self.series_types[index]
@@ -247,247 +498,14 @@ class CategoricalGraph(BaseGraph):
                         + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
                     )
                 self.svg_elements.append(
-                    f'<text x="{legend_x + legend_rect_size + legend_spacing}" '
-                    + f'y="{legend_y + (2/3) * legend_rect_size}" font-size="10" '
-                    + f'alignment-baseline="middle" fill="{self.text_color}">{label}</text>'
+                    self._generate_text(
+                        label,
+                        legend_x + legend_rect_size + legend_spacing,
+                        legend_y + (2 / 3) * legend_rect_size,
+                        fill=self.text_color,
+                        anchor="start",
+                    )
                 )
                 legend_y += (2 * legend_spacing) + legend_rect_size
-
-        # Draw series
-        bar_spacing = (self.width - self.x_left_padding - self.x_right_padding) / len(
-            self.data[0]
-        )
-        bar_series_across = (
-            1
-            if self.stacked
-            else len(
-                [
-                    series_type
-                    for series_type, _ in self.series_types
-                    if series_type == "bar"
-                ]
-            )
-        )
-        total_bars_width = bar_series_across * bar_width
-
-        num_categories = len(self.data[0])
-        num_series = len(self.data)
-        positive_bar_heights = [0] * num_categories
-        negative_bar_heights = [0] * num_categories
-
-        for sub_index in range(num_categories):
-            bar_count = 0
-            for index in range(num_series):
-                value = self.data[index][sub_index]
-                secondary_value = self.secondary[index]
-
-                series_type, print_values = self.series_types[index]
-
-                if series_type == "dot" or series_type == "line" or self.stacked:
-                    x = (
-                        self.x_left_padding
-                        + sub_index * bar_spacing
-                        + (bar_spacing - bar_width) / 2
-                    )
-                else:
-                    x = (
-                        self.x_left_padding
-                        + sub_index * bar_spacing
-                        + bar_count * bar_width
-                    )
-                    bar_count += 1
-                scale = scale_secondary if secondary_value else scale_primary
-                min_value = (
-                    adjusted_min_value_secondary
-                    if secondary_value
-                    else adjusted_min_value_primary
-                )
-                y = self.height - self.y_bottom_padding - (value - min_value) * scale
-
-                if series_type == "bar" and self.stacked:
-                    bar_height = value * scale
-                    x -= bar_width / 2
-                    if value >= 0:
-                        y -= positive_bar_heights[sub_index]
-                        positive_bar_heights[sub_index] += bar_height
-                    else:
-                        y -= negative_bar_heights[sub_index]
-                        negative_bar_heights[sub_index] += bar_height
-                    self.svg_elements.append(
-                        self._draw_bar(x, y, bar_width, bar_height, self.colors[index])
-                    )
-                elif series_type == "bar":
-                    self.svg_elements.append(
-                        self._draw_bar(
-                            x,
-                            y,
-                            bar_width,
-                            value * scale,
-                            self.colors[index],
-                        )
-                    )
-                elif series_type == "dot":
-                    center_x = (
-                        self.x_left_padding
-                        + sub_index * bar_spacing
-                        + (bar_spacing - total_bars_width) / 2
-                        + bar_width * (bar_series_across - 1) / 2
-                    )
-                    self.svg_elements.append(
-                        self._draw_dot(
-                            center_x,
-                            y,
-                            radius=5,
-                            fill=self.colors[index],
-                        )
-                    )
-                elif series_type == "line" and sub_index > 0:
-                    prev_y = (
-                        self.height
-                        - self.y_bottom_padding
-                        - (self.data[index][sub_index - 1] - min_value) * scale
-                    )
-                    prev_x = (
-                        self.x_left_padding
-                        + (sub_index - 1) * bar_spacing
-                        + (bar_spacing - bar_width) / 2
-                    )
-                    self.svg_elements.append(
-                        self._draw_line(
-                            prev_x,
-                            prev_y,
-                            x,
-                            y,
-                            stroke=self.colors[index],
-                        )
-                    )
-
-                if print_values:
-                    if series_type == "dot":
-                        value_x = center_x
-                    elif series_type == "line":
-                        value_x = x
-                    else:
-                        value_x = x + bar_width / 2
-
-                    value_y = y - 5 if series_type == "bar" else y - 10
-                    self.svg_elements.append(
-                        f'<text x="{value_x}" y="{value_y}" text-anchor="middle" font-size="10" fill="{self.text_color}">{value}</text>'
-                    )
-
-        # Draw axis
-        self.svg_elements.append(
-            f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" '
-            + f'y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
-        )
-        zero_line_y = (
-            self.height
-            - self.y_bottom_padding
-            + adjusted_min_value_primary * scale_primary
-        )
-        self.svg_elements.append(
-            f'<line x1="{self.x_left_padding}" y1="{zero_line_y}" '
-            + f'x2="{self.width - self.x_right_padding}" y2="{zero_line_y}" '
-            + f'stroke="{self.text_color}" stroke-width="1" />'
-        )
-
-        # Draw secondary y-axis if needed
-        if has_secondary:
-            self.svg_elements.append(
-                f'<line x1="{self.width - self.x_right_padding}" y1="{self.y_top_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
-            )
-            secondary_zero_line_y = (
-                self.height
-                - self.y_bottom_padding
-                + adjusted_min_value_secondary * scale_secondary
-            )
-            assert (
-                abs(secondary_zero_line_y - zero_line_y) < 1e-9
-            ), f"Secondary y-axis not aligned with primary y-axis: {secondary_zero_line_y} != {zero_line_y}"
-
-        # Draw x tick labels
-        for index, label in enumerate(self.x_labels):
-            x = (
-                self.x_left_padding
-                + index * bar_spacing
-                + (bar_spacing - total_bars_width) / 2
-                + bar_width * (bar_series_across - 1) / 2
-            )
-            y = self.height - self.y_bottom_padding + 5
-            if label is not None and self.rotate_x_labels:
-                self.svg_elements.append(
-                    f'<text x="{x}" y="{y}" text-anchor="end" font-size="10" transform="rotate(-90 {x} {y})" fill="{self.text_color}">{label}</text>'
-                )
-            elif label is not None and not self.rotate_x_labels:
-                self.svg_elements.append(
-                    f'<text x="{x}" y="{y+10}" text-anchor="middle" font-size="10" fill="{self.text_color}">{label}</text>'
-                )
-
-        # Draw primary y-axis ticks and values
-        for tick_value in primary_ticks:
-            tick_y = (
-                self.height
-                - self.y_bottom_padding
-                - (tick_value - adjusted_min_value_primary) * scale_primary
-            )
-            tick_label = f"{human_readable_number(tick_value)}"
-
-            self.svg_elements.append(
-                f'<text x="{self.x_left_padding - 5}" y="{tick_y + 3}" text-anchor="end" font-size="10" fill="{self.text_color}">{tick_label}</text>'
-            )
-            self.svg_elements.append(
-                f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
-            )
-
-        # Draw secondary y-axis ticks and values if needed
-        if has_secondary:
-            for tick_value in secondary_ticks:
-                tick_y = (
-                    self.height
-                    - self.y_bottom_padding
-                    - (tick_value - adjusted_min_value_secondary) * scale_secondary
-                )
-                tick_label = f"{human_readable_number(tick_value)}"
-
-                self.svg_elements.append(
-                    f'<text x="{self.width - self.x_right_padding + 5}" y="{tick_y + 3}" text-anchor="start" font-size="10" fill="{self.text_color}">{tick_label}</text>'
-                )
-                self.svg_elements.append(
-                    f'<line x1="{self.width - self.x_right_padding}" y1="{tick_y}" x2="{self.width - self.x_right_padding + 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
-                )
-
-        # Draw axis labels
-        if self.x_axis_label:
-            x_label_x = (
-                self.width - self.x_left_padding - self.x_right_padding
-            ) / 2 + self.x_left_padding
-            x_label_y = self.height - self.y_bottom_padding / 4
-            self.svg_elements.append(
-                f'<text x="{x_label_x}" y="{x_label_y}" text-anchor="middle" font-size="12" fill="{self.text_color}">{self.x_axis_label}</text>'
-            )
-
-        if self.primary_y_axis_label:
-            y_label_x = self.x_left_padding / 4
-            y_label_y = (
-                self.height - self.y_top_padding - self.y_bottom_padding
-            ) / 2 + self.y_top_padding
-            self.svg_elements.append(
-                f'<text x="{y_label_x}" y="{y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {y_label_x} {y_label_y})" fill="{self.text_color}">{self.primary_y_axis_label}</text>'
-            )
-
-        if any(self.secondary) and self.secondary_y_axis_label:
-            sec_y_label_x = self.width - self.x_right_padding / 4
-            sec_y_label_y = self.height / 2
-            self.svg_elements.append(
-                f'<text x="{sec_y_label_x}" y="{sec_y_label_y}" text-anchor="middle" font-size="12" transform="rotate(-90 {sec_y_label_x} {sec_y_label_y})" fill="{self.text_color}">{self.secondary_y_axis_label}</text>'
-            )
-
-        # TODO: Make these calculate dynamically based on elements
-        self.most_extreme_dimensions = {
-            "left": self.x_left_padding,
-            "right": self.width - self.x_right_padding,
-            "top": self.y_top_padding,
-            "bottom": self.height - self.y_bottom_padding,
-        }
 
         return self._generate_svg()

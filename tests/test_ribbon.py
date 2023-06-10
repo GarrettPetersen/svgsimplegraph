@@ -8,10 +8,7 @@ def test_ribbon_graph():
         width=600,
         height=400,
         bar_width=30,
-        x_left_padding=30,
-        x_right_padding=60,
-        y_top_padding=40,
-        y_bottom_padding=30,
+        title="Ribbon Graph",
     )
 
     graph.x_labels = ["A", "B", "C", "D", "E"]
