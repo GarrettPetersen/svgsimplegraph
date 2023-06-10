@@ -95,6 +95,7 @@ class BaseGraph:
         rotation=None,
         additional_attributes=None,
     ):
+        text = str(text)
         if not fill:
             fill = self.text_color
         # Start building the SVG text element
