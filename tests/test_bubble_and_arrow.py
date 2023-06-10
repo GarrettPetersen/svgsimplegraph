@@ -7,6 +7,7 @@ def test_bubble_and_arrow_graph():
     graph = BubbleAndArrowGraph(
         width=600,
         height=600,
+        title="Bubble and Arrow Graph",
     )
 
     graph.add_bubble(100, None, "Bubble 0")

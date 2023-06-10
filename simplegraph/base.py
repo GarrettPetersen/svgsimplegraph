@@ -35,6 +35,8 @@ class BaseGraph:
         rotate_x_labels=True,
         background_color=None,
         dark_mode=None,
+        title=None,
+        title_font_size=16,
     ):
         self.width = width
         self.height = height
@@ -59,6 +61,8 @@ class BaseGraph:
             self.dark_mode = is_dark(background_color)
         elif dark_mode is None:
             self.dark_mode = False
+        self.title = title
+        self.title_font_size = title_font_size
         self.defs = []
         self.svg_elements = []
 
@@ -180,6 +184,24 @@ class BaseGraph:
         """
         Generate the SVG string from the styles and elements.
         """
+        if self.title:
+            title_x_position = (
+                max(self.width, self.most_extreme_dimensions["right"])
+                - min(0, self.most_extreme_dimensions["left"])
+            ) / 2
+            title_y_position = min(0, self.most_extreme_dimensions["top"]) - 10
+            self.svg_elements.append(
+                self._generate_text(
+                    self.title,
+                    title_x_position,
+                    title_y_position,
+                    font_size=self.title_font_size,
+                    fill=self.text_color,
+                    anchor="middle",
+                    dominant_baseline="text-top",
+                )
+            )
+
         viewbox_width = (
             self.most_extreme_dimensions["right"]
             - self.most_extreme_dimensions["left"]

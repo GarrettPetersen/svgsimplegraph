@@ -12,6 +12,7 @@ def test_categorical_graph():
         x_right_padding=120,
         y_top_padding=10,
         y_bottom_padding=30,
+        title="Categorical Graph",
     )
 
     graph.x_labels = ["A", "B", "C", "D", "E"]

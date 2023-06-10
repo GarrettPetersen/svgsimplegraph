@@ -12,6 +12,7 @@ def test_ribbon_graph():
         x_right_padding=60,
         y_top_padding=40,
         y_bottom_padding=30,
+        title="Ribbon Graph",
     )
 
     graph.x_labels = ["A", "B", "C", "D", "E"]
