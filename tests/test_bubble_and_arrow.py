@@ -5,8 +5,8 @@ from simplegraph.bubble_and_arrow import BubbleAndArrowGraph
 
 def test_bubble_and_arrow_graph():
     graph = BubbleAndArrowGraph(
-        width=600,
-        height=600,
+        width=400,
+        height=400,
         title="Bubble and Arrow Graph",
     )
 

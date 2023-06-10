@@ -8,10 +8,6 @@ def test_categorical_graph():
         width=600,
         height=400,
         bar_width=30,
-        x_left_padding=40,
-        x_right_padding=120,
-        y_top_padding=10,
-        y_bottom_padding=30,
         title="Categorical Graph",
     )
 

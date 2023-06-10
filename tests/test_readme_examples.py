@@ -75,8 +75,8 @@ def test_bubble_and_arrow():
     from simplegraph import BubbleAndArrowGraph
 
     graph = BubbleAndArrowGraph(
-        width=600,
-        height=600,
+        width=400,
+        height=400,
         background_color="#ffffff",
     )
 

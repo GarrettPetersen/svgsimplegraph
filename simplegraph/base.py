@@ -185,10 +185,7 @@ class BaseGraph:
         Generate the SVG string from the styles and elements.
         """
         if self.title:
-            title_x_position = (
-                max(self.width, self.most_extreme_dimensions["right"])
-                - min(0, self.most_extreme_dimensions["left"])
-            ) / 2
+            title_x_position = self.width / 2
             title_y_position = min(0, self.most_extreme_dimensions["top"]) - 10
             self.svg_elements.append(
                 self._generate_text(

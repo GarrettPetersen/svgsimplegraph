@@ -20,7 +20,7 @@ class BubbleAndArrowGraph(BaseGraph):
         self,
         width=300,
         height=200,
-        padding=10,
+        padding=20,
         x_padding=None,
         y_padding=None,
         y_top_padding=None,
@@ -237,9 +237,7 @@ class BubbleAndArrowGraph(BaseGraph):
         )
 
         # With this circle radius, determine the diameter and add some inter-bubble space
-        min_diameter = 2 * (
-            min_circle_radius + largest_radii[-1] * (1 + inter_bubble_space)
-        )
+        min_diameter = 2 * min_circle_radius
 
         # Now compute the scaling factor to fit this minimum circle within the canvas
         scaling_factor = min(self.width, self.height) / min_diameter
