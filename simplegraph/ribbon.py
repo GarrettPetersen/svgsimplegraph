@@ -126,9 +126,7 @@ class RibbonGraph(BaseGraph):
         adjusted_max_value = primary_ticks[-1]
         adjusted_min_value = primary_ticks[0]
 
-        scale_primary = (self.height - self.y_top_padding - self.y_bottom_padding) / (
-            adjusted_max_value - adjusted_min_value
-        )
+        scale_primary = (self.height) / (adjusted_max_value - adjusted_min_value)
 
         self.defs.append(
             "<linearGradient id='legend_grad' x1='0%' y1='0%' x2='0%' y2='100%'>"
@@ -138,12 +136,10 @@ class RibbonGraph(BaseGraph):
 
         # Draw legend
         if self.show_legend:
-            third_graph_width = (
-                self.width - self.x_left_padding - self.x_right_padding
-            ) / 3
-            graph_height = self.height - self.y_top_padding - self.y_bottom_padding
-            top_legend_x = self.x_left_padding + third_graph_width
-            top_legend_y = (self.y_top_padding / 2) - (self.bar_width / 2)
+            third_graph_width = (self.width) / 3
+            graph_height = self.height
+            top_legend_x = third_graph_width
+            top_legend_y = -(self.bar_width / 2)
             half_bar_width = self.bar_width / 2
 
             self.svg_elements.append(
@@ -169,10 +165,8 @@ class RibbonGraph(BaseGraph):
             )
 
             if color_series_present:
-                right_legend_x = (
-                    self.width - (self.x_right_padding / 2) - (self.bar_width / 2)
-                )
-                right_legend_y = self.y_top_padding
+                right_legend_x = self.width + 10 - (self.bar_width / 2)
+                right_legend_y = 0
                 right_legend_y_middle = right_legend_y + graph_height / 2
 
                 self.svg_elements.append(
@@ -209,21 +203,15 @@ class RibbonGraph(BaseGraph):
 
         # Draw ribbons
         num_ribbons = len(self.data[0])
-        bar_spacing = (self.width - self.x_left_padding - self.x_right_padding) / (
-            num_ribbons + 1 / 2
-        )
+        bar_spacing = (self.width) / (num_ribbons + 1 / 2)
 
         for index in range(num_ribbons):
-            x = (index + 1 / 2) * bar_spacing + self.x_left_padding
+            x = (index + 1 / 2) * bar_spacing
             y1 = (
-                self.height
-                - self.y_bottom_padding
-                - (self.data[0][index] - adjusted_min_value) * scale_primary
+                self.height - (self.data[0][index] - adjusted_min_value) * scale_primary
             )
             y2 = (
-                self.height
-                - self.y_bottom_padding
-                - (self.data[1][index] - adjusted_min_value) * scale_primary
+                self.height - (self.data[1][index] - adjusted_min_value) * scale_primary
             )
             color = self.colors[0]
             if color_series_present:
@@ -294,26 +282,22 @@ class RibbonGraph(BaseGraph):
 
         # Draw axis
         self.svg_elements.append(
-            f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+            f'<line x1="0" y1="0" x2="0" y2="{self.height}" stroke="{self.text_color}" stroke-width="1" />'
         )
         if adjusted_min_value < 0 and adjusted_max_value > 0:
-            zero_line = (
-                self.height
-                - self.y_bottom_padding
-                - (0 - adjusted_min_value) * scale_primary
-            )
+            zero_line = self.height - (0 - adjusted_min_value) * scale_primary
             self.svg_elements.append(
-                f'<line x1="{self.x_left_padding}" y1="{zero_line}" x2="{self.width - self.x_right_padding}" y2="{zero_line}" stroke="{self.text_color}" stroke-width="1" />'
+                f'<line x1="0" y1="{zero_line}" x2="{self.width}" y2="{zero_line}" stroke="{self.text_color}" stroke-width="1" />'
             )
         else:
             self.svg_elements.append(
-                f'<line x1="{self.x_left_padding}" y1="{self.height - self.y_bottom_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+                f'<line x1="0" y1="{self.height}" x2="{self.width}" y2="{self.height}" stroke="{self.text_color}" stroke-width="1" />'
             )
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
-            x = (index + 1 / 2) * bar_spacing + self.x_left_padding + self.bar_width / 2
-            y = self.height - self.y_bottom_padding + 5
+            x = (index + 1 / 2) * bar_spacing + self.bar_width / 2
+            y = self.height + 5
             if label is not None and self.rotate_x_labels:
                 self.svg_elements.append(
                     self._generate_text(
@@ -329,32 +313,26 @@ class RibbonGraph(BaseGraph):
 
         # Draw primary y-axis ticks and values
         for tick_value in primary_ticks:
-            tick_y = (
-                self.height
-                - self.y_bottom_padding
-                - (tick_value - adjusted_min_value) * scale_primary
-            )
+            tick_y = self.height - (tick_value - adjusted_min_value) * scale_primary
             tick_label = f"{human_readable_number(tick_value)}"
 
             self.svg_elements.append(
                 self._generate_text(
                     tick_label,
-                    self.x_left_padding - 5,
+                    -5,
                     tick_y + 3,
                     fill=self.text_color,
                     anchor="end",
                 )
             )
             self.svg_elements.append(
-                f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
+                f'<line x1="0" y1="{tick_y}" x2="-3" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
             )
 
         # Draw axis labels
         if self.x_axis_label:
-            x_label_x = (
-                self.width - self.x_left_padding - self.x_right_padding
-            ) / 2 + self.x_left_padding
-            x_label_y = self.height - self.y_bottom_padding / 4
+            x_label_x = (self.width) / 2
+            x_label_y = self.height + 5
             self.svg_elements.append(
                 self._generate_text(
                     self.x_axis_label,
@@ -367,10 +345,8 @@ class RibbonGraph(BaseGraph):
             )
 
         if self.primary_y_axis_label:
-            y_label_x = self.x_left_padding / 4
-            y_label_y = (
-                self.height - self.y_top_padding - self.y_bottom_padding
-            ) / 2 + self.y_top_padding
+            y_label_x = -5
+            y_label_y = (self.height) / 2
             self.svg_elements.append(
                 self._generate_text(
                     self.primary_y_axis_label,
