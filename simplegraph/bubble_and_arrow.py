@@ -36,6 +36,8 @@ class BubbleAndArrowGraph(BaseGraph):
         rotate_x_labels=True,
         background_color=None,
         dark_mode=None,
+        title=None,
+        title_font_size=None,
     ):
         super().__init__(
             width=width,
@@ -56,6 +58,8 @@ class BubbleAndArrowGraph(BaseGraph):
             rotate_x_labels=rotate_x_labels,
             background_color=background_color,
             dark_mode=dark_mode,
+            title=title,
+            title_font_size=title_font_size,
         )
         self.bubbles = []
         self.arrows = []

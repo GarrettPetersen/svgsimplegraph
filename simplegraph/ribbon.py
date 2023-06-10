@@ -34,6 +34,8 @@ class RibbonGraph(BaseGraph):
         color_range=None,
         background_color=None,
         dark_mode=None,
+        title=None,
+        title_font_size=None,
     ):
         super().__init__(
             width=width,
@@ -53,6 +55,8 @@ class RibbonGraph(BaseGraph):
             rotate_x_labels=rotate_x_labels,
             background_color=background_color,
             dark_mode=dark_mode,
+            title=title,
+            title_font_size=title_font_size,
         )
         self.bar_width = bar_width
         self.x_labels = []
