@@ -249,7 +249,13 @@ class CategoricalGraph(BaseGraph):
                 if series_type == "dot" or series_type == "line" or self.stacked:
                     x = sub_index * bar_spacing + (bar_spacing - bar_width) / 2
                 else:
-                    x = sub_index * bar_spacing + bar_count * bar_width
+                    # Calculate the starting x-position of the bars in each category
+                    start_x = (
+                        sub_index * bar_spacing + (bar_spacing - total_bars_width) / 2
+                    )
+                    x = (
+                        start_x + bar_count * bar_width - bar_width / 2
+                    )  # Adjusting by half of the bar width
                     bar_count += 1
                 scale = scale_secondary if secondary_value else scale_primary
                 min_value = (
