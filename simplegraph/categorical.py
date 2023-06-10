@@ -81,6 +81,7 @@ class CategoricalGraph(BaseGraph):
         title=None,
         title_font_size=None,
         element_spacing=None,
+        watermark=None,
     ):
         super().__init__(
             width=width,
@@ -104,6 +105,7 @@ class CategoricalGraph(BaseGraph):
             title=title,
             title_font_size=title_font_size,
             element_spacing=element_spacing,
+            watermark=watermark,
         )
         self.stacked = stacked
         self.bar_width = bar_width
@@ -415,7 +417,7 @@ class CategoricalGraph(BaseGraph):
             x_label_x = (self.width) / 2
             x_label_y = (
                 max(self.height, self.most_extreme_dimensions["bottom"])
-                + 2 * self.element_spacing
+                + 1.5 * self.element_spacing
             )
             self.svg_elements.append(
                 self._generate_text(

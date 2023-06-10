@@ -38,6 +38,7 @@ class BaseGraph:
         title=None,
         title_font_size=None,
         element_spacing=None,
+        watermark=None,
     ):
         self.width = width
         self.height = height
@@ -67,6 +68,7 @@ class BaseGraph:
         self.defs = []
         self.svg_elements = []
         self.element_spacing = element_spacing or 10
+        self.watermark = watermark
 
         # Use dark colors last if in dark mode and using default color palette
         if self.colors == DEFAULT_COLOR_PALETTE and self.dark_mode:
@@ -230,6 +232,13 @@ class BaseGraph:
                 f"<rect x='{viewbox_left}' y='{viewbox_top}' width='{viewbox_width}' height='{viewbox_height}' "
                 + f"rx='10' ry='10' fill='{self.background_color}' />"
             )
+
+        if self.watermark:
+            if not isinstance(self.watermark, str):
+                raise ValueError("Watermark must be a string.")
+            if not (self.watermark.startswith("<") and self.watermark.endswith(">")):
+                raise ValueError("Watermark must be a valid SVG snippet.")
+            self.svg_elements.append(self.watermark)
 
         defs_str = ""
         if self.defs:
