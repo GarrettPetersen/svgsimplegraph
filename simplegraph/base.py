@@ -7,6 +7,7 @@ import math
 from .utils import DEFAULT_COLOR_PALETTE
 from .utils import is_dark
 from .utils import estimate_text_dimensions
+from .utils import human_readable_number
 
 
 class BaseGraph:
@@ -95,6 +96,8 @@ class BaseGraph:
         rotation=None,
         additional_attributes=None,
     ):
+        if isinstance(text, int) or isinstance(text, float):
+            text = human_readable_number(text)
         text = str(text)
         if not fill:
             fill = self.text_color
