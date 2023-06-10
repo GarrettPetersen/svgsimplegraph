@@ -4,7 +4,8 @@ This is a simple little graphing package for making graphs and exporting them as
 
 You can also upload the SVGs to your GitHub account as Gists, so they may be embedded in any website!
 
-## Categorical Graph
+## Graph Types
+### Categorical Graph
 
 The categorical graph is for data that comes in distinct categories. It can generate a bar chart, a stacked bar chart, dots, or lines.
 
@@ -43,7 +44,7 @@ print(raw_svg)
 ```
 ![Example categorical graph](images/example_categorical.svg)
 
-## Ribbon Graph
+### Ribbon Graph
 
 The ribbon graph is for comparing two numbers on the same scale and a third number on a different scale (represented through color).
 
@@ -84,7 +85,7 @@ print(raw_svg)
 ```
 ![Example ribbon graph](images/example_ribbon.svg)
 
-## Bubble and Arrow Graph
+### Bubble and Arrow Graph
 The bubble and arrow graph is for displaying relationships between nodes in a network.
 
 The user adds bubbles, which are displayed in clockwise order around a larger circle. Then the user can add arrows that exit from one bubble and enter another. Arrow width is scaled to show more important connections.
@@ -180,3 +181,7 @@ svg_url = graph.upload_to_github_gist(GITHUB_ACCESS_TOKEN, "my_categorical_graph
 ```
 
 The `svg_url` variable now contains a string with the url of your new SVG, ready to be embedded in any website!
+
+## Watermarks
+
+When you initialize a graph, you can use the watermark variable to add arbitrary svg code to the graph. It is recommended to make your watermark partially transparent, as it will be placed on top of your graph.
