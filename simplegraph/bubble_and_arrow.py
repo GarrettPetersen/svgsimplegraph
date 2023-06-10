@@ -38,6 +38,7 @@ class BubbleAndArrowGraph(BaseGraph):
         dark_mode=None,
         title=None,
         title_font_size=None,
+        element_spacing=None,
     ):
         super().__init__(
             width=width,
@@ -60,6 +61,7 @@ class BubbleAndArrowGraph(BaseGraph):
             dark_mode=dark_mode,
             title=title,
             title_font_size=title_font_size,
+            element_spacing=element_spacing,
         )
         self.bubbles = []
         self.arrows = []

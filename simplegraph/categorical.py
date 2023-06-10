@@ -80,6 +80,7 @@ class CategoricalGraph(BaseGraph):
         dark_mode=None,
         title=None,
         title_font_size=None,
+        element_spacing=None,
     ):
         super().__init__(
             width=width,
@@ -102,6 +103,7 @@ class CategoricalGraph(BaseGraph):
             dark_mode=dark_mode,
             title=title,
             title_font_size=title_font_size,
+            element_spacing=element_spacing,
         )
         self.stacked = stacked
         self.bar_width = bar_width
@@ -411,7 +413,10 @@ class CategoricalGraph(BaseGraph):
         # Draw axis labels
         if self.x_axis_label:
             x_label_x = (self.width) / 2
-            x_label_y = max(self.height, self.most_extreme_dimensions["bottom"]) + 5
+            x_label_y = (
+                max(self.height, self.most_extreme_dimensions["bottom"])
+                + self.element_spacing
+            )
             self.svg_elements.append(
                 self._generate_text(
                     self.x_axis_label,
@@ -423,7 +428,9 @@ class CategoricalGraph(BaseGraph):
             )
 
         if self.primary_y_axis_label:
-            y_label_x = min(0, self.most_extreme_dimensions["left"]) - 5
+            y_label_x = (
+                min(0, self.most_extreme_dimensions["left"]) - self.element_spacing
+            )
             y_label_y = (self.height) / 2
             self.svg_elements.append(
                 self._generate_text(
@@ -437,7 +444,10 @@ class CategoricalGraph(BaseGraph):
             )
 
         if any(self.secondary) and self.secondary_y_axis_label:
-            sec_y_label_x = max(self.width, self.most_extreme_dimensions["right"]) + 5
+            sec_y_label_x = (
+                max(self.width, self.most_extreme_dimensions["right"])
+                + self.element_spacing
+            )
             sec_y_label_y = self.height / 2
             self.svg_elements.append(
                 self._generate_text(

@@ -37,6 +37,7 @@ class BaseGraph:
         dark_mode=None,
         title=None,
         title_font_size=None,
+        element_spacing=None,
     ):
         self.width = width
         self.height = height
@@ -65,6 +66,7 @@ class BaseGraph:
         self.title_font_size = title_font_size or 16
         self.defs = []
         self.svg_elements = []
+        self.element_spacing = element_spacing or 10
 
         # Use dark colors last if in dark mode and using default color palette
         if self.colors == DEFAULT_COLOR_PALETTE and self.dark_mode:
@@ -186,7 +188,9 @@ class BaseGraph:
         """
         if self.title:
             title_x_position = self.width / 2
-            title_y_position = min(0, self.most_extreme_dimensions["top"]) - 10
+            title_y_position = (
+                min(0, self.most_extreme_dimensions["top"]) - self.element_spacing
+            )
             self.svg_elements.append(
                 self._generate_text(
                     self.title,

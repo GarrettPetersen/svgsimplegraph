@@ -36,6 +36,7 @@ class RibbonGraph(BaseGraph):
         dark_mode=None,
         title=None,
         title_font_size=None,
+        element_spacing=None,
     ):
         super().__init__(
             width=width,
@@ -57,6 +58,7 @@ class RibbonGraph(BaseGraph):
             dark_mode=dark_mode,
             title=title,
             title_font_size=title_font_size,
+            element_spacing=element_spacing,
         )
         self.bar_width = bar_width
         self.x_labels = []
@@ -143,11 +145,14 @@ class RibbonGraph(BaseGraph):
             third_graph_width = (self.width) / 3
             graph_height = self.height
             top_legend_x = third_graph_width
-            top_legend_y = -(self.bar_width / 2)
             half_bar_width = self.bar_width / 2
+            top_legend_y = -self.bar_width - self.element_spacing
 
             self.svg_elements.append(
                 f'<path d="M{top_legend_x} {top_legend_y} h{third_graph_width} l{half_bar_width} {half_bar_width} l-{half_bar_width} {half_bar_width} h-{third_graph_width} l{half_bar_width} -{half_bar_width}" fill="{self.colors[0]}" />'
+            )
+            self.most_extreme_dimensions["top"] = min(
+                top_legend_y - half_bar_width, self.most_extreme_dimensions["top"]
             )
             self.svg_elements.append(
                 self._generate_text(
@@ -336,7 +341,10 @@ class RibbonGraph(BaseGraph):
         # Draw axis labels
         if self.x_axis_label:
             x_label_x = (self.width) / 2
-            x_label_y = self.height + 5
+            x_label_y = (
+                max(self.height, self.most_extreme_dimensions["bottom"])
+                + self.element_spacing
+            )
             self.svg_elements.append(
                 self._generate_text(
                     self.x_axis_label,
@@ -349,7 +357,9 @@ class RibbonGraph(BaseGraph):
             )
 
         if self.primary_y_axis_label:
-            y_label_x = -5
+            y_label_x = (
+                min(0, self.most_extreme_dimensions["left"]) - self.element_spacing
+            )
             y_label_y = (self.height) / 2
             self.svg_elements.append(
                 self._generate_text(
