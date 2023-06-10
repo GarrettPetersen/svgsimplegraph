@@ -210,52 +210,6 @@ class CategoricalGraph(BaseGraph):
         else:
             scale_secondary = None
 
-        # Draw legend
-        if self.show_legend:
-            legend_spacing = 5
-            legend_rect_size = 10
-            legend_x = self.width + legend_spacing
-            if has_secondary:
-                legend_x += 10
-            legend_y = 0
-
-            for index, label in enumerate(self.legend_labels):
-                series_type, _ = self.series_types[index]
-                if series_type == "dot":
-                    self.svg_elements.append(
-                        self._draw_dot(
-                            legend_x + legend_rect_size / 2,
-                            legend_y + legend_rect_size / 2,
-                            radius=5,
-                            fill=self.colors[index],
-                        )
-                    )
-                elif series_type == "line":
-                    self.svg_elements.append(
-                        self._draw_line(
-                            legend_x,
-                            legend_y + legend_rect_size / 2,
-                            legend_x + legend_rect_size,
-                            legend_y + legend_rect_size / 2,
-                            stroke=self.colors[index],
-                        )
-                    )
-                else:  # series_type == "bar"
-                    self.svg_elements.append(
-                        f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" '
-                        + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
-                    )
-                self.svg_elements.append(
-                    self._generate_text(
-                        label,
-                        legend_x + legend_rect_size + legend_spacing,
-                        legend_y + (2 / 3) * legend_rect_size,
-                        fill=self.text_color,
-                        anchor="start",
-                    )
-                )
-                legend_y += (2 * legend_spacing) + legend_rect_size
-
         # Draw series
         bar_spacing = (self.width) / len(self.data[0])
         bar_series_across = (
@@ -453,7 +407,7 @@ class CategoricalGraph(BaseGraph):
         # Draw axis labels
         if self.x_axis_label:
             x_label_x = (self.width) / 2
-            x_label_y = self.height + 5
+            x_label_y = max(self.height, self.most_extreme_dimensions["bottom"]) + 5
             self.svg_elements.append(
                 self._generate_text(
                     self.x_axis_label,
@@ -465,7 +419,7 @@ class CategoricalGraph(BaseGraph):
             )
 
         if self.primary_y_axis_label:
-            y_label_x = -5
+            y_label_x = min(0, self.most_extreme_dimensions["left"]) - 5
             y_label_y = (self.height) / 2
             self.svg_elements.append(
                 self._generate_text(
@@ -479,7 +433,7 @@ class CategoricalGraph(BaseGraph):
             )
 
         if any(self.secondary) and self.secondary_y_axis_label:
-            sec_y_label_x = self.width + 5
+            sec_y_label_x = max(self.width, self.most_extreme_dimensions["right"]) + 5
             sec_y_label_y = self.height / 2
             self.svg_elements.append(
                 self._generate_text(
@@ -491,5 +445,53 @@ class CategoricalGraph(BaseGraph):
                     rotation=-90,
                 )
             )
+
+        # Draw legend
+        if self.show_legend:
+            legend_spacing = 5
+            legend_rect_size = 10
+            legend_x = (
+                max(self.width, self.most_extreme_dimensions["right"]) + legend_spacing
+            )
+            if has_secondary:
+                legend_x += 10
+            legend_y = 0
+
+            for index, label in enumerate(self.legend_labels):
+                series_type, _ = self.series_types[index]
+                if series_type == "dot":
+                    self.svg_elements.append(
+                        self._draw_dot(
+                            legend_x + legend_rect_size / 2,
+                            legend_y + legend_rect_size / 2,
+                            radius=5,
+                            fill=self.colors[index],
+                        )
+                    )
+                elif series_type == "line":
+                    self.svg_elements.append(
+                        self._draw_line(
+                            legend_x,
+                            legend_y + legend_rect_size / 2,
+                            legend_x + legend_rect_size,
+                            legend_y + legend_rect_size / 2,
+                            stroke=self.colors[index],
+                        )
+                    )
+                else:  # series_type == "bar"
+                    self.svg_elements.append(
+                        f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" '
+                        + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
+                    )
+                self.svg_elements.append(
+                    self._generate_text(
+                        label,
+                        legend_x + legend_rect_size + legend_spacing,
+                        legend_y + (2 / 3) * legend_rect_size,
+                        fill=self.text_color,
+                        anchor="start",
+                    )
+                )
+                legend_y += (2 * legend_spacing) + legend_rect_size
 
         return self._generate_svg()

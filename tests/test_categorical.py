@@ -17,6 +17,7 @@ def test_categorical_graph():
     graph.x_labels = ["A", "B", "C", "D", "E"]
     graph.x_axis_label = "X Axis"
     graph.primary_y_axis_label = "Primary Y Axis"
+    graph.secondary_y_axis_label = "Secondary Y Axis"
 
     graph.add_series([10, 20, -30, 40, 50], legend_label="Series 1")
     graph.add_series([15, 25, -5, 44, 56], legend_label="Series 2")
