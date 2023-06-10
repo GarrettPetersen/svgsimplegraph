@@ -464,10 +464,10 @@ class CategoricalGraph(BaseGraph):
 
         # Draw legend
         if self.show_legend:
-            legend_spacing = 5
             legend_rect_size = 10
             legend_x = (
-                max(self.width, self.most_extreme_dimensions["right"]) + legend_spacing
+                max(self.width, self.most_extreme_dimensions["right"])
+                + self.element_spacing / 2
             )
             if has_secondary:
                 legend_x += 10
@@ -502,12 +502,18 @@ class CategoricalGraph(BaseGraph):
                 self.svg_elements.append(
                     self._generate_text(
                         label,
-                        legend_x + legend_rect_size + legend_spacing,
+                        legend_x + legend_rect_size + self.element_spacing / 2,
                         legend_y + (2 / 3) * legend_rect_size,
                         fill=self.text_color,
                         anchor="start",
                     )
                 )
-                legend_y += (2 * legend_spacing) + legend_rect_size
+                legend_y += self.element_spacing + legend_rect_size
+                if legend_y + legend_rect_size > self.height:
+                    legend_y = 0
+                    legend_x = (
+                        max(self.width, self.most_extreme_dimensions["right"])
+                        + self.element_spacing / 2
+                    )
 
         return self._generate_svg()

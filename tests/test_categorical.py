@@ -38,14 +38,27 @@ def test_categorical_graph():
 
     print(f"\n<img src='{svg_base64}' />")
 
+    # Add a ton of series to test the two-column legend
+    graph.add_series([5, 44, -10, 56, 15], legend_label="Series 5")
+    graph.add_series([0.35, 6, 0.25, 0.05, 0.44], legend_label="Series 6")
+    graph.add_series([5, 5, 10, 33, 40], legend_label="Series 7")
+    graph.add_series([0.35, 0.56, 0.25, 0.05, 0.44], legend_label="Series 8")
+    graph.add_series([5, 35, 10, 23, 40], legend_label="Series 9")
+    graph.add_series([0.35, 0.56, 0.25, 0.05, 0.44], legend_label="Series 10")
+    graph.add_series([5, 35, 10, 3, 40], legend_label="Series 11")
+    graph.add_series([25, 0.56, 15, 0.05, 0.44], legend_label="Series 12")
+    graph.add_series([5, 35, 11, 33, 90], legend_label="Series 13")
+    graph.add_series([15, 6, 5, 5, 4], legend_label="Series 14")
+    graph.add_series([5, 35, 10, 33, 4], legend_label="Series 15")
+    graph.add_series([5, 5, 10, 33, 40], legend_label="Series 16")
+    graph.add_series([5, 35, 1, 33, 40], legend_label="Series 17")
+    graph.add_series([5, 35, 10, 3, 40], legend_label="Series 18")
+    graph.add_series([5, 35, 10, 33, 4], legend_label="Series 19")
+    graph.add_series([15, 15, 10, 11, 40], legend_label="Series 20")
+
+    graph.height = 300
+
     graph.stacked = True
 
     stacked_base64 = graph.to_base64_src()
     print(f"\n<img src='{stacked_base64}' />")
-
-    graph.add_series([5, 44, -10, 56, 15], legend_label="Series 5")
-    graph.stacked = False
-
-    # Get the SVG string in base64 format
-    svg_base64 = graph.to_base64_src()
-    print(f"\n<img src='{svg_base64}' />")
