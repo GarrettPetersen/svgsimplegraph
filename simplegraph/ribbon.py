@@ -143,7 +143,6 @@ class RibbonGraph(BaseGraph):
         # Draw legend
         if self.show_legend:
             third_graph_width = (self.width) / 3
-            graph_height = self.height
             top_legend_x = third_graph_width
             half_bar_width = self.bar_width / 2
             top_legend_y = -self.bar_width - self.element_spacing
@@ -174,12 +173,15 @@ class RibbonGraph(BaseGraph):
             )
 
             if color_series_present:
-                right_legend_x = self.width + 10 - (self.bar_width / 2)
+                right_legend_x = (
+                    max(self.width, self.most_extreme_dimensions["right"])
+                    + self.element_spacing
+                )
                 right_legend_y = 0
-                right_legend_y_middle = right_legend_y + graph_height / 2
+                right_legend_y_middle = right_legend_y + self.height / 2
 
                 self.svg_elements.append(
-                    f'<rect x="{right_legend_x}" y="{right_legend_y}" width="{self.bar_width}" height="{graph_height}" fill="url(#legend_grad)" />'
+                    f'<rect x="{right_legend_x}" y="{right_legend_y}" width="{self.bar_width}" height="{self.height}" fill="url(#legend_grad)" />'
                 )
                 self.svg_elements.append(
                     self._generate_text(
@@ -204,7 +206,7 @@ class RibbonGraph(BaseGraph):
                     self._generate_text(
                         human_readable_number(min_color_range),
                         right_legend_x + self.bar_width + 5,
-                        right_legend_y + graph_height,
+                        right_legend_y + self.height,
                         fill=self.text_color,
                         anchor="start",
                     )

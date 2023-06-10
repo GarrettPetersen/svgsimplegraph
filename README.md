@@ -23,6 +23,7 @@ graph = CategoricalGraph(
         y_bottom_padding=40,
         stacked=False,
         background_color="#404040",
+        title="Categorical Graph",
     )
 
 graph.x_labels = ["A", "B", "C", "D", "E"]
@@ -66,6 +67,7 @@ graph = RibbonGraph(
     y_top_padding=40,
     y_bottom_padding=30,
     background_color="#404040",
+    title="Ribbon Graph",
 )
 
 graph.x_labels = ["A", "B", "C", "D", "E"]
@@ -103,6 +105,7 @@ graph = BubbleAndArrowGraph(
     width=400,
     height=400,
     background_color="#ffffff",
+    title="Bubble and Arrow Graph",
 )
 
 # Optional str label param can be referred to later when defining arrows

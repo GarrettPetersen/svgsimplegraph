@@ -14,6 +14,7 @@ def test_readme_categorical():
         y_bottom_padding=40,
         stacked=False,
         background_color="#404040",
+        title="Categorical Graph",
     )
 
     graph.x_labels = ["A", "B", "C", "D", "E"]
@@ -48,6 +49,7 @@ def test_ribbon():
         y_top_padding=40,
         y_bottom_padding=30,
         background_color="#404040",
+        title="Ribbon Graph",
     )
 
     graph.x_labels = ["A", "B", "C", "D", "E"]
@@ -78,6 +80,7 @@ def test_bubble_and_arrow():
         width=400,
         height=400,
         background_color="#ffffff",
+        title="Bubble and Arrow Graph",
     )
 
     # Optional str label param can be referred to later when defining arrows
