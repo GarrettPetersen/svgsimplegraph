@@ -36,7 +36,7 @@ class BaseGraph:
         background_color=None,
         dark_mode=None,
         title=None,
-        title_font_size=16,
+        title_font_size=None,
     ):
         self.width = width
         self.height = height
@@ -62,7 +62,7 @@ class BaseGraph:
         elif dark_mode is None:
             self.dark_mode = False
         self.title = title
-        self.title_font_size = title_font_size
+        self.title_font_size = title_font_size or 16
         self.defs = []
         self.svg_elements = []
 
