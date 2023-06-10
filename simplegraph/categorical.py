@@ -138,7 +138,7 @@ class CategoricalGraph(BaseGraph):
 
     def render(self):
         self._reset_graph()
-        graph_width = self.width - self.x_left_padding - self.x_right_padding
+        graph_width = self.width
         has_secondary = any(self.secondary)
         max_value_secondary = None
         min_value_secondary = None
@@ -200,13 +200,13 @@ class CategoricalGraph(BaseGraph):
 
         bar_width = min(max_bar_width, self.bar_width)
 
-        scale_primary = (self.height - self.y_top_padding - self.y_bottom_padding) / (
+        scale_primary = (self.height) / (
             adjusted_max_value_primary - adjusted_min_value_primary
         )
         if has_secondary:
-            scale_secondary = (
-                self.height - self.y_top_padding - self.y_bottom_padding
-            ) / (adjusted_max_value_secondary - adjusted_min_value_secondary)
+            scale_secondary = (self.height) / (
+                adjusted_max_value_secondary - adjusted_min_value_secondary
+            )
         else:
             scale_secondary = None
 
@@ -214,10 +214,10 @@ class CategoricalGraph(BaseGraph):
         if self.show_legend:
             legend_spacing = 5
             legend_rect_size = 10
-            legend_x = self.width - self.x_right_padding + legend_spacing
+            legend_x = self.width + legend_spacing
             if has_secondary:
-                legend_x += self.x_right_padding / 3
-            legend_y = self.y_top_padding
+                legend_x += 10
+            legend_y = 0
 
             for index, label in enumerate(self.legend_labels):
                 series_type, _ = self.series_types[index]
@@ -257,9 +257,7 @@ class CategoricalGraph(BaseGraph):
                 legend_y += (2 * legend_spacing) + legend_rect_size
 
         # Draw series
-        bar_spacing = (self.width - self.x_left_padding - self.x_right_padding) / len(
-            self.data[0]
-        )
+        bar_spacing = (self.width) / len(self.data[0])
         bar_series_across = (
             1
             if self.stacked
@@ -287,17 +285,9 @@ class CategoricalGraph(BaseGraph):
                 series_type, print_values = self.series_types[index]
 
                 if series_type == "dot" or series_type == "line" or self.stacked:
-                    x = (
-                        self.x_left_padding
-                        + sub_index * bar_spacing
-                        + (bar_spacing - bar_width) / 2
-                    )
+                    x = sub_index * bar_spacing + (bar_spacing - bar_width) / 2
                 else:
-                    x = (
-                        self.x_left_padding
-                        + sub_index * bar_spacing
-                        + bar_count * bar_width
-                    )
+                    x = sub_index * bar_spacing + bar_count * bar_width
                     bar_count += 1
                 scale = scale_secondary if secondary_value else scale_primary
                 min_value = (
@@ -305,7 +295,7 @@ class CategoricalGraph(BaseGraph):
                     if secondary_value
                     else adjusted_min_value_primary
                 )
-                y = self.height - self.y_bottom_padding - (value - min_value) * scale
+                y = self.height - (value - min_value) * scale
 
                 if series_type == "bar" and self.stacked:
                     bar_height = value * scale
@@ -331,8 +321,7 @@ class CategoricalGraph(BaseGraph):
                     )
                 elif series_type == "dot":
                     center_x = (
-                        self.x_left_padding
-                        + sub_index * bar_spacing
+                        sub_index * bar_spacing
                         + (bar_spacing - total_bars_width) / 2
                         + bar_width * (bar_series_across - 1) / 2
                     )
@@ -347,14 +336,11 @@ class CategoricalGraph(BaseGraph):
                 elif series_type == "line" and sub_index > 0:
                     prev_y = (
                         self.height
-                        - self.y_bottom_padding
                         - (self.data[index][sub_index - 1] - min_value) * scale
                     )
-                    prev_x = (
-                        self.x_left_padding
-                        + (sub_index - 1) * bar_spacing
-                        + (bar_spacing - bar_width) / 2
-                    )
+                    prev_x = (sub_index - 1) * bar_spacing + (
+                        bar_spacing - bar_width
+                    ) / 2
                     self.svg_elements.append(
                         self._draw_line(
                             prev_x,
@@ -382,29 +368,22 @@ class CategoricalGraph(BaseGraph):
 
         # Draw axis
         self.svg_elements.append(
-            f'<line x1="{self.x_left_padding}" y1="{self.y_top_padding}" x2="{self.x_left_padding}" '
-            + f'y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+            f'<line x1="0" y1="0" x2="0" y2="{self.height}" stroke="{self.text_color}" stroke-width="1" />'
         )
-        zero_line_y = (
-            self.height
-            - self.y_bottom_padding
-            + adjusted_min_value_primary * scale_primary
-        )
+        zero_line_y = self.height + adjusted_min_value_primary * scale_primary
         self.svg_elements.append(
-            f'<line x1="{self.x_left_padding}" y1="{zero_line_y}" '
-            + f'x2="{self.width - self.x_right_padding}" y2="{zero_line_y}" '
+            f'<line x1="0" y1="{zero_line_y}" '
+            + f'x2="{self.width}" y2="{zero_line_y}" '
             + f'stroke="{self.text_color}" stroke-width="1" />'
         )
 
         # Draw secondary y-axis if needed
         if has_secondary:
             self.svg_elements.append(
-                f'<line x1="{self.width - self.x_right_padding}" y1="{self.y_top_padding}" x2="{self.width - self.x_right_padding}" y2="{self.height - self.y_bottom_padding}" stroke="{self.text_color}" stroke-width="1" />'
+                f'<line x1="{self.width}" y1="0" x2="{self.width}" y2="{self.height}" stroke="{self.text_color}" stroke-width="1" />'
             )
             secondary_zero_line_y = (
-                self.height
-                - self.y_bottom_padding
-                + adjusted_min_value_secondary * scale_secondary
+                self.height + adjusted_min_value_secondary * scale_secondary
             )
             assert (
                 abs(secondary_zero_line_y - zero_line_y) < 1e-9
@@ -413,12 +392,11 @@ class CategoricalGraph(BaseGraph):
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
             x = (
-                self.x_left_padding
-                + index * bar_spacing
+                index * bar_spacing
                 + (bar_spacing - total_bars_width) / 2
                 + bar_width * (bar_series_across - 1) / 2
             )
-            y = self.height - self.y_bottom_padding + 5
+            y = self.height + 5
             if label is not None and self.rotate_x_labels:
                 self.svg_elements.append(
                     self._generate_text(
@@ -433,23 +411,21 @@ class CategoricalGraph(BaseGraph):
         # Draw primary y-axis ticks and values
         for tick_value in primary_ticks:
             tick_y = (
-                self.height
-                - self.y_bottom_padding
-                - (tick_value - adjusted_min_value_primary) * scale_primary
+                self.height - (tick_value - adjusted_min_value_primary) * scale_primary
             )
             tick_label = f"{human_readable_number(tick_value)}"
 
             self.svg_elements.append(
                 self._generate_text(
                     tick_label,
-                    self.x_left_padding - 5,
+                    -5,
                     tick_y + 3,
                     fill=self.text_color,
                     anchor="end",
                 )
             )
             self.svg_elements.append(
-                f'<line x1="{self.x_left_padding}" y1="{tick_y}" x2="{self.x_left_padding - 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
+                f'<line x1="0" y1="{tick_y}" x2="-3" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
             )
 
         # Draw secondary y-axis ticks and values if needed
@@ -457,7 +433,6 @@ class CategoricalGraph(BaseGraph):
             for tick_value in secondary_ticks:
                 tick_y = (
                     self.height
-                    - self.y_bottom_padding
                     - (tick_value - adjusted_min_value_secondary) * scale_secondary
                 )
                 tick_label = f"{human_readable_number(tick_value)}"
@@ -465,22 +440,20 @@ class CategoricalGraph(BaseGraph):
                 self.svg_elements.append(
                     self._generate_text(
                         tick_label,
-                        self.width - self.x_right_padding + 5,
+                        self.width + 5,
                         tick_y + 3,
                         fill=self.text_color,
                         anchor="start",
                     )
                 )
                 self.svg_elements.append(
-                    f'<line x1="{self.width - self.x_right_padding}" y1="{tick_y}" x2="{self.width - self.x_right_padding + 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
+                    f'<line x1="{self.width}" y1="{tick_y}" x2="{self.width + 3}" y2="{tick_y}" stroke="{self.text_color}" stroke-width="1" />'
                 )
 
         # Draw axis labels
         if self.x_axis_label:
-            x_label_x = (
-                self.width - self.x_left_padding - self.x_right_padding
-            ) / 2 + self.x_left_padding
-            x_label_y = self.height - self.y_bottom_padding / 4
+            x_label_x = (self.width) / 2
+            x_label_y = self.height + 5
             self.svg_elements.append(
                 self._generate_text(
                     self.x_axis_label,
@@ -492,10 +465,8 @@ class CategoricalGraph(BaseGraph):
             )
 
         if self.primary_y_axis_label:
-            y_label_x = self.x_left_padding / 4
-            y_label_y = (
-                self.height - self.y_top_padding - self.y_bottom_padding
-            ) / 2 + self.y_top_padding
+            y_label_x = -5
+            y_label_y = (self.height) / 2
             self.svg_elements.append(
                 self._generate_text(
                     self.primary_y_axis_label,
@@ -508,7 +479,7 @@ class CategoricalGraph(BaseGraph):
             )
 
         if any(self.secondary) and self.secondary_y_axis_label:
-            sec_y_label_x = self.width - self.x_right_padding / 4
+            sec_y_label_x = self.width + 5
             sec_y_label_y = self.height / 2
             self.svg_elements.append(
                 self._generate_text(
