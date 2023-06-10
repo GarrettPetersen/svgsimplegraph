@@ -234,6 +234,10 @@ class BaseGraph:
             )
 
         if self.watermark:
+            if not isinstance(self.watermark, str):
+                raise ValueError("Watermark must be a string.")
+            if not (self.watermark.startswith("<") and self.watermark.endswith(">")):
+                raise ValueError("Watermark must be a valid SVG snippet.")
             self.svg_elements.append(self.watermark)
 
         defs_str = ""
