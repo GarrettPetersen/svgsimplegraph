@@ -53,23 +53,33 @@ def boxes_overlap(x1, y1, width1, height1, x2, y2, width2, height2):
         return bottom2 - top1
 
 
-def get_color(val, min_color, max_color):
-    # Normalize RGB values to the [0, 1] range
-    min_rgb = matplotlib.colors.hex2color(min_color)
-    max_rgb = matplotlib.colors.hex2color(max_color)
+def get_color(val, colors):
+    # Convert hex colors to RGB
+    rgbs = [np.array(matplotlib.colors.hex2color(color)) for color in colors]
 
-    if val < 0:
-        return min_color
-    elif val > 1:
-        return max_color
+    # Assign values to color ranges
+    ranges = np.linspace(0, 1, len(colors))
 
-    # Compute the interpolated color's RGB values
-    interpolated_rgb = [
-        min_c + val * (max_c - min_c) for min_c, max_c in zip(min_rgb, max_rgb)
-    ]
+    # If value is outside the defined range, use the edge colors.
+    if val <= 0:
+        return colors[-1]
+    elif val >= 1:
+        return colors[0]
 
-    # Convert the interpolated RGB values back to hexadecimal color format
-    return matplotlib.colors.rgb2hex(interpolated_rgb)
+    # Find the two colors between which the value lies.
+    for i in range(len(ranges) - 1):
+        # Adjust the ranges to match the colors properly
+        low_range = ranges[i]
+        high_range = ranges[i + 1]
+        # Perform interpolation if val falls within the adjusted ranges
+        if low_range <= val < high_range:
+            t = (val - low_range) / (high_range - low_range)
+            color = rgbs[i] * (1 - t) + rgbs[i + 1] * t
+            break
+    else:
+        color = rgbs[0]  # default to the first color if no range found
+
+    return matplotlib.colors.rgb2hex(color)
 
 
 def hex_to_rgba(hex_color, alpha=1.0):

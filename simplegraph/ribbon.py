@@ -38,6 +38,7 @@ class RibbonGraph(BaseGraph):
         title_font_size=None,
         element_spacing=None,
         watermark=None,
+        num_colors=2,
     ):
         super().__init__(
             width=width,
@@ -67,6 +68,7 @@ class RibbonGraph(BaseGraph):
         self.print_values = []
         self.num_series = 0
         self.color_range = color_range
+        self.num_colors = min(num_colors, len(self.colors))
 
     def add_series(
         self,
@@ -99,14 +101,14 @@ class RibbonGraph(BaseGraph):
 
     def render(self):
         self._reset_graph()
-        self.defs = []
-        self.svg_elements = []
         assert self.num_series in [2, 3], "Two or three series are required"
 
         max_value = max(self.data[0] + self.data[1])
         min_value = min(self.data[0] + self.data[1])
 
-        color_series_present = True if self.num_series == 3 else False
+        color_series_present = (
+            True if self.num_series == 3 and self.num_colors > 1 else False
+        )
 
         if color_series_present and self.color_range:
             max_color_range = self.color_range[1]
@@ -136,11 +138,15 @@ class RibbonGraph(BaseGraph):
 
         scale_primary = (self.height) / (adjusted_max_value - adjusted_min_value)
 
-        self.defs.append(
-            "<linearGradient id='legend_grad' x1='0%' y1='0%' x2='0%' y2='100%'>"
-            + f"<stop offset='0%' style='stop-color:{self.colors[1]}' />"
-            + f"<stop offset='100%' style='stop-color:{self.colors[0]}' /></linearGradient>"
-        )
+        if color_series_present:
+            self.defs.append(
+                "<linearGradient id='legend_grad' x1='0%' y1='0%' x2='0%' y2='100%'>"
+            )
+            for i in range(self.num_colors):
+                self.defs.append(
+                    f"<stop offset='{(i/(self.num_colors-1))*100}%' style='stop-color:{self.colors[i]}' />"
+                )
+            self.defs.append("</linearGradient>")
 
         # Draw legend
         if self.show_legend:
@@ -231,7 +237,7 @@ class RibbonGraph(BaseGraph):
                 color_val = self.data[2][index]
                 color_range = max_color_range - min_color_range
                 color_percent = (color_val - min_color_range) / color_range
-                color = get_color(color_percent, self.colors[0], self.colors[1])
+                color = get_color(color_percent, self.colors[: self.num_colors])
             self.svg_elements.append(
                 self._draw_ribbon(x, y1, y2, self.bar_width, color)
             )
