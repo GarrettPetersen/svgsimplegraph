@@ -144,7 +144,7 @@ class RibbonGraph(BaseGraph):
             )
             for i in range(self.num_colors):
                 self.defs.append(
-                    f"<stop offset='{(i/(self.num_colors-1))*100}%' style='stop-color:{self.colors[i]}' />"
+                    f"<stop offset='{(i/(self.num_colors-1))*100}%' style='stop-color:{self.colors[self.num_colors-1-i]}' />"
                 )
             self.defs.append("</linearGradient>")
 

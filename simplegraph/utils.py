@@ -62,9 +62,9 @@ def get_color(val, colors):
 
     # If value is outside the defined range, use the edge colors.
     if val <= 0:
-        return colors[-1]
-    elif val >= 1:
         return colors[0]
+    elif val >= 1:
+        return colors[-1]
 
     # Find the two colors between which the value lies.
     for i in range(len(ranges) - 1):
