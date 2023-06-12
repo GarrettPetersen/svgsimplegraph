@@ -60,14 +60,26 @@ def get_color(val, colors):
     # Assign values to color ranges
     ranges = np.linspace(0, 1, len(colors))
 
-    # Find the range that val falls into
-    for i in range(len(ranges) - 1):
-        if ranges[i] <= val < ranges[i + 1]:
-            # Interpolate the color
-            t = (val - ranges[i]) / (ranges[i + 1] - ranges[i])
-            return matplotlib.colors.rgb2hex(rgbs[i] * (1 - t) + rgbs[i + 1] * t)
+    # If value is outside the defined range, use the edge colors.
+    if val <= 0:
+        return colors[-1]
+    elif val >= 1:
+        return colors[0]
 
-    return matplotlib.colors.rgb2hex(rgbs[-1])
+    # Find the two colors between which the value lies.
+    for i in range(len(ranges) - 1):
+        # Adjust the ranges to match the colors properly
+        low_range = ranges[i]
+        high_range = ranges[i + 1]
+        # Perform interpolation if val falls within the adjusted ranges
+        if low_range <= val < high_range:
+            t = (val - low_range) / (high_range - low_range)
+            color = rgbs[i] * (1 - t) + rgbs[i + 1] * t
+            break
+    else:
+        color = rgbs[0]  # default to the first color if no range found
+
+    return matplotlib.colors.rgb2hex(color)
 
 
 def hex_to_rgba(hex_color, alpha=1.0):
