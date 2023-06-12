@@ -18,7 +18,7 @@ def test_ribbon_graph():
     graph.add_series([-10, 20, 30, 40, 50], legend_label="Series 1", print_values=True)
     graph.add_series([20, 30, 40, 30, 20], legend_label="Series 2", print_values=True)
     graph.add_series(
-        [-10, -20, 30, 20, 10], legend_label="Color Series", print_values=True
+        [-11, -23, 31, 14, 9], legend_label="Color Series", print_values=True
     )
 
     # Get the SVG string in base64 format
