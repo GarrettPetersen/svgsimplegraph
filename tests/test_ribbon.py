@@ -33,6 +33,7 @@ def test_ribbon_graph():
     print(f"\n<img src='{svg_base64}' />")
 
     graph.color_range = (0, 20)
+    graph.num_colors = 3
 
     svg_base64 = graph.to_base64_src()
 
