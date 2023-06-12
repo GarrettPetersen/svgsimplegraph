@@ -155,8 +155,14 @@ class RibbonGraph(BaseGraph):
             half_bar_width = self.bar_width / 2
             top_legend_y = -self.bar_width - self.element_spacing
 
+            legend_ribbon_color = self.colors[0]
+            if color_series_present:
+                legend_ribbon_color = self.colors[int(self.num_colors / 2)]
+
             self.svg_elements.append(
-                f'<path d="M{top_legend_x} {top_legend_y} h{third_graph_width} l{half_bar_width} {half_bar_width} l-{half_bar_width} {half_bar_width} h-{third_graph_width} l{half_bar_width} -{half_bar_width}" fill="{self.colors[0]}" />'
+                f'<path d="M{top_legend_x} {top_legend_y} h{third_graph_width} '
+                + f"l{half_bar_width} {half_bar_width} l-{half_bar_width} {half_bar_width} "
+                + f'h-{third_graph_width} l{half_bar_width} -{half_bar_width}" fill="{legend_ribbon_color}" />'
             )
             self.most_extreme_dimensions["top"] = min(
                 top_legend_y - half_bar_width, self.most_extreme_dimensions["top"]
