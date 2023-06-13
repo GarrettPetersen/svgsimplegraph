@@ -276,7 +276,7 @@ class BaseGraph:
         if not filename:
             filename = "simplegraph"
         filename = f"{filename}_{epoch_time}.svg"
-        description = "test image"
+        description = filename
         public = "true"
 
         raw_svg = self.render()
