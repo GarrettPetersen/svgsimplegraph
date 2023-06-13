@@ -390,6 +390,7 @@ class CategoricalGraph(BaseGraph):
                     tick_y + 3,
                     fill=self.text_color,
                     anchor="end",
+                    dominant_baseline="text-bottom",
                 )
             )
             self.svg_elements.append(
@@ -412,6 +413,7 @@ class CategoricalGraph(BaseGraph):
                         tick_y + 3,
                         fill=self.text_color,
                         anchor="start",
+                        dominant_baseline="text-bottom",
                     )
                 )
                 self.svg_elements.append(
