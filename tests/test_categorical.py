@@ -30,7 +30,7 @@ def test_categorical_graph():
 
     print(f"\n<img src='{svg_base64}' />")
 
-    graph.add_series([15, 25, -5, 44, 56], legend_label="Series 2")
+    graph.add_series([15, 0, -5, 44, 56], legend_label="Series 2")
     graph.add_series([5, 35, 10, 33, 40], legend_label="Series 3", series_type="line")
     graph.add_series(
         [0.35, 0.56, 0.25, 0.05, 0.44],
