@@ -1,30 +1,30 @@
 <svg xmlns='http://www.w3.org/2000/svg' width='737.2' height='538.2' viewBox="-54.19999999999999 -85.0 737.2 538.2"><defs><linearGradient id='legend_grad' x1='0%' y1='0%' x2='0%' y2='100%'>
-<stop offset='0.0%' style='stop-color:#75a743' />
-<stop offset='100.0%' style='stop-color:#e8c170' />
-</linearGradient></defs><rect x='-54.19999999999999' y='-85.0' width='737.2' height='538.2' rx='10' ry='10' fill='#404040' /><path d="M200.0 -40 h200.0 l15.0 15.0 l-15.0 15.0 h-200.0 l15.0 -15.0" fill="#75a743" />
+<stop offset='0.0%' style='stop-color:#e8c170' />
+<stop offset='100.0%' style='stop-color:#73bed3' />
+</linearGradient></defs><rect x='-54.19999999999999' y='-85.0' width='737.2' height='538.2' rx='10' ry='10' fill='#404040' /><path d="M200.0 -40 h200.0 l15.0 15.0 l-15.0 15.0 h-200.0 l15.0 -15.0" fill="#e8c170" />
 <text x="200.0" y="-25.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle">Series 1</text>
 <text x="420.0" y="-25.0" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 2</text>
 <rect x="610" y="0" width="30" height="400" fill="url(#legend_grad)" />
 <text x="605" y="200.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 605 200.0)">Color Series</text>
 <text x="645" y="0" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">36</text>
 <text x="645" y="400" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">-24</text>
-<path d="M54.54545454545455 240.0 v80.0 l15.0 -15.0 l15.0 15.0 v-80.0 l-15.0 -15.0" fill="#cdbb66" />
+<path d="M54.54545454545455 240.0 v80.0 l15.0 -15.0 l15.0 15.0 v-80.0 l-15.0 -15.0" fill="#8ebfbc" />
 <text x="69.54545454545455" y="320.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">10</text>
 <text x="69.54545454545455" y="218.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">20</text>
 <text x="69.54545454545455" y="272.5" font-size="10" fill="#000000" text-anchor="middle" dominant-baseline="middle">-10</text>
-<path d="M163.63636363636363 160.0 v80.0 l15.0 -15.0 l15.0 15.0 v-80.0 l-15.0 -15.0" fill="#e0bf6d" />
+<path d="M163.63636363636363 160.0 v80.0 l15.0 -15.0 l15.0 15.0 v-80.0 l-15.0 -15.0" fill="#7bbecc" />
 <text x="178.63636363636363" y="240.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">20</text>
 <text x="178.63636363636363" y="138.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">30</text>
 <text x="178.63636363636363" y="192.5" font-size="10" fill="#000000" text-anchor="middle" dominant-baseline="middle">-20</text>
-<path d="M272.72727272727275 80.0 v80.0 l15.0 -15.0 l15.0 15.0 v-80.0 l-15.0 -15.0" fill="#80aa48" />
+<path d="M272.72727272727275 80.0 v80.0 l15.0 -15.0 l15.0 15.0 v-80.0 l-15.0 -15.0" fill="#dcc17a" />
 <text x="287.72727272727275" y="160.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">30</text>
 <text x="287.72727272727275" y="58.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">40</text>
 <text x="287.72727272727275" y="112.5" font-size="10" fill="#000000" text-anchor="middle" dominant-baseline="middle">30</text>
-<path d="M381.8181818181818 80.0 v80.0 l15.0 15.0 l15.0 -15.0 v-80.0 l-15.0 15.0" fill="#94ae4f" />
+<path d="M381.8181818181818 80.0 v80.0 l15.0 15.0 l15.0 -15.0 v-80.0 l-15.0 15.0" fill="#c9c08a" />
 <text x="396.8181818181818" y="80.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">40</text>
 <text x="396.8181818181818" y="180.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">30</text>
 <text x="396.8181818181818" y="127.5" font-size="10" fill="#000000" text-anchor="middle" dominant-baseline="middle">20</text>
-<path d="M490.90909090909093 0.0 v240.0 l15.0 15.0 l15.0 -15.0 v-240.0 l-15.0 15.0" fill="#a7b256" />
+<path d="M490.90909090909093 0.0 v240.0 l15.0 15.0 l15.0 -15.0 v-240.0 l-15.0 15.0" fill="#b5c09b" />
 <text x="505.90909090909093" y="0.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">50</text>
 <text x="505.90909090909093" y="260.0" font-size="10" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">20</text>
 <text x="505.90909090909093" y="127.5" font-size="10" fill="#000000" text-anchor="middle" dominant-baseline="middle">10</text>

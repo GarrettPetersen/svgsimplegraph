@@ -266,11 +266,10 @@ def is_dark(color):
 
 
 DEFAULT_COLOR_PALETTE = [
-    "#253a5e",
+    "#73bed3",
     "#e8c170",
     "#a53030",
     "#75a743",
-    "#73bed3",
     "#7a367b",
     "#3c5e8b",
     "#4f8fba",
@@ -312,4 +311,5 @@ DEFAULT_COLOR_PALETTE = [
     "#a8b5b2",
     "#c7cfcc",
     "#ebede9",
+    "#253a5e",
 ]
