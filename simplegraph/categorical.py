@@ -127,6 +127,8 @@ class CategoricalGraph(BaseGraph):
         self.secondary.append(secondary)
 
     def _draw_bar(self, x, y, width, height, fill):
+        if height == 0:
+            return ""
         if height < 0:
             y += height
             height *= -1
