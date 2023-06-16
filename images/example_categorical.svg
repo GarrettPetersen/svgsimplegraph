@@ -1,22 +1,22 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='742.2' height='492.2' viewBox="-54.19999999999999 -39.0 742.2 492.2"><rect x='-54.19999999999999' y='-39.0' width='742.2' height='492.2' rx='10' ry='10' fill='#404040' /><rect x="15.0" y="333.3333333333333" width="30" height="66.66666666666667" fill="#73bed3" />
+<svg xmlns='http://www.w3.org/2000/svg' width='747.2' height='492.2' viewBox="-54.19999999999999 -39.0 747.2 492.2"><rect x='-54.19999999999999' y='-39.0' width='747.2' height='492.2' rx='10' ry='10' fill='#404040' /><rect x="15.0" y="333.3333333333333" width="30" height="66.66666666666667" fill="#73bed3" />
 <rect x="45.0" y="300.0" width="30" height="100.0" fill="#e8c170" />
-<circle cx="45.0" cy="166.66666666666666" r="5" fill="#4f8fba"  />
+<circle cx="45.0" cy="166.66666666666666" r="5" fill="#d0da91"  />
 <rect x="135.0" y="266.66666666666663" width="30" height="133.33333333333334" fill="#73bed3" />
 <rect x="165.0" y="233.33333333333331" width="30" height="166.66666666666669" fill="#e8c170" />
 <line x1="45.0" y1="366.6666666666667" x2="165.0" y2="166.66666666666666" stroke="#75a743" stroke-width="1" />
-<circle cx="165.0" cy="26.66666666666663" r="5" fill="#4f8fba"  />
+<circle cx="165.0" cy="26.66666666666663" r="5" fill="#d0da91"  />
 <rect x="255.0" y="200.0" width="30" height="200.0" fill="#73bed3" />
 <rect x="285.0" y="366.6666666666667" width="30" height="33.333333333333336" fill="#e8c170" />
 <line x1="165.0" y1="166.66666666666666" x2="285.0" y2="333.3333333333333" stroke="#75a743" stroke-width="1" />
-<circle cx="285.0" cy="233.33333333333331" r="5" fill="#4f8fba"  />
+<circle cx="285.0" cy="233.33333333333331" r="5" fill="#d0da91"  />
 <rect x="375.0" y="133.33333333333331" width="30" height="266.6666666666667" fill="#73bed3" />
 <rect x="405.0" y="106.66666666666663" width="30" height="293.33333333333337" fill="#e8c170" />
 <line x1="285.0" y1="333.3333333333333" x2="405.0" y2="180.0" stroke="#75a743" stroke-width="1" />
-<circle cx="405.0" cy="366.6666666666667" r="5" fill="#4f8fba"  />
+<circle cx="405.0" cy="366.6666666666667" r="5" fill="#d0da91"  />
 <rect x="495.0" y="66.66666666666663" width="30" height="333.33333333333337" fill="#73bed3" />
 <rect x="525.0" y="26.66666666666663" width="30" height="373.33333333333337" fill="#e8c170" />
 <line x1="405.0" y1="180.0" x2="525.0" y2="133.33333333333331" stroke="#75a743" stroke-width="1" />
-<circle cx="525.0" cy="106.66666666666663" r="5" fill="#4f8fba"  />
+<circle cx="525.0" cy="106.66666666666663" r="5" fill="#d0da91"  />
 <line x1="0" y1="0" x2="0" y2="400" stroke="#ffffff" stroke-width="1" />
 <line x1="0" y1="400.0" x2="600" y2="400.0" stroke="#ffffff" stroke-width="1" />
 <text x="45.0" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 45.0 405)">A</text>
@@ -40,12 +40,12 @@
 <line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#ffffff" stroke-width="1" />
 <text x="300.0" y="426.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">X Axis</text>
 <text x="-27.0" y="200.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -27.0 200.0)">Primary Y Axis</text>
-<rect x="605.0" y="0" width="10" height="10" fill="#73bed3" />
-<text x="620.0" y="6.666666666666666" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 1</text>
-<rect x="605.0" y="20" width="10" height="10" fill="#e8c170" />
-<text x="620.0" y="26.666666666666664" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 2</text>
-<line x1="605.0" y1="45.0" x2="615.0" y2="45.0" stroke="#75a743" stroke-width="1" />
-<text x="620.0" y="46.666666666666664" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 3</text>
-<circle cx="610.0" cy="65.0" r="5" fill="#4f8fba"  />
-<text x="620.0" y="66.66666666666667" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 4</text>
+<rect x="610" y="0" width="10" height="10" fill="#73bed3" />
+<text x="625.0" y="6.666666666666666" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 1</text>
+<rect x="610" y="20" width="10" height="10" fill="#e8c170" />
+<text x="625.0" y="26.666666666666664" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 2</text>
+<line x1="610" y1="45.0" x2="620" y2="45.0" stroke="#75a743" stroke-width="1" />
+<text x="625.0" y="46.666666666666664" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 3</text>
+<circle cx="615.0" cy="65.0" r="5" fill="#d0da91"  />
+<text x="625.0" y="66.66666666666667" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Series 4</text>
 <text x="300.0" y="-19.0" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="text-top">Categorical Graph</text></svg>
