@@ -14,7 +14,26 @@ def estimate_text_dimensions(text, font_size):
     lines = text.splitlines()
 
     # Define a list of "big" characters that take up more space
-    big_characters = ['W', 'M', 'D', 'O', 'H', 'R', 'K', 'X', 'B', 'E', 'P', 'F']
+    big_characters = [
+        "W",
+        "M",
+        "D",
+        "G",
+        "O",
+        "Q",
+        "R",
+        "m",
+        "w",
+        "0",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+    ]
 
     # Find the widest line
     max_chars = 0
