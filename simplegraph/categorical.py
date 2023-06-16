@@ -477,10 +477,8 @@ class CategoricalGraph(BaseGraph):
             legend_rect_size = 10
             legend_x = (
                 max(self.width, self.most_extreme_dimensions["right"])
-                + self.element_spacing / 2
+                + self.element_spacing
             )
-            if has_secondary:
-                legend_x += 10
             legend_y = 0
 
             for index, label in enumerate(self.legend_labels):
@@ -523,7 +521,7 @@ class CategoricalGraph(BaseGraph):
                     legend_y = 0
                     legend_x = (
                         max(self.width, self.most_extreme_dimensions["right"])
-                        + self.element_spacing / 2
+                        + (2 * self.element_spacing) / 3
                     )
 
         return self._generate_svg()
