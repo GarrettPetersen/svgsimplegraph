@@ -49,7 +49,7 @@ print(f"\n<img src='{svg_base64}' />")
 raw_svg = graph.render()
 print(raw_svg)
 ```
-![Example categorical graph](images/example_categorical.svg)
+![Example categorical graph](https://github.com/GarrettPetersen/svgsimplegraph/blob/27f7b7ceb7e4376f6be8919aa3d2af53d89ed558/images/example_categorical.svg)
 
 ### Ribbon Graph
 
@@ -90,7 +90,7 @@ print(f"\n<img src='{svg_base64}' />")
 raw_svg = graph.render()
 print(raw_svg)
 ```
-![Example ribbon graph](images/example_ribbon.svg)
+![Example ribbon graph](https://github.com/GarrettPetersen/svgsimplegraph/blob/27f7b7ceb7e4376f6be8919aa3d2af53d89ed558/images/example_ribbon.svg)
 
 ### Bubble and Arrow Graph
 The bubble and arrow graph is for displaying relationships between nodes in a network.
@@ -148,7 +148,7 @@ print(f"\n<img src='{svg_base64}' />")
 raw_svg = graph.render()
 print(raw_svg)
 ```
-![Example bubble and arrow graph](images/example_bubble_and_arrow.svg)
+![Example bubble and arrow graph](https://github.com/GarrettPetersen/svgsimplegraph/blob/5f37bc7c7a2db495db1c56c1c3272b34f5b29e41/images/example_bubble_and_arrow.svg)
 
 ## GitHub Gist integration
 
