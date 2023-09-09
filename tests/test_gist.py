@@ -2,7 +2,7 @@ import unittest
 import urllib.request
 import json
 from unittest.mock import patch, MagicMock
-from simplegraph import CategoricalGraph
+from svgsimplegraph import CategoricalGraph
 
 
 class TestUploadToGithubGist(unittest.TestCase):

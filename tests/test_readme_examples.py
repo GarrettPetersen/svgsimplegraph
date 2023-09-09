@@ -2,7 +2,7 @@ import pytest
 
 
 def test_readme_categorical():
-    from simplegraph import CategoricalGraph
+    from svgsimplegraph import CategoricalGraph
 
     graph = CategoricalGraph(
         width=600,

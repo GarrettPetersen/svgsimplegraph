@@ -6,7 +6,7 @@ DESCRIPTION = "Simple SVG graphing package"
 LONG_DESCRIPTION = "Graphing package that generates base64-encoded SVG graphs"
 
 setup(
-    name="simplegraph",
+    name="svgsimplegraph",
     version=VERSION,
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
@@ -15,7 +15,7 @@ setup(
     license="MIT",
     packages=find_packages(),
     install_requires=["matplotlib", "numpy"],
-    keywords=["graph", "svg", "base64", "simplegraph", "simple graph"],
+    keywords=["graph", "svg", "base64", "svg simple graph"],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
