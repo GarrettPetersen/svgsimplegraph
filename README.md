@@ -4,6 +4,13 @@ This is a simple little graphing package for making graphs and exporting them as
 
 You can also upload the SVGs to your GitHub account as Gists, so they may be embedded in any website!
 
+## Installing svgsimplegraph
+Install svgsimplegraph by typing
+```
+pip install svgsimplegraph
+```
+in your terminal.
+
 ## Graph Types
 ### Categorical Graph
 
