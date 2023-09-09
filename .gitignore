@@ -10,3 +10,8 @@ __pycache__/
 
 # MacOS files
 .DS_Store
+
+# PyPi distribution files
+dist/
+build/
+*.egg-info/
