@@ -1,15 +1,18 @@
-from setuptools import setup
-from setuptools import find_packages
+from setuptools import setup, find_packages
 
-VERSION = "0.0.1"
+# Read in the README.md for the long description on PyPI
+with open("README.md", "r") as f:
+    long_description = f.read()
+
+VERSION = "0.0.2"
 DESCRIPTION = "Simple SVG graphing package"
-LONG_DESCRIPTION = "Graphing package that generates base64-encoded SVG graphs"
 
 setup(
     name="svgsimplegraph",
     version=VERSION,
     description=DESCRIPTION,
-    long_description=LONG_DESCRIPTION,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Garrett M. Petersen",
     author_email="garrett.m.petersen@gmail.com",
     license="MIT",
@@ -22,4 +25,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
     ],
+    project_urls={
+        "Source Code": "https://github.com/GarrettPetersen/svgsimplegraph",
+    },
 )
