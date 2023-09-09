@@ -1,6 +1,6 @@
 import pytest
 
-from simplegraph.bubble_and_arrow import BubbleAndArrowGraph
+from svgsimplegraph.bubble_and_arrow import BubbleAndArrowGraph
 
 
 def test_bubble_and_arrow_graph():

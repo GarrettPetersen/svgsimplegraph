@@ -1,6 +1,6 @@
 import pytest
 
-from simplegraph.ribbon import RibbonGraph
+from svgsimplegraph.ribbon import RibbonGraph
 
 
 def test_ribbon_graph():

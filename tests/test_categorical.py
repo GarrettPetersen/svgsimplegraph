@@ -1,6 +1,6 @@
 import pytest
 
-from simplegraph.categorical import CategoricalGraph
+from svgsimplegraph.categorical import CategoricalGraph
 
 
 def test_categorical_graph():

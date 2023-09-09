@@ -1,4 +1,4 @@
-# simplegraph
+# svgsimplegraph
 
 This is a simple little graphing package for making graphs and exporting them as raw or base64-encoded SVGs.
 
@@ -12,7 +12,7 @@ The categorical graph is for data that comes in distinct categories. It can gene
 Here is an example of how to make a graph:
 
 ```
-from simplegraph import CategoricalGraph
+from svgsimplegraph import CategoricalGraph
 
 graph = CategoricalGraph(
         width=600,
@@ -53,7 +53,7 @@ The three series must be added in order, with the first representing the back of
 Here's an example:
 
 ```
-from simplegraph import RibbonGraph
+from svgsimplegraph import RibbonGraph
 
 graph = RibbonGraph(
     width=600,
@@ -92,7 +92,7 @@ The user adds bubbles, which are displayed in clockwise order around a larger ci
 
 Here's an example:
 ```
-from simplegraph import BubbleAndArrowGraph
+from svgsimplegraph import BubbleAndArrowGraph
 
 graph = BubbleAndArrowGraph(
     width=400,
@@ -158,7 +158,7 @@ Now you should see a screen showing your token. This is the only time Github wil
 Assuming you've done all that, you can use the token to turn your graphs into gists.
 
 ```
-from simplegraph import CategoricalGraph
+from svgsimplegraph import CategoricalGraph
 
 GITHUB_ACCESS_TOKEN = "your_token_goes_here"
 
