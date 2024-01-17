@@ -17,7 +17,7 @@ def test_categorical_graph():
     graph.primary_y_axis_label = "Primary Y Axis"
     graph.secondary_y_axis_label = "Secondary Y Axis"
 
-    graph.add_series([10, 20, -30, 40, 50], legend_label="Series 1")
+    graph.add_series([10, 20, -30, 40, 50])
 
     # Get the SVG string in base64 format
     svg_base64 = graph.to_base64_src()
