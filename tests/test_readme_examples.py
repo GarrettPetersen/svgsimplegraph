@@ -17,6 +17,7 @@ def test_readme_categorical():
     graph.x_axis_label = "X Axis"
     graph.primary_y_axis_label = "Primary Y Axis"
 
+    # Skip adding a legend_label to exclude a series from the legend
     graph.add_series([10, 20, 30, 40, 50], legend_label="Series 1")
     graph.add_series([15, 25, 5, 44, 56], legend_label="Series 2")
     graph.add_series([5, 35, 10, 33, 40], legend_label="Series 3", series_type="line")
@@ -34,7 +35,7 @@ def test_readme_categorical():
 
 
 def test_ribbon():
-    from simplegraph import RibbonGraph
+    from svgsimplegraph import RibbonGraph
 
     graph = RibbonGraph(
         width=600,
@@ -66,7 +67,7 @@ def test_ribbon():
 
 
 def test_bubble_and_arrow():
-    from simplegraph import BubbleAndArrowGraph
+    from svgsimplegraph import BubbleAndArrowGraph
 
     graph = BubbleAndArrowGraph(
         width=400,

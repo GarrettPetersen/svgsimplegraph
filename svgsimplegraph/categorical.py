@@ -122,7 +122,7 @@ class CategoricalGraph(BaseGraph):
         secondary=False,
     ):
         self.data.append(series)
-        self.legend_labels.append(legend_label or "")
+        self.legend_labels.append(legend_label or None)
         self.series_types.append((series_type, print_values))
         self.secondary.append(secondary)
 
@@ -482,46 +482,47 @@ class CategoricalGraph(BaseGraph):
             legend_y = 0
 
             for index, label in enumerate(self.legend_labels):
-                series_type, _ = self.series_types[index]
-                if series_type == "dot":
+                if label is not None:
+                    series_type, _ = self.series_types[index]
+                    if series_type == "dot":
+                        self.svg_elements.append(
+                            self._draw_dot(
+                                legend_x + legend_rect_size / 2,
+                                legend_y + legend_rect_size / 2,
+                                radius=5,
+                                fill=self.colors[index],
+                            )
+                        )
+                    elif series_type == "line":
+                        self.svg_elements.append(
+                            self._draw_line(
+                                legend_x,
+                                legend_y + legend_rect_size / 2,
+                                legend_x + legend_rect_size,
+                                legend_y + legend_rect_size / 2,
+                                stroke=self.colors[index],
+                            )
+                        )
+                    else:  # series_type == "bar"
+                        self.svg_elements.append(
+                            f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" '
+                            + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
+                        )
                     self.svg_elements.append(
-                        self._draw_dot(
-                            legend_x + legend_rect_size / 2,
-                            legend_y + legend_rect_size / 2,
-                            radius=5,
-                            fill=self.colors[index],
+                        self._generate_text(
+                            label,
+                            legend_x + legend_rect_size + self.element_spacing / 2,
+                            legend_y + (2 / 3) * legend_rect_size,
+                            fill=self.text_color,
+                            anchor="start",
                         )
                     )
-                elif series_type == "line":
-                    self.svg_elements.append(
-                        self._draw_line(
-                            legend_x,
-                            legend_y + legend_rect_size / 2,
-                            legend_x + legend_rect_size,
-                            legend_y + legend_rect_size / 2,
-                            stroke=self.colors[index],
+                    legend_y += self.element_spacing + legend_rect_size
+                    if legend_y + legend_rect_size > self.height:
+                        legend_y = 0
+                        legend_x = (
+                            max(self.width, self.most_extreme_dimensions["right"])
+                            + (2 * self.element_spacing) / 3
                         )
-                    )
-                else:  # series_type == "bar"
-                    self.svg_elements.append(
-                        f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" '
-                        + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
-                    )
-                self.svg_elements.append(
-                    self._generate_text(
-                        label,
-                        legend_x + legend_rect_size + self.element_spacing / 2,
-                        legend_y + (2 / 3) * legend_rect_size,
-                        fill=self.text_color,
-                        anchor="start",
-                    )
-                )
-                legend_y += self.element_spacing + legend_rect_size
-                if legend_y + legend_rect_size > self.height:
-                    legend_y = 0
-                    legend_x = (
-                        max(self.width, self.most_extreme_dimensions["right"])
-                        + (2 * self.element_spacing) / 3
-                    )
 
         return self._generate_svg()
