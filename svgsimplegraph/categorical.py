@@ -112,6 +112,8 @@ class CategoricalGraph(BaseGraph):
         self.x_labels = []
         self.series_types = []
         self.secondary = []
+        self.horizontal_lines = []
+        self.vertical_lines = []
 
     def add_series(
         self,
@@ -125,6 +127,75 @@ class CategoricalGraph(BaseGraph):
         self.legend_labels.append(legend_label or None)
         self.series_types.append((series_type, print_values))
         self.secondary.append(secondary)
+
+    def add_horizontal_line(
+        self,
+        y,
+        color=None,
+        label=None,
+        label_x_position="right",
+        label_y_position="top",
+        stroke_width="1",
+    ):
+        if color is None:
+            color = self.text_color
+        assert label_x_position in [
+            "left",
+            "right",
+            "center",
+        ], (
+            f"Invalid label position: {label_x_position}. "
+            + "Must be 'left', 'right', or 'center'."
+        )
+        assert label_y_position in [
+            "top",
+            "bottom",
+        ], (
+            f"Invalid label position: {label_y_position}. "
+            + "Must be 'top' or 'bottom'."
+        )
+        self.horizontal_lines.append(
+            (y, color, stroke_width, label, label_x_position, label_y_position)
+        )
+
+    def add_vertical_line(
+        self,
+        x,
+        color=None,
+        label=None,
+        label_x_position="right",
+        label_y_position="top",
+        rotate_label=False,
+        stroke_width="1",
+    ):
+        if color is None:
+            color = self.text_color
+        assert label_x_position in [
+            "left",
+            "right",
+        ], (
+            f"Invalid label position: {label_x_position}. "
+            + "Must be 'left' or 'right'."
+        )
+        assert label_y_position in [
+            "top",
+            "bottom",
+            "center",
+        ], (
+            f"Invalid label position: {label_y_position}. "
+            + "Must be 'top', 'bottom', or 'center'."
+        )
+        self.vertical_lines.append(
+            (
+                x,
+                color,
+                stroke_width,
+                label,
+                label_x_position,
+                label_y_position,
+                rotate_label,
+            )
+        )
 
     def _draw_bar(self, x, y, width, height, fill):
         if height == 0:
@@ -333,6 +404,121 @@ class CategoricalGraph(BaseGraph):
                     self.svg_elements.append(
                         self._generate_text(
                             value, value_x, value_y, fill=self.text_color
+                        )
+                    )
+
+        # Draw horizontal lines
+        for (
+            y,
+            color,
+            stroke_width,
+            label,
+            label_x_position,
+            label_y_position,
+        ) in self.horizontal_lines:
+            y_svg = self.height - (y - adjusted_min_value_primary) * scale_primary
+            self.svg_elements.append(
+                f'<line x1="0" y1="{y_svg}" x2="{self.width}" y2="{y_svg}" stroke="{color}" stroke-width="{stroke_width}" />'
+            )
+            if label:
+                padding = 5  # Padding from the edge
+                if label_x_position == "left":
+                    x = padding
+                    anchor = "start"
+                elif label_x_position == "right":
+                    x = self.width - padding
+                    anchor = "end"
+                else:  # Center position
+                    x = self.width / 2
+                    anchor = "middle"
+                # Determine whether to place the label above or below the line
+                dominant_baseline = (
+                    "text-after-edge"
+                    if label_y_position == "top"
+                    else "text-before-edge"
+                )
+                text_y = (
+                    y_svg - padding if label_y_position == "top" else y_svg + padding
+                )
+
+                self.svg_elements.append(
+                    self._generate_text(
+                        label,
+                        x,
+                        text_y,
+                        fill=self.text_color,
+                        anchor=anchor,
+                        dominant_baseline=dominant_baseline,
+                    )
+                )
+
+        # Corrected Draw vertical lines with proper alignment and rotation of labels
+        for (
+            x_index,
+            color,
+            stroke_width,
+            label,
+            label_x_position,
+            label_y_position,
+            rotate_label,
+        ) in self.vertical_lines:
+            x_svg = x_index * bar_spacing + (bar_spacing - total_bars_width) / 2
+            self.svg_elements.append(
+                f'<line x1="{x_svg}" y1="0" x2="{x_svg}" y2="{self.height}" stroke="{color}" stroke-width="{stroke_width}" />'
+            )
+            if label:
+                # Standard padding from the line
+                padding = 5
+
+                # Calculate the x position with respect to the line and padding
+                x = x_svg + padding if label_x_position == "right" else x_svg - padding
+                anchor = "start" if label_x_position == "right" else "end"
+
+                # Calculate the y position based on the vertical label position
+                if label_y_position == "top":
+                    y = padding
+                    vertical_anchor = "start" if label_x_position == "right" else "end"
+                elif label_y_position == "bottom":
+                    y = self.height - padding
+                    vertical_anchor = "end" if label_x_position == "right" else "start"
+                else:  # Center position
+                    y = self.height / 2
+                    vertical_anchor = "middle"
+
+                if rotate_label:
+                    # Set the rotation angle based on the side of the line
+                    rotation = 90 if label_x_position == "right" else -90
+
+                    # Apply rotation and adjustments
+                    self.svg_elements.append(
+                        self._generate_text(
+                            label,
+                            x,
+                            y,
+                            fill=self.text_color,
+                            anchor=vertical_anchor,
+                            dominant_baseline="text-after-edge",
+                            rotation=rotation,
+                        )
+                    )
+                else:
+                    # For non-rotated labels, adjust the y position to ensure the label is always inside the graph area
+                    y = y - padding if label_y_position == "bottom" else y + padding
+                    # Non-rotated labels should have the baseline set to central if they are in the center position
+                    dominant_baseline = (
+                        "central"
+                        if label_y_position == "center"
+                        else "hanging" if label_y_position == "top" else "baseline"
+                    )
+
+                    self.svg_elements.append(
+                        self._generate_text(
+                            label,
+                            x,
+                            y,
+                            fill=self.text_color,
+                            anchor=anchor,
+                            dominant_baseline=dominant_baseline,
                         )
                     )
 

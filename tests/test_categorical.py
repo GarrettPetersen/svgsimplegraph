@@ -19,6 +19,109 @@ def test_categorical_graph():
 
     graph.add_series([10, 20, -30, 40, 50])
 
+    graph.add_horizontal_line(
+        y=20, label="top left label", label_x_position="left", label_y_position="top"
+    )
+    graph.add_horizontal_line(
+        y=20, label="top right label", label_x_position="right", label_y_position="top"
+    )
+    graph.add_horizontal_line(
+        y=20,
+        label="top center label",
+        label_x_position="center",
+        label_y_position="top",
+    )
+    graph.add_horizontal_line(
+        y=20,
+        label="bottom left label",
+        label_x_position="left",
+        label_y_position="bottom",
+    )
+    graph.add_horizontal_line(
+        y=20,
+        label="bottom right label",
+        label_x_position="right",
+        label_y_position="bottom",
+    )
+    graph.add_horizontal_line(
+        y=20,
+        label="bottom center label",
+        label_x_position="center",
+        label_y_position="bottom",
+    )
+    graph.add_vertical_line(
+        x=3.5, label="top right label", label_x_position="right", label_y_position="top"
+    )
+    graph.add_vertical_line(
+        x=3.5, label="top left label", label_x_position="left", label_y_position="top"
+    )
+    graph.add_vertical_line(
+        x=3.5,
+        label="bottom right label",
+        label_x_position="right",
+        label_y_position="bottom",
+    )
+    graph.add_vertical_line(
+        x=3.5,
+        label="bottom left label",
+        label_x_position="left",
+        label_y_position="bottom",
+    )
+    graph.add_vertical_line(
+        x=3.5,
+        label="center right label",
+        label_x_position="right",
+        label_y_position="center",
+    )
+    graph.add_vertical_line(
+        x=3.5,
+        label="center left label",
+        label_x_position="left",
+        label_y_position="center",
+    )
+    graph.add_vertical_line(
+        x=1,
+        label="top right label",
+        label_x_position="right",
+        label_y_position="top",
+        rotate_label=True,
+    )
+    graph.add_vertical_line(
+        x=1,
+        label="top left label",
+        label_x_position="left",
+        label_y_position="top",
+        rotate_label=True,
+    )
+    graph.add_vertical_line(
+        x=1,
+        label="bottom right label",
+        label_x_position="right",
+        label_y_position="bottom",
+        rotate_label=True,
+    )
+    graph.add_vertical_line(
+        x=1,
+        label="bottom left label",
+        label_x_position="left",
+        label_y_position="bottom",
+        rotate_label=True,
+    )
+    graph.add_vertical_line(
+        x=1,
+        label="center right label",
+        label_x_position="right",
+        label_y_position="center",
+        rotate_label=True,
+    )
+    graph.add_vertical_line(
+        x=1,
+        label="center left label",
+        label_x_position="left",
+        label_y_position="center",
+        rotate_label=True,
+    )
+
     # Get the SVG string in base64 format
     svg_base64 = graph.to_base64_src()
 
