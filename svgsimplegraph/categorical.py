@@ -462,7 +462,11 @@ class CategoricalGraph(BaseGraph):
             label_y_position,
             rotate_label,
         ) in self.vertical_lines:
-            x_svg = x_index * bar_spacing + (bar_spacing - total_bars_width) / 2
+            x_svg = (
+                x_index * bar_spacing
+                + (bar_spacing - total_bars_width) / 2
+                + bar_width * (bar_series_across - 1) / 2
+            )
             self.svg_elements.append(
                 f'<line x1="{x_svg}" y1="0" x2="{x_svg}" y2="{self.height}" stroke="{color}" stroke-width="{stroke_width}" />'
             )
