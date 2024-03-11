@@ -12,40 +12,47 @@ def stacked_bar_range(data, series_types, secondary):
 
     stacked_positive_data = [
         sum(
-            max(value, 0)
+            max(value or 0, 0)
             for i, value in enumerate(column)
-            if non_secondary_bars_to_use[i]
+            if non_secondary_bars_to_use[i] and value is not None
         )
         for column in zip(*data)
     ]
 
     stacked_negative_data = [
         sum(
-            min(value, 0)
+            min(value or 0, 0)
             for i, value in enumerate(column)
-            if non_secondary_bars_to_use[i]
+            if non_secondary_bars_to_use[i] and value is not None
         )
         for column in zip(*data)
     ]
-    return (
-        (min(stacked_negative_data), max(stacked_positive_data))
-        if non_secondary_bars_to_use
-        else (None, None)
-    )
+
+    if stacked_positive_data and stacked_negative_data:
+        # Only proceed if there are valid (non-None) data points
+        return (
+            min(filter(lambda x: x is not None, stacked_negative_data)),
+            max(filter(lambda x: x is not None, stacked_positive_data)),
+        )
+    else:
+        return (None, None)
 
 
 def non_secondary_range(data, secondary):
+    # Filter out None values and then compute the range for non-secondary values
     non_secondary_values = [
         value
         for values, is_secondary in zip(data, secondary)
         if not is_secondary
         for value in values
+        if value is not None  # Exclude None values
     ]
-    return (
-        (min(non_secondary_values), max(non_secondary_values))
-        if non_secondary_values
-        else (None, None)
-    )
+
+    if non_secondary_values:
+        # Proceed only if there are valid (non-None) data points
+        return (min(non_secondary_values), max(non_secondary_values))
+    else:
+        return (None, None)
 
 
 class CategoricalGraph(BaseGraph):
@@ -139,18 +146,11 @@ class CategoricalGraph(BaseGraph):
     ):
         if color is None:
             color = self.text_color
-        assert label_x_position in [
-            "left",
-            "right",
-            "center",
-        ], (
+        assert label_x_position in ["left", "right", "center"], (
             f"Invalid label position: {label_x_position}. "
             + "Must be 'left', 'right', or 'center'."
         )
-        assert label_y_position in [
-            "top",
-            "bottom",
-        ], (
+        assert label_y_position in ["top", "bottom"], (
             f"Invalid label position: {label_y_position}. "
             + "Must be 'top' or 'bottom'."
         )
@@ -170,18 +170,11 @@ class CategoricalGraph(BaseGraph):
     ):
         if color is None:
             color = self.text_color
-        assert label_x_position in [
-            "left",
-            "right",
-        ], (
+        assert label_x_position in ["left", "right"], (
             f"Invalid label position: {label_x_position}. "
             + "Must be 'left' or 'right'."
         )
-        assert label_y_position in [
-            "top",
-            "bottom",
-            "center",
-        ], (
+        assert label_y_position in ["top", "bottom", "center"], (
             f"Invalid label position: {label_y_position}. "
             + "Must be 'top', 'bottom', or 'center'."
         )
@@ -315,6 +308,10 @@ class CategoricalGraph(BaseGraph):
             bar_count = 0
             for index in range(num_series):
                 value = self.data[index][sub_index]
+
+                if value is None:
+                    continue
+
                 secondary_value = self.secondary[index]
 
                 series_type, print_values = self.series_types[index]
@@ -375,22 +372,21 @@ class CategoricalGraph(BaseGraph):
                         )
                     )
                 elif series_type == "line" and sub_index > 0:
-                    prev_y = (
-                        self.height
-                        - (self.data[index][sub_index - 1] - min_value) * scale
-                    )
-                    prev_x = (sub_index - 1) * bar_spacing + (
-                        bar_spacing - bar_width
-                    ) / 2
-                    self.svg_elements.append(
-                        self._draw_line(
-                            prev_x,
-                            prev_y,
-                            x,
-                            y,
-                            stroke=self.colors[index],
+                    last_data_point = self.data[index][sub_index - 1]
+                    if last_data_point is not None:
+                        prev_y = self.height - (last_data_point - min_value) * scale
+                        prev_x = (sub_index - 1) * bar_spacing + (
+                            bar_spacing - bar_width
+                        ) / 2
+                        self.svg_elements.append(
+                            self._draw_line(
+                                prev_x,
+                                prev_y,
+                                x,
+                                y,
+                                stroke=self.colors[index],
+                            )
                         )
-                    )
 
                 if print_values:
                     if series_type == "dot":
@@ -512,7 +508,9 @@ class CategoricalGraph(BaseGraph):
                     dominant_baseline = (
                         "central"
                         if label_y_position == "center"
-                        else "hanging" if label_y_position == "top" else "baseline"
+                        else "hanging"
+                        if label_y_position == "top"
+                        else "baseline"
                     )
 
                     self.svg_elements.append(
