@@ -146,11 +146,11 @@ class CategoricalGraph(BaseGraph):
     ):
         if color is None:
             color = self.text_color
-        assert label_x_position in ["left", "right", "center",], (
+        assert label_x_position in ["left", "right", "center"], (
             f"Invalid label position: {label_x_position}. "
             + "Must be 'left', 'right', or 'center'."
         )
-        assert label_y_position in ["top", "bottom",], (
+        assert label_y_position in ["top", "bottom"], (
             f"Invalid label position: {label_y_position}. "
             + "Must be 'top' or 'bottom'."
         )
@@ -170,11 +170,11 @@ class CategoricalGraph(BaseGraph):
     ):
         if color is None:
             color = self.text_color
-        assert label_x_position in ["left", "right",], (
+        assert label_x_position in ["left", "right"], (
             f"Invalid label position: {label_x_position}. "
             + "Must be 'left' or 'right'."
         )
-        assert label_y_position in ["top", "bottom", "center",], (
+        assert label_y_position in ["top", "bottom", "center"], (
             f"Invalid label position: {label_y_position}. "
             + "Must be 'top', 'bottom', or 'center'."
         )
