@@ -4,7 +4,7 @@ from .utils import calculate_ticks
 from .utils import match_ticks
 
 
-def stacked_bar_range(data, series_types, secondary):
+def stacked_bar_range(data, series_types, secondary, maximum, minimum):
     non_secondary_bars_to_use = [
         not secondary[index] and series_types[index][0] == "bar"
         for index in range(len(secondary))
@@ -30,15 +30,19 @@ def stacked_bar_range(data, series_types, secondary):
 
     if stacked_positive_data and stacked_negative_data:
         # Only proceed if there are valid (non-None) data points
+        if maximum is None:
+            maximum = max(stacked_positive_data)
+        if minimum is None:
+            minimum = min(stacked_negative_data)
         return (
-            min(filter(lambda x: x is not None, stacked_negative_data)),
-            max(filter(lambda x: x is not None, stacked_positive_data)),
+            min(min(filter(lambda x: x is not None, stacked_negative_data)), minimum),
+            max(max(filter(lambda x: x is not None, stacked_positive_data)), maximum),
         )
     else:
         return (None, None)
 
 
-def non_secondary_range(data, secondary):
+def non_secondary_range(data, secondary, maximum, minimum):
     # Filter out None values and then compute the range for non-secondary values
     non_secondary_values = [
         value
@@ -50,7 +54,14 @@ def non_secondary_range(data, secondary):
 
     if non_secondary_values:
         # Proceed only if there are valid (non-None) data points
-        return (min(non_secondary_values), max(non_secondary_values))
+        if maximum is None:
+            maximum = max(non_secondary_values)
+        if minimum is None:
+            minimum = min(non_secondary_values)
+        return (
+            min(non_secondary_values + [minimum]),
+            max(non_secondary_values + [maximum]),
+        )
     else:
         return (None, None)
 
@@ -89,6 +100,10 @@ class CategoricalGraph(BaseGraph):
         title_font_size=None,
         element_spacing=None,
         watermark=None,
+        scale_max=None,
+        scale_min=None,
+        secondary_scale_max=None,
+        secondary_scale_min=None,
     ):
         super().__init__(
             width=width,
@@ -116,6 +131,10 @@ class CategoricalGraph(BaseGraph):
         )
         self.stacked = stacked
         self.bar_width = bar_width
+        self.scale_max = scale_max
+        self.scale_min = scale_min
+        self.secondary_scale_max = secondary_scale_max
+        self.secondary_scale_min = secondary_scale_min
         self.x_labels = []
         self.series_types = []
         self.secondary = []
@@ -226,19 +245,30 @@ class CategoricalGraph(BaseGraph):
             ), "All stacked bar series must be either primary or secondary."
 
             min_value_primary, max_value_primary = stacked_bar_range(
-                self.data, self.series_types, self.secondary
+                self.data,
+                self.series_types,
+                self.secondary,
+                self.scale_max,
+                self.scale_min,
             )
             if has_secondary:
                 min_value_secondary, max_value_secondary = stacked_bar_range(
-                    self.data, self.series_types, [not sec for sec in self.secondary]
+                    self.data,
+                    self.series_types,
+                    [not sec for sec in self.secondary],
+                    self.secondary_scale_max,
+                    self.secondary_scale_min,
                 )
         else:
             min_value_primary, max_value_primary = non_secondary_range(
-                self.data, self.secondary
+                self.data, self.secondary, self.scale_max, self.scale_min
             )
             if has_secondary:
                 min_value_secondary, max_value_secondary = non_secondary_range(
-                    self.data, [not sec for sec in self.secondary]
+                    self.data,
+                    [not sec for sec in self.secondary],
+                    self.secondary_scale_max,
+                    self.secondary_scale_min,
                 )
 
         primary_ticks = calculate_ticks(
