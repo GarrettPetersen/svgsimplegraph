@@ -104,6 +104,10 @@ class CategoricalGraph(BaseGraph):
         scale_min=None,
         secondary_scale_max=None,
         secondary_scale_min=None,
+        primary_tick_prefix="",
+        primary_tick_suffix="",
+        secondary_tick_prefix="",
+        secondary_tick_suffix="",
     ):
         super().__init__(
             width=width,
@@ -135,6 +139,10 @@ class CategoricalGraph(BaseGraph):
         self.scale_min = scale_min
         self.secondary_scale_max = secondary_scale_max
         self.secondary_scale_min = secondary_scale_min
+        self.primary_tick_prefix = primary_tick_prefix
+        self.primary_tick_suffix = primary_tick_suffix
+        self.secondary_tick_prefix = secondary_tick_prefix
+        self.secondary_tick_suffix = secondary_tick_suffix
         self.x_labels = []
         self.series_types = []
         self.secondary = []
@@ -601,7 +609,11 @@ class CategoricalGraph(BaseGraph):
             tick_y = (
                 self.height - (tick_value - adjusted_min_value_primary) * scale_primary
             )
-            tick_label = f"{human_readable_number(tick_value)}"
+            tick_label = (
+                self.primary_tick_prefix
+                + human_readable_number(tick_value)
+                + self.primary_tick_suffix
+            )
 
             self.svg_elements.append(
                 self._generate_text(
@@ -624,7 +636,11 @@ class CategoricalGraph(BaseGraph):
                     self.height
                     - (tick_value - adjusted_min_value_secondary) * scale_secondary
                 )
-                tick_label = f"{human_readable_number(tick_value)}"
+                tick_label = (
+                    self.secondary_tick_prefix
+                    + human_readable_number(tick_value)
+                    + self.secondary_tick_suffix
+                )
 
                 self.svg_elements.append(
                     self._generate_text(
