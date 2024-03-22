@@ -10,6 +10,8 @@ def test_categorical_graph():
         bar_width=30,
         title="Categorical Graph",
         watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
+        primary_tick_prefix="$",
+        secondary_tick_suffix="%",
     )
 
     graph.x_labels = ["A", "B", "C", "D", "E"]
