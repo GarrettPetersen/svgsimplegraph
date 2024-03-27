@@ -9,7 +9,7 @@ def polar_to_cartesian(angle, radius, x=0, y=0):
     return x, y
 
 
-def estimate_text_dimensions(text, font_size):
+def estimate_text_dimensions(text, font_size, font_width_estimate_multiplier):
     if not text:
         return 0, 0
 
@@ -37,7 +37,7 @@ def estimate_text_dimensions(text, font_size):
             max_chars = count
 
     # Assume each character is about 0.6 times the font size (this is a rough approximation)
-    estimated_width = max_chars * font_size * 0.6
+    estimated_width = (max_chars * font_size * 0.6) * font_width_estimate_multiplier
 
     # The height of a single line of text is roughly equal to the font size.
     # For multiple lines, multiply by the number of lines.

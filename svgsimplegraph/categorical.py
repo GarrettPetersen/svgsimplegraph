@@ -101,6 +101,7 @@ class CategoricalGraph(BaseGraph):
         title_font_size=None,
         element_spacing=None,
         watermark=None,
+        font_width_estimate_multiplier=1,
         scale_max=None,
         scale_min=None,
         secondary_scale_max=None,
@@ -134,6 +135,7 @@ class CategoricalGraph(BaseGraph):
             title_font_size=title_font_size,
             element_spacing=element_spacing,
             watermark=watermark,
+            font_width_estimate_multiplier=font_width_estimate_multiplier,
         )
         self.stacked = stacked
         self.bar_width = bar_width
@@ -789,7 +791,9 @@ class CategoricalGraph(BaseGraph):
             elif self.legend_position == "left":
                 max_legend_label_width = max(
                     [
-                        estimate_text_dimensions(label, 10)
+                        estimate_text_dimensions(
+                            label, 10, self.font_width_estimate_multiplier
+                        )
                         for label in self.legend_labels
                     ]
                 )[0]
@@ -903,14 +907,18 @@ class CategoricalGraph(BaseGraph):
                         legend_x += (
                             (2 * self.element_spacing) / 3
                             + legend_rect_size
-                            + estimate_text_dimensions(label, 10)[0]
+                            + estimate_text_dimensions(
+                                label, 10, self.font_width_estimate_multiplier
+                            )[0]
                         )
 
                         next_index_with_label = index + 1
                         next_label_width = 0
                         while next_index_with_label < len(self.legend_labels):
                             next_label_width = estimate_text_dimensions(
-                                self.legend_labels[next_index_with_label], 10
+                                self.legend_labels[next_index_with_label],
+                                10,
+                                self.font_width_estimate_multiplier,
                             )[0]
                             if self.legend_labels[next_index_with_label] is not None:
                                 break
@@ -980,14 +988,18 @@ class CategoricalGraph(BaseGraph):
                         legend_x += (
                             (2 * self.element_spacing) / 3
                             + legend_rect_size
-                            + estimate_text_dimensions(label, 10)[0]
+                            + estimate_text_dimensions(
+                                label, 10, self.font_width_estimate_multiplier
+                            )[0]
                         )
 
                         next_index_with_label = index + 1
                         next_label_width = 0
                         while next_index_with_label < len(self.legend_labels):
                             next_label_width = estimate_text_dimensions(
-                                self.legend_labels[next_index_with_label], 10
+                                self.legend_labels[next_index_with_label],
+                                10,
+                                self.font_width_estimate_multiplier,
                             )[0]
                             if self.legend_labels[next_index_with_label] is not None:
                                 break

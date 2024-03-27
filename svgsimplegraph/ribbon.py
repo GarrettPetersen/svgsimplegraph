@@ -38,6 +38,7 @@ class RibbonGraph(BaseGraph):
         title_font_size=None,
         element_spacing=None,
         watermark=None,
+        font_width_estimate_multiplier=1,
         num_colors=2,
     ):
         super().__init__(
@@ -62,6 +63,7 @@ class RibbonGraph(BaseGraph):
             title_font_size=title_font_size,
             element_spacing=element_spacing,
             watermark=watermark,
+            font_width_estimate_multiplier=font_width_estimate_multiplier,
         )
         self.bar_width = bar_width
         self.x_labels = []

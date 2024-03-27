@@ -40,6 +40,7 @@ class BubbleAndArrowGraph(BaseGraph):
         title_font_size=None,
         element_spacing=None,
         watermark=None,
+        font_width_estimate_multiplier=1,
     ):
         super().__init__(
             width=width,
@@ -64,6 +65,7 @@ class BubbleAndArrowGraph(BaseGraph):
             title_font_size=title_font_size,
             element_spacing=element_spacing,
             watermark=watermark,
+            font_width_estimate_multiplier=font_width_estimate_multiplier,
         )
         self.bubbles = []
         self.arrows = []
@@ -102,7 +104,11 @@ class BubbleAndArrowGraph(BaseGraph):
             self.arrows.append([origin, destination, size])
 
     def _draw_dot(self, x, y, fill, radius=5, inner_radius=None, text=None):
-        text_width, _ = estimate_text_dimensions(text, 10) if text else 0
+        text_width, _ = (
+            estimate_text_dimensions(text, 10, self.font_width_estimate_multiplier)
+            if text
+            else 0
+        )
         self.most_extreme_dimensions["left"] = min(
             self.most_extreme_dimensions["left"], x - radius
         )
@@ -383,10 +389,10 @@ class BubbleAndArrowGraph(BaseGraph):
                 other_index = (text_to_check + i) % len(self.text_buffer)
                 other_text = self.text_buffer[other_index]
                 first_text_width, first_text_height = estimate_text_dimensions(
-                    first_text[2], 10
+                    first_text[2], 10, self.font_width_estimate_multiplier
                 )
                 other_text_width, other_text_height = estimate_text_dimensions(
-                    other_text[2], 10
+                    other_text[2], 10, self.font_width_estimate_multiplier
                 )
                 vertical_overlap = boxes_overlap(
                     first_text[0],
