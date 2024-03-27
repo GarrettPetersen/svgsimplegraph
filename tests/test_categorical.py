@@ -180,6 +180,24 @@ def test_categorical_graph():
     stacked_base64 = graph.to_base64_src()
     print(f"\n<img src='{stacked_base64}' />")
 
+    # Now try another legend position
+    graph.legend_position = "top"
+
+    stacked_base64 = graph.to_base64_src()
+    print(f"\n<img src='{stacked_base64}' />")
+
+    # Now try another legend position
+    graph.legend_position = "left"
+
+    stacked_base64 = graph.to_base64_src()
+    print(f"\n<img src='{stacked_base64}' />")
+
+    # Now try another legend position
+    graph.legend_position = "bottom"
+
+    stacked_base64 = graph.to_base64_src()
+    print(f"\n<img src='{stacked_base64}' />")
+
     # New graph with a very long series
     graph = CategoricalGraph(
         width=600,

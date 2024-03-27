@@ -10,6 +10,9 @@ def polar_to_cartesian(angle, radius, x=0, y=0):
 
 
 def estimate_text_dimensions(text, font_size):
+    if not text:
+        return 0, 0
+
     # Split the text into lines
     lines = text.splitlines()
 
