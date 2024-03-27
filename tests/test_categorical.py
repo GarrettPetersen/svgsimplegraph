@@ -179,3 +179,24 @@ def test_categorical_graph():
 
     stacked_base64 = graph.to_base64_src()
     print(f"\n<img src='{stacked_base64}' />")
+
+    # New graph with a very long series
+    graph = CategoricalGraph(
+        width=600,
+        height=400,
+        bar_width=30,
+        title="Categorical Graph",
+        primary_tick_prefix="$",
+    )
+
+    number_of_bars = 100
+
+    graph.x_labels = [f"Label {i}" for i in range(number_of_bars)]
+    graph.x_axis_label = "X Axis"
+    graph.primary_y_axis_label = "Primary Y Axis"
+    graph.secondary_y_axis_label = "Secondary Y Axis"
+
+    graph.add_series([abs(i - number_of_bars // 2) for i in range(number_of_bars)])
+
+    stacked_base64 = graph.to_base64_src()
+    print(f"\n<img src='{stacked_base64}' />")

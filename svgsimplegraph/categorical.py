@@ -218,6 +218,7 @@ class CategoricalGraph(BaseGraph):
         )
 
     def _draw_bar(self, x, y, width, height, fill):
+        assert x >= 0, f"Bars cannot start below 0: {x}"
         if height == 0:
             return ""
         if height < 0:
@@ -308,7 +309,7 @@ class CategoricalGraph(BaseGraph):
                 if type == "bar":
                     num_bars += 1
         num_bars = max(num_bars, 1)
-        max_bar_width = graph_width / (num_bars * len(self.data[0]))
+        max_bar_width = graph_width / (num_bars * (len(self.data[0]) + 0.5))
 
         bar_width = min(max_bar_width, self.bar_width)
 
@@ -323,7 +324,7 @@ class CategoricalGraph(BaseGraph):
             scale_secondary = None
 
         # Draw series
-        bar_spacing = (self.width) / len(self.data[0])
+        bar_spacing = (self.width) / (len(self.data[0]) + 0.5)
         bar_series_across = (
             1
             if self.stacked
@@ -355,12 +356,12 @@ class CategoricalGraph(BaseGraph):
                 series_type, print_values = self.series_types[index]
 
                 if series_type == "dot" or series_type == "line" or self.stacked:
-                    x = sub_index * bar_spacing + (bar_spacing - bar_width) / 2
+                    x = (0.5 + sub_index) * bar_spacing + (bar_spacing - bar_width) / 2
                 else:
                     # Calculate the starting x-position of the bars in each category
-                    start_x = (
-                        sub_index * bar_spacing + (bar_spacing - total_bars_width) / 2
-                    )
+                    start_x = (0.5 + sub_index) * bar_spacing + (
+                        bar_spacing - total_bars_width
+                    ) / 2
                     x = (
                         start_x + bar_count * bar_width - bar_width / 2
                     )  # Adjusting by half of the bar width
@@ -397,7 +398,7 @@ class CategoricalGraph(BaseGraph):
                     )
                 elif series_type == "dot":
                     center_x = (
-                        sub_index * bar_spacing
+                        (sub_index + 0.5) * bar_spacing
                         + (bar_spacing - total_bars_width) / 2
                         + bar_width * (bar_series_across - 1) / 2
                     )
@@ -413,7 +414,7 @@ class CategoricalGraph(BaseGraph):
                     last_data_point = self.data[index][sub_index - 1]
                     if last_data_point is not None:
                         prev_y = self.height - (last_data_point - min_value) * scale
-                        prev_x = (sub_index - 1) * bar_spacing + (
+                        prev_x = (sub_index - 0.5) * bar_spacing + (
                             bar_spacing - bar_width
                         ) / 2
                         self.svg_elements.append(
@@ -497,7 +498,7 @@ class CategoricalGraph(BaseGraph):
             rotate_label,
         ) in self.vertical_lines:
             x_svg = (
-                x_index * bar_spacing
+                (x_index + 0.5) * bar_spacing
                 + (bar_spacing - total_bars_width) / 2
                 + bar_width * (bar_series_across - 1) / 2
             )
@@ -546,9 +547,7 @@ class CategoricalGraph(BaseGraph):
                     dominant_baseline = (
                         "central"
                         if label_y_position == "center"
-                        else "hanging"
-                        if label_y_position == "top"
-                        else "baseline"
+                        else "hanging" if label_y_position == "top" else "baseline"
                     )
 
                     self.svg_elements.append(
@@ -588,7 +587,7 @@ class CategoricalGraph(BaseGraph):
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
             x = (
-                index * bar_spacing
+                (index + 0.5) * bar_spacing
                 + (bar_spacing - total_bars_width) / 2
                 + bar_width * (bar_series_across - 1) / 2
             )
