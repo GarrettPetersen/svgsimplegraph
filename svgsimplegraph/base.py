@@ -40,6 +40,7 @@ class BaseGraph:
         title_font_size=None,
         element_spacing=None,
         watermark=None,
+        font_width_estimate_multiplier=1,
     ):
         self.width = width
         self.height = height
@@ -70,6 +71,7 @@ class BaseGraph:
         self.svg_elements = []
         self.element_spacing = element_spacing or 10
         self.watermark = watermark
+        self.font_width_estimate_multiplier = font_width_estimate_multiplier
 
         # Use dark colors last if in dark mode and using default color palette
         if self.colors == DEFAULT_COLOR_PALETTE and self.dark_mode:
@@ -120,7 +122,9 @@ class BaseGraph:
         text_element += f">{text}</text>"
 
         # Estimate the text dimensions
-        text_width, text_height = estimate_text_dimensions(text, font_size)
+        text_width, text_height = estimate_text_dimensions(
+            text, font_size, self.font_width_estimate_multiplier
+        )
 
         # Adjust the bounding box coordinates according to the anchor and dominant-baseline
         if anchor == "end":
