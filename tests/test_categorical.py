@@ -216,5 +216,27 @@ def test_categorical_graph():
 
     graph.add_series([abs(i - number_of_bars // 2) for i in range(number_of_bars)])
 
+    large_base64 = graph.to_base64_src()
+    print(f"\n<img src='{large_base64}' />")
+
+    # New graph with stacked primary and line secondary
+    graph = CategoricalGraph(
+        width=600,
+        height=400,
+        bar_width=30,
+        title="Categorical Graph",
+        secondary_tick_suffix="%",
+        stacked=True,
+    )
+
+    graph.x_labels = [f"Label {i}" for i in range(5)]
+    graph.x_axis_label = "X Axis"
+    graph.primary_y_axis_label = "Primary Y Axis"
+    graph.secondary_y_axis_label = "Secondary Y Axis"
+
+    graph.add_series([1, 2, 3, 4, 5])
+    graph.add_series([50, 40, 30, 20, 10], series_type="line", secondary=True)
+    graph.add_series([3, 4, 3, 2, 1])
+
     stacked_base64 = graph.to_base64_src()
     print(f"\n<img src='{stacked_base64}' />")

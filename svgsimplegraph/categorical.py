@@ -11,6 +11,32 @@ def stacked_bar_range(data, series_types, secondary, maximum, minimum):
         for index in range(len(secondary))
     ]
 
+    non_secondary_non_bars_to_use = [
+        not secondary[index] and series_types[index][0] != "bar"
+        for index in range(len(secondary))
+    ]
+
+    if any(non_secondary_non_bars_to_use):
+        non_secondary_non_bar_values = [
+            value
+            for values, non_bar_non_secondary in zip(
+                data, non_secondary_non_bars_to_use
+            )
+            if non_bar_non_secondary
+            for value in values
+            if value is not None  # Exclude None values
+        ]
+        max_non_secondary_non_bar = max(non_secondary_non_bar_values)
+        min_non_secondary_non_bar = min(non_secondary_non_bar_values)
+        if maximum is not None:
+            maximum = max(max_non_secondary_non_bar, maximum)
+        else:
+            maximum = max_non_secondary_non_bar
+        if minimum is not None:
+            minimum = min(min_non_secondary_non_bar, minimum)
+        else:
+            minimum = min_non_secondary_non_bar
+
     stacked_positive_data = [
         sum(
             max(value or 0, 0)
