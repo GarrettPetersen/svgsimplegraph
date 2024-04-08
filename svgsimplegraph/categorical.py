@@ -950,7 +950,7 @@ class CategoricalGraph(BaseGraph):
                                 break
                             next_index_with_label += 1
 
-                        if (legend_x > 0) and (
+                        if (
                             legend_x
                             + legend_rect_size
                             + self.element_spacing / 2
@@ -1031,7 +1031,7 @@ class CategoricalGraph(BaseGraph):
                                 break
                             next_index_with_label += 1
 
-                        if (legend_x > 0) and (
+                        if (
                             legend_x
                             + legend_rect_size
                             + self.element_spacing / 2

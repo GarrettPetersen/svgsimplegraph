@@ -1,6 +1,4 @@
 import math
-import matplotlib
-import numpy as np
 
 
 def polar_to_cartesian(angle, radius, x=0, y=0):
@@ -73,12 +71,25 @@ def boxes_overlap(x1, y1, width1, height1, x2, y2, width2, height2):
         return bottom2 - top1
 
 
+def hex_to_rgb(color):
+    """Convert a hex color to an RGB tuple."""
+    color = color.lstrip("#")
+    lv = len(color)
+    return tuple(int(color[i : i + lv // 3], 16) / 255.0 for i in range(0, lv, lv // 3))
+
+
+def rgb_to_hex(rgb):
+    """Convert an RGB tuple to a hex color."""
+    return "#" + "".join(f"{int(c*255):02x}" for c in rgb)
+
+
 def get_color(val, colors):
     # Convert hex colors to RGB
-    rgbs = [np.array(matplotlib.colors.hex2color(color)) for color in colors]
+    rgbs = [hex_to_rgb(color) for color in colors]
 
     # Assign values to color ranges
-    ranges = np.linspace(0, 1, len(colors))
+    num_colors = len(colors)
+    ranges = [i / (num_colors - 1) for i in range(num_colors)]
 
     # If value is outside the defined range, use the edge colors.
     if val <= 0:
@@ -88,18 +99,16 @@ def get_color(val, colors):
 
     # Find the two colors between which the value lies.
     for i in range(len(ranges) - 1):
-        # Adjust the ranges to match the colors properly
         low_range = ranges[i]
         high_range = ranges[i + 1]
-        # Perform interpolation if val falls within the adjusted ranges
         if low_range <= val < high_range:
             t = (val - low_range) / (high_range - low_range)
-            color = rgbs[i] * (1 - t) + rgbs[i + 1] * t
-            break
-    else:
-        color = rgbs[0]  # default to the first color if no range found
+            # Linearly interpolate between the two colors
+            color = tuple(a * (1 - t) + b * t for a, b in zip(rgbs[i], rgbs[i + 1]))
+            return rgb_to_hex(color)
 
-    return matplotlib.colors.rgb2hex(color)
+    # Default case, should not be reached due to checks for val <= 0 and val >= 1
+    return colors[0]
 
 
 def hex_to_rgba(hex_color, alpha=1.0):
@@ -157,7 +166,11 @@ def calculate_ticks(min_val, max_val, include_zero=True, target_tick_count=7):
     axis_max = step_size * math.ceil(max_val / step_size)
 
     # Generate the list of ticks
-    ticks = list(np.arange(axis_min, axis_max + step_size, step_size))
+    ticks = []
+    current = axis_min
+    while current <= axis_max:
+        ticks.append(current)
+        current += step_size
 
     if include_zero:
         assert 0 in ticks, "Zero should be included in the ticks."

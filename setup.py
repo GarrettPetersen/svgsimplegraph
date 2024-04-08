@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as f:
     long_description = f.read()
 
-VERSION = "0.2.2"
+VERSION = "0.2.3"
 DESCRIPTION = "Simple SVG graphing package"
 
 setup(
@@ -17,7 +17,7 @@ setup(
     author_email="garrett.m.petersen@gmail.com",
     license="MIT",
     packages=find_packages(),
-    install_requires=["matplotlib", "numpy"],
+    install_requires=[],
     keywords=["graph", "svg", "base64", "svg simple graph"],
     classifiers=[
         "Development Status :: 3 - Alpha",
