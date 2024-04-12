@@ -176,8 +176,8 @@ class CategoricalGraph(BaseGraph):
         self.secondary_tick_suffix = secondary_tick_suffix
         self.legend_position = legend_position
         assert (
-            line_curvature >= 0 and line_curvature <= 1
-        ), f"Invalid line_curvature value: {line_curvature}. Must be between 0 and 1."
+            line_curvature >= 0 and line_curvature <= 0.5
+        ), f"Invalid line_curvature value: {line_curvature}. Must be between 0 and 0.5."
         self.line_curvature = line_curvature
         self.x_labels = []
         self.series_types = []

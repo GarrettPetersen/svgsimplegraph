@@ -205,6 +205,7 @@ def test_categorical_graph():
         bar_width=30,
         title="Categorical Graph",
         primary_tick_prefix="$",
+        line_curvature=0.5,
     )
 
     number_of_bars = 100
@@ -215,6 +216,9 @@ def test_categorical_graph():
     graph.secondary_y_axis_label = "Secondary Y Axis"
 
     graph.add_series([abs(i - number_of_bars // 2) for i in range(number_of_bars)])
+    graph.add_series(
+        [(i**2) % number_of_bars for i in range(number_of_bars)], series_type="line"
+    )
 
     large_base64 = graph.to_base64_src()
     print(f"\n<img src='{large_base64}' />")
@@ -227,7 +231,7 @@ def test_categorical_graph():
         title="Categorical Graph",
         secondary_tick_suffix="%",
         stacked=True,
-        line_curvature=0.25,
+        line_curvature=0.5,
         legend_position="top",
     )
 
