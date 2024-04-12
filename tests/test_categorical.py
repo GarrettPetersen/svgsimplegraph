@@ -227,6 +227,8 @@ def test_categorical_graph():
         title="Categorical Graph",
         secondary_tick_suffix="%",
         stacked=True,
+        line_curvature=0.25,
+        legend_position="top",
     )
 
     graph.x_labels = [f"Label {i}" for i in range(5)]
@@ -234,9 +236,22 @@ def test_categorical_graph():
     graph.primary_y_axis_label = "Primary Y Axis"
     graph.secondary_y_axis_label = "Secondary Y Axis"
 
-    graph.add_series([1, 2, 3, 4, 5])
-    graph.add_series([50, 40, 30, 20, 10], series_type="line", secondary=True)
-    graph.add_series([3, 4, 3, 2, 1])
+    graph.add_series([1, 2, 3, 4, 5, 1, 1, 1, 5, 6, 7, 8], legend_label="Primary Bar")
+    graph.add_series(
+        [50, 10, 35, 25, 10, 5, 30, 5, 10, 15, 20, 25],
+        series_type="line",
+        secondary=True,
+        stroke_width=2,
+        legend_label="Secondary Line",
+    )
+    graph.add_series(
+        [50, None, 35, 25, 10, 5, None, None, 10, 15, None, 25],
+        series_type="line",
+        secondary=True,
+        stroke_width=2,
+        legend_label="Secondary Line 2",
+    )
+    graph.add_series([3, 4, 3, 2, 1, 1, 3, 4, 1, 2, 1, 3], legend_label="Primary Bar 2")
 
     stacked_base64 = graph.to_base64_src()
     print(f"\n<img src='{stacked_base64}' />")

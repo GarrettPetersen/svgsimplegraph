@@ -137,6 +137,7 @@ class CategoricalGraph(BaseGraph):
         secondary_tick_prefix="",
         secondary_tick_suffix="",
         legend_position="right",
+        line_curvature=0,
     ):
         super().__init__(
             width=width,
@@ -174,11 +175,16 @@ class CategoricalGraph(BaseGraph):
         self.secondary_tick_prefix = secondary_tick_prefix
         self.secondary_tick_suffix = secondary_tick_suffix
         self.legend_position = legend_position
+        assert (
+            line_curvature >= 0 and line_curvature <= 1
+        ), f"Invalid line_curvature value: {line_curvature}. Must be between 0 and 1."
+        self.line_curvature = line_curvature
         self.x_labels = []
         self.series_types = []
         self.secondary = []
         self.horizontal_lines = []
         self.vertical_lines = []
+        self.stroke_width = []
 
     def add_series(
         self,
@@ -187,11 +193,13 @@ class CategoricalGraph(BaseGraph):
         series_type="bar",
         print_values=False,
         secondary=False,
+        stroke_width=1,
     ):
         self.data.append(series)
         self.legend_labels.append(legend_label or None)
         self.series_types.append((series_type, print_values))
         self.secondary.append(secondary)
+        self.stroke_width.append(stroke_width)
 
     def add_horizontal_line(
         self,
@@ -293,8 +301,78 @@ class CategoricalGraph(BaseGraph):
         )
         return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}" stroke-width="{stroke_width}" />'
 
+    def _draw_path(self, points, stroke="black", stroke_width=1, curvature=0):
+        path_data = ""
+        current_path = []
+
+        def append_current_path():
+            nonlocal path_data, current_path
+            if not current_path:
+                return
+
+            path_data += f" M {current_path[0][0]} {current_path[0][1]}"
+            if len(current_path) == 1:
+                return  # Only one point, nothing more to draw
+
+            if curvature == 0:
+                # Draw straight lines between points
+                for i in range(1, len(current_path)):
+                    p1 = current_path[i]
+                    path_data += f" L {p1[0]} {p1[1]}"
+            else:
+                for i in range(1, len(current_path)):
+                    p0 = current_path[i - 1]
+                    p1 = current_path[i]
+
+                    if i < len(current_path) - 1:
+                        p2 = current_path[i + 1]
+                        is_valley = p0[1] <= p1[1] >= p2[1]
+                        is_peak = p0[1] >= p1[1] <= p2[1]
+
+                        if is_valley or is_peak:
+                            # Handle peaks and valleys with a flatter approach
+                            ctrl1_x = p0[0] + (p1[0] - p0[0]) * curvature
+                            ctrl1_y = p1[1]  # Keep Y same to prevent overshoot
+                            ctrl2_x = p1[0] - (p2[0] - p1[0]) * curvature
+                            ctrl2_y = p1[1]  # Keep Y same to prevent overshoot
+                        else:
+                            # Adapt curvature based on the slope and overall direction
+                            delta_x1 = p1[0] - p0[0]
+                            delta_y1 = p1[1] - p0[1]
+                            delta_x2 = p2[0] - p1[0]
+                            delta_y2 = p2[1] - p1[1]
+                            ctrl1_x = p0[0] + delta_x1 * curvature
+                            ctrl1_y = p0[1] + delta_y1 * curvature
+                            ctrl2_x = p1[0] - delta_x2 * curvature
+                            ctrl2_y = p1[1] - delta_y2 * curvature
+                    else:
+                        # Last point, use the slope from the previous points
+                        delta_x = p1[0] - p0[0]
+                        delta_y = p1[1] - p0[1]
+                        ctrl1_x = p0[0] + delta_x * curvature
+                        ctrl1_y = p0[1] + delta_y * curvature
+                        ctrl2_x = p1[0] + delta_x * curvature
+                        ctrl2_y = p1[1] + delta_y * curvature
+
+                    if i == 1:
+                        path_data += f" C {ctrl1_x} {ctrl1_y} {ctrl2_x} {ctrl2_y} {p1[0]} {p1[1]}"
+                    else:
+                        path_data += f" S {ctrl2_x} {ctrl2_y} {p1[0]} {p1[1]}"
+
+            current_path = []
+
+        for point in points:
+            if point is None:
+                append_current_path()
+            else:
+                current_path.append(point)
+
+        append_current_path()
+        return f'<path d="{path_data}" stroke="{stroke}" stroke-width="{stroke_width}" fill="none"/>'
+
     def render(self):
         self._reset_graph()
+        self.paths = {}
         graph_width = self.width
         has_secondary = any(self.secondary)
         max_value_secondary = None
@@ -403,12 +481,17 @@ class CategoricalGraph(BaseGraph):
             for index in range(num_series):
                 value = self.data[index][sub_index]
 
-                if value is None:
-                    continue
-
                 secondary_value = self.secondary[index]
 
                 series_type, print_values = self.series_types[index]
+
+                if value is None:
+                    if series_type == "line":
+                        if index not in self.paths:
+                            self.paths[index] = []
+                        self.paths[index].append(None)
+
+                    continue
 
                 if series_type == "dot" or series_type == "line" or self.stacked:
                     x = (0.5 + sub_index) * bar_spacing + (bar_spacing - bar_width) / 2
@@ -465,22 +548,10 @@ class CategoricalGraph(BaseGraph):
                             fill=self.colors[index],
                         )
                     )
-                elif series_type == "line" and sub_index > 0:
-                    last_data_point = self.data[index][sub_index - 1]
-                    if last_data_point is not None:
-                        prev_y = self.height - (last_data_point - min_value) * scale
-                        prev_x = (sub_index - 0.5) * bar_spacing + (
-                            bar_spacing - bar_width
-                        ) / 2
-                        self.svg_elements.append(
-                            self._draw_line(
-                                prev_x,
-                                prev_y,
-                                x,
-                                y,
-                                stroke=self.colors[index],
-                            )
-                        )
+                elif series_type == "line":
+                    if index not in self.paths:
+                        self.paths[index] = []
+                    self.paths[index].append((x, y))
 
                 if print_values:
                     if series_type == "dot":
@@ -496,6 +567,17 @@ class CategoricalGraph(BaseGraph):
                             value, value_x, value_y, fill=self.text_color
                         )
                     )
+
+        # Draw paths
+        for index, points in self.paths.items():
+            self.svg_elements.append(
+                self._draw_path(
+                    points,
+                    stroke=self.colors[index],
+                    curvature=self.line_curvature,
+                    stroke_width=self.stroke_width[index],
+                )
+            )
 
         # Draw horizontal lines
         for (
@@ -790,6 +872,7 @@ class CategoricalGraph(BaseGraph):
                                     legend_x + legend_rect_size,
                                     legend_y + legend_rect_size / 2,
                                     stroke=self.colors[index],
+                                    stroke_width=self.stroke_width[index],
                                 )
                             )
                         else:  # series_type == "bar"
@@ -1012,7 +1095,7 @@ class CategoricalGraph(BaseGraph):
                             )
                         )
                         legend_x += (
-                            (2 * self.element_spacing) / 3
+                            self.element_spacing
                             + legend_rect_size
                             + estimate_text_dimensions(
                                 label, 10, self.font_width_estimate_multiplier
