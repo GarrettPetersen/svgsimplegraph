@@ -935,6 +935,7 @@ class CategoricalGraph(BaseGraph):
                                     legend_x + legend_rect_size,
                                     legend_y + legend_rect_size / 2,
                                     stroke=self.colors[index],
+                                    stroke_width=self.stroke_width[index],
                                 )
                             )
                         else:  # series_type == "bar"
@@ -993,6 +994,7 @@ class CategoricalGraph(BaseGraph):
                                     legend_x + legend_rect_size,
                                     legend_y + legend_rect_size / 2,
                                     stroke=self.colors[index],
+                                    stroke_width=self.stroke_width[index],
                                 )
                             )
                         else:  # series_type == "bar"
@@ -1074,6 +1076,7 @@ class CategoricalGraph(BaseGraph):
                                     legend_x + legend_rect_size,
                                     legend_y + legend_rect_size / 2,
                                     stroke=self.colors[index],
+                                    stroke_width=self.stroke_width[index],
                                 )
                             )
                         else:  # series_type == "bar"
