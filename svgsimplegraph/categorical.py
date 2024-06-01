@@ -3,6 +3,8 @@ from .utils import human_readable_number
 from .utils import calculate_ticks
 from .utils import match_ticks
 from .utils import estimate_text_dimensions
+import math
+import numbers
 
 
 def stacked_bar_range(data, series_types, secondary, maximum, minimum):
@@ -195,7 +197,16 @@ class CategoricalGraph(BaseGraph):
         secondary=False,
         stroke_width=1,
     ):
-        self.data.append(series)
+        # Deal with NaN values besides None (e.g. np.nan)
+        cleaned_series = [
+            (
+                value
+                if isinstance(value, numbers.Number) and not math.isnan(value)
+                else None
+            )
+            for value in series
+        ]
+        self.data.append(cleaned_series)
         self.legend_labels.append(legend_label or None)
         self.series_types.append((series_type, print_values))
         self.secondary.append(secondary)
