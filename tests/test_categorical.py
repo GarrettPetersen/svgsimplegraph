@@ -258,4 +258,8 @@ def test_categorical_graph():
     graph.add_series([3, 4, 3, 2, 1, 1, 3, 4, 1, 2, 1, 3], legend_label="Primary Bar 2")
 
     stacked_base64 = graph.to_base64_src()
+    svg_code = graph.render()
+
     print(f"\n<img src='{stacked_base64}' />")
+
+    print(svg_code)

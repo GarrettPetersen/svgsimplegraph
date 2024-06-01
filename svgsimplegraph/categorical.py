@@ -3,6 +3,8 @@ from .utils import human_readable_number
 from .utils import calculate_ticks
 from .utils import match_ticks
 from .utils import estimate_text_dimensions
+import math
+import numbers
 
 
 def stacked_bar_range(data, series_types, secondary, maximum, minimum):
@@ -195,7 +197,16 @@ class CategoricalGraph(BaseGraph):
         secondary=False,
         stroke_width=1,
     ):
-        self.data.append(series)
+        # Deal with NaN values besides None (e.g. np.nan)
+        cleaned_series = [
+            (
+                value
+                if isinstance(value, numbers.Number) and not math.isnan(value)
+                else None
+            )
+            for value in series
+        ]
+        self.data.append(cleaned_series)
         self.legend_labels.append(legend_label or None)
         self.series_types.append((series_type, print_values))
         self.secondary.append(secondary)
@@ -301,7 +312,7 @@ class CategoricalGraph(BaseGraph):
         )
         return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}" stroke-width="{stroke_width}" />'
 
-    def _draw_path(self, points, stroke="black", stroke_width=1, curvature=0):
+    def _make_line_path(self, points, curvature=0):
         path_data = ""
         current_path = []
 
@@ -368,11 +379,41 @@ class CategoricalGraph(BaseGraph):
                 current_path.append(point)
 
         append_current_path()
+        return path_data
+
+    def _draw_line_path(self, points, stroke="black", stroke_width=1, curvature=0):
+        path_data = self._make_line_path(points, curvature)
         return f'<path d="{path_data}" stroke="{stroke}" stroke-width="{stroke_width}" fill="none"/>'
+
+    def _make_bar_path(self, bars):
+        path_data = ""
+        for x, y, width, height in bars:
+            path_data += f"M {x} {y} h {width} v {height} h -{width} z "
+        return path_data
+
+    def _draw_bar_path(self, bars, fill):
+        path_data = self._make_bar_path(bars)
+        return f'<path d="{path_data}" fill="{fill}" />'
+
+    def _make_dot_path(self, dots, radius=5):
+        path_data = ""
+        for x, y in dots:
+            path_data += (
+                f"M {x-radius} {y} "  # Move to the left edge of the circle
+                f"a {radius},{radius} 0 1,0 {2*radius},0 "  # Draw the first arc
+                f"a {radius},{radius} 0 1,0 -{2*radius},0 "  # Draw the second arc to complete the circle
+            )
+        return path_data
+
+    def _draw_dot_path(self, dots, fill, radius=5):
+        path_data = self._make_dot_path(dots, radius)
+        return f'<path d="{path_data}" fill="{fill}" />'
 
     def render(self):
         self._reset_graph()
-        self.paths = {}
+        self.line_paths = {}
+        self.bar_paths = {}
+        self.dot_paths = {}
         graph_width = self.width
         has_secondary = any(self.secondary)
         max_value_secondary = None
@@ -487,9 +528,9 @@ class CategoricalGraph(BaseGraph):
 
                 if value is None:
                     if series_type == "line":
-                        if index not in self.paths:
-                            self.paths[index] = []
-                        self.paths[index].append(None)
+                        if index not in self.line_paths:
+                            self.line_paths[index] = []
+                        self.line_paths[index].append(None)
 
                     continue
 
@@ -521,37 +562,54 @@ class CategoricalGraph(BaseGraph):
                     else:
                         y -= negative_bar_heights[sub_index]
                         negative_bar_heights[sub_index] += bar_height
-                    self.svg_elements.append(
-                        self._draw_bar(x, y, bar_width, bar_height, self.colors[index])
-                    )
+                    if index not in self.bar_paths:
+                        self.bar_paths[index] = []
+                    self.bar_paths[index].append((x, y, bar_width, bar_height))
+
+                    # This is how we would draw bars individually
+                    # self.svg_elements.append(
+                    #     self._draw_bar(x, y, bar_width, bar_height, self.colors[index])
+                    # )
+
                 elif series_type == "bar":
-                    self.svg_elements.append(
-                        self._draw_bar(
-                            x,
-                            y,
-                            bar_width,
-                            value * scale,
-                            self.colors[index],
-                        )
-                    )
+                    bar_height = value * scale
+                    if index not in self.bar_paths:
+                        self.bar_paths[index] = []
+                    self.bar_paths[index].append((x, y, bar_width, bar_height))
+
+                    # self.svg_elements.append(
+                    #     self._draw_bar(
+                    #         x,
+                    #         y,
+                    #         bar_width,
+                    #         value * scale,
+                    #         self.colors[index],
+                    #     )
+                    # )
+
                 elif series_type == "dot":
                     center_x = (
                         (sub_index + 0.5) * bar_spacing
                         + (bar_spacing - total_bars_width) / 2
                         + bar_width * (bar_series_across - 1) / 2
                     )
-                    self.svg_elements.append(
-                        self._draw_dot(
-                            center_x,
-                            y,
-                            radius=5,
-                            fill=self.colors[index],
-                        )
-                    )
+                    if index not in self.dot_paths:
+                        self.dot_paths[index] = []
+                    self.dot_paths[index].append((center_x, y))
+
+                    # self.svg_elements.append(
+                    #     self._draw_dot(
+                    #         center_x,
+                    #         y,
+                    #         radius=5,
+                    #         fill=self.colors[index],
+                    #     )
+                    # )
+
                 elif series_type == "line":
-                    if index not in self.paths:
-                        self.paths[index] = []
-                    self.paths[index].append((x, y))
+                    if index not in self.line_paths:
+                        self.line_paths[index] = []
+                    self.line_paths[index].append((x, y))
 
                 if print_values:
                     if series_type == "dot":
@@ -568,16 +626,24 @@ class CategoricalGraph(BaseGraph):
                         )
                     )
 
+        # Draw bars
+        for index, bars in self.bar_paths.items():
+            self.svg_elements.append(self._draw_bar_path(bars, self.colors[index]))
+
         # Draw paths
-        for index, points in self.paths.items():
+        for index, points in self.line_paths.items():
             self.svg_elements.append(
-                self._draw_path(
+                self._draw_line_path(
                     points,
                     stroke=self.colors[index],
                     curvature=self.line_curvature,
                     stroke_width=self.stroke_width[index],
                 )
             )
+
+        # Draw dots
+        for index, dots in self.dot_paths.items():
+            self.svg_elements.append(self._draw_dot_path(dots, fill=self.colors[index]))
 
         # Draw horizontal lines
         for (
