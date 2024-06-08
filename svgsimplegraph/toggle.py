@@ -156,7 +156,7 @@ class ToggleGraph:
             button_y_position = (
                 self.most_extreme_dimensions["top"]
                 - button_height
-                - self.element_spacing
+                - 2 * self.element_spacing
             )
         elif self.button_position == "bottom":
             button_x_position = 0
