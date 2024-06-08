@@ -81,3 +81,16 @@ def test_toggle_graph():
     print(f"\n<object type='image/svg+xml' data='{svg_base64}' />")
 
     print(toggle.render())
+
+    toggle2 = ToggleGraph(button_position="top", button_font_size=12)
+
+    toggle2.add_graph(graph1, label="Graph 1")
+    toggle2.add_graph(graph2, label="Graph 2")
+    toggle2.add_graph(graph3, label="Graph 3")
+    toggle2.add_graph(graph4, label="Graph 4")
+
+    svg_base64 = toggle2.to_base64_src()
+
+    print(f"\n<object type='image/svg+xml' data='{svg_base64}' />")
+
+    print(toggle2.render())
