@@ -61,6 +61,95 @@ print(raw_svg)
 ```
 ![Example categorical graph](https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_categorical.svg)
 
+### Toggle Graph
+
+You can combine multiple CategoricalGraphs into a ToggleGraph with interactive buttons.
+
+```
+from svgsimplegraph import ToggleGraph
+from svgsimplegraph import CategoricalGraph
+
+# Let's make some categorical graphs to put in our ToggleGraph
+graph1 = CategoricalGraph(
+    width=600,
+    height=400,
+    bar_width=30,
+    title="Categorical Graph 1",
+    watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
+    primary_tick_prefix="$",
+)
+
+graph1.x_labels = ["A", "B", "C", "D", "E"]
+graph1.x_axis_label = "X Axis"
+graph1.primary_y_axis_label = "Primary Y Axis"
+
+graph1.add_series([10, 20, -30, 40, 50])
+
+graph2 = CategoricalGraph(
+    width=600,
+    height=400,
+    bar_width=30,
+    title="Categorical Graph 2",
+    watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
+    primary_tick_prefix="$",
+)
+
+graph2.x_labels = ["A", "B", "C", "D", "E"]
+graph2.x_axis_label = "X Axis"
+graph2.primary_y_axis_label = "Primary Y Axis"
+
+graph2.add_series([20, 10, 30, 50, 10], legend_label="Legend Label")
+
+graph3 = CategoricalGraph(
+    width=600,
+    height=400,
+    bar_width=30,
+    title="Categorical Graph 3",
+    watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
+    primary_tick_prefix="$",
+)
+
+graph3.x_labels = ["A", "B", "C", "D", "E"]
+graph3.x_axis_label = "X Axis"
+graph3.primary_y_axis_label = "Primary Y Axis"
+
+graph3.add_series([10, 25, 30, 40, 50])
+
+graph4 = CategoricalGraph(
+    width=600,
+    height=400,
+    bar_width=30,
+    title="Categorical Graph 4",
+    watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
+    primary_tick_prefix="$",
+)
+
+graph4.x_labels = ["A", "B", "C", "D", "E"]
+graph4.x_axis_label = "X Axis"
+graph4.primary_y_axis_label = "Primary Y Axis"
+
+graph4.add_series([10, 10, 10, 50, 5])
+
+toggle = ToggleGraph()
+
+toggle.add_graph(graph1, label="Graph 1")
+toggle.add_graph(graph2, label="Graph 2")
+toggle.add_graph(graph3, label="Graph 3")
+toggle.add_graph(graph4, label="Graph 4")
+
+# You can't put this in the src of an image tag, because it implicitly contains
+# JavaScript, which cannot execute from within an image. So we include it as the
+# data within an object.
+svg_base64 = toggle.to_base64_src()
+
+print(f"\n<object type='image/svg+xml' data='{svg_base64}' />")
+
+# Alternatively we can just print the SVG code
+print(toggle.render())
+```
+
+<object type="image/svg+xml" data="https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_toggle_graph.svg" />
+
 ### Ribbon Graph
 
 The ribbon graph is for comparing two numbers on the same scale and a third number on a different scale (represented through color).

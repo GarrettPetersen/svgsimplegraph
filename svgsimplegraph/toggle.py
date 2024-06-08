@@ -1,6 +1,8 @@
 from .categorical import CategoricalGraph
 from .utils import estimate_text_dimensions
+from .utils import to_snake_case
 import uuid
+import base64
 
 
 class ToggleGraph:
@@ -27,7 +29,7 @@ class ToggleGraph:
         self.font_width_estimate_multiplier = None
         self.widest_label = 0
         self.tallest_label = 0
-        self.colors = ["#c7cfcc", "#4f8fba"]
+        self.colors = ["#73bed3", "#c7cfcc"]
         self.x_left_padding = 0
         self.x_right_padding = 0
         self.y_top_padding = 0
@@ -40,7 +42,7 @@ class ToggleGraph:
 
         self.graphs.append(graph)
         self.labels.append(label)
-        self.label_ids.append(f"label-{uuid.uuid4()}")
+        self.label_ids.append(to_snake_case(f"{label}_{uuid.uuid4()}"))
 
         if is_default:
             self.default = len(graph) - 1
@@ -73,6 +75,7 @@ class ToggleGraph:
             self.most_extreme_dimensions["right"] = max(
                 self.most_extreme_dimensions["right"],
                 graph.most_extreme_dimensions["right"],
+                graph.width,
             )
             self.most_extreme_dimensions["top"] = min(
                 self.most_extreme_dimensions["top"],
@@ -81,6 +84,7 @@ class ToggleGraph:
             self.most_extreme_dimensions["bottom"] = max(
                 self.most_extreme_dimensions["bottom"],
                 graph.most_extreme_dimensions["bottom"],
+                graph.height,
             )
 
             if index == self.default:
@@ -124,12 +128,10 @@ class ToggleGraph:
 
         button_x_position = self.most_extreme_dimensions["right"] + self.element_spacing
         button_y_position = 0
-        for index, label, label_id in enumerate(zip(self.labels, self.label_ids)):
+        for index, (label, label_id) in enumerate(zip(self.labels, self.label_ids)):
             # Draw buttons
-            svg_elements_str += (
-                f"<g id='{label_id}' x='{button_x_position}' y='{button_y_position}'>"
-            )
-            width = self.element_spacing + self.widest_label
+            svg_elements_str += f"<g id='{label_id}' transform='translate({button_x_position} {button_y_position})'>"
+            width = 2 * self.element_spacing + self.widest_label
             height = self.element_spacing + self.tallest_label
             color = self.colors[0] if index == self.default else self.colors[1]
             label_ids_that_deactivate = ""
@@ -140,13 +142,13 @@ class ToggleGraph:
                 f"<rect width='{width}' height='{height}' rx='{height/2}' ry='{height/2}' fill='{color}'>"
                 + f"<set attributeName='fill' to='{self.colors[0]}' begin='{label_id}.click' />"
                 + f"<set attributeName='fill' to='{self.colors[1]}' begin='{label_ids_that_deactivate}' /></rect>"
-                + f"<text x='{width/2}' y='{height/2}' text-anchor='middle' dominant-baseline='middle'>{label}</text></g>"
+                + f"<text x='{width/2}' y='{height/2}' text-anchor='middle' dominant-baseline='middle' font-size='10'>{label}</text></g>"
             )
 
             button_y_position += self.tallest_label + 1.5 * self.element_spacing
 
         self.most_extreme_dimensions["right"] = (
-            button_x_position + self.element_spacing + self.widest_label
+            button_x_position + 2 * self.element_spacing + self.widest_label
         )
         self.most_extreme_dimensions["bottom"] = max(
             self.most_extreme_dimensions["bottom"],
@@ -189,3 +191,9 @@ class ToggleGraph:
             + "</svg>"
         )
         return svg
+
+    def to_base64_src(self):
+        svg_str = self.render()
+        svg_bytes = svg_str.encode("utf-8")
+        encoded_svg = base64.b64encode(svg_bytes).decode("utf-8")
+        return "data:image/svg+xml;base64," + encoded_svg
