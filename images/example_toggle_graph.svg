@@ -1,101 +1,101 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='852.8' height='492.2' viewBox="-66.19999999999999 -39.0 852.8 492.2"><g visibility ='visible' ><path d="M 79.0909090909091 200.0 h 30 v 50.0 h -30 z M 188.1818181818182 150.0 h 30 v 100.0 h -30 z M 297.2727272727273 400.0 h 30 v -150.0 h -30 z M 406.3636363636364 50.0 h 30 v 200.0 h -30 z M 515.4545454545455 0.0 h 30 v 250.0 h -30 z " fill="#73bed3" />
-<line x1="0" y1="0" x2="0" y2="400" stroke="#000000" stroke-width="1" />
-<line x1="0" y1="250.0" x2="600" y2="250.0" stroke="#000000" stroke-width="1" />
-<text x="94.0909090909091" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 94.0909090909091 405)">A</text>
-<text x="203.1818181818182" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 203.1818181818182 405)">B</text>
-<text x="312.2727272727273" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 312.2727272727273 405)">C</text>
-<text x="421.3636363636364" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 421.3636363636364 405)">D</text>
-<text x="530.4545454545455" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 530.4545454545455 405)">E</text>
-<text x="-5" y="403.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$-30</text>
-<line x1="0" y1="400.0" x2="-3" y2="400.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="353.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$-20</text>
-<line x1="0" y1="350.0" x2="-3" y2="350.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="303.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$-10</text>
-<line x1="0" y1="300.0" x2="-3" y2="300.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="253.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$0</text>
-<line x1="0" y1="250.0" x2="-3" y2="250.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="203.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$10</text>
-<line x1="0" y1="200.0" x2="-3" y2="200.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="153.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$20</text>
-<line x1="0" y1="150.0" x2="-3" y2="150.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="103.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$30</text>
-<line x1="0" y1="100.0" x2="-3" y2="100.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="53.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$40</text>
-<line x1="0" y1="50.0" x2="-3" y2="50.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="3.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$50</text>
-<line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#000000" stroke-width="1" />
-<text x="300.0" y="426.0" font-size="12" fill="#000000" text-anchor="middle" dominant-baseline="middle">X Axis</text>
-<text x="-39.0" y="200.0" font-size="12" fill="#000000" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -39.0 200.0)">Primary Y Axis</text>
-<text x="300.0" y="-19.0" font-size="16" fill="#000000" text-anchor="middle" dominant-baseline="text-top">Categorical Graph 1</text>
-<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' /><set attributeName='visibility' to='visible' begin='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4.click' /><set attributeName='visibility' to='hidden' begin='graph_2_fed75539_fd59_430e_bb07_c3ed262141e5.click;graph_3_16669421_1e09_4800_bab4_f5b443308e52.click;graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054.click;' /></g><g visibility ='hidden' ><path d="M 79.0909090909091 240.0 h 30 v 160.0 h -30 z M 188.1818181818182 320.0 h 30 v 80.0 h -30 z M 297.2727272727273 160.0 h 30 v 240.0 h -30 z M 406.3636363636364 0.0 h 30 v 400.0 h -30 z M 515.4545454545455 320.0 h 30 v 80.0 h -30 z " fill="#73bed3" />
-<line x1="0" y1="0" x2="0" y2="400" stroke="#000000" stroke-width="1" />
-<line x1="0" y1="400.0" x2="600" y2="400.0" stroke="#000000" stroke-width="1" />
-<text x="94.0909090909091" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 94.0909090909091 405)">A</text>
-<text x="203.1818181818182" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 203.1818181818182 405)">B</text>
-<text x="312.2727272727273" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 312.2727272727273 405)">C</text>
-<text x="421.3636363636364" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 421.3636363636364 405)">D</text>
-<text x="530.4545454545455" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 530.4545454545455 405)">E</text>
-<text x="-5" y="403.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$0</text>
-<line x1="0" y1="400.0" x2="-3" y2="400.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="323.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$10</text>
-<line x1="0" y1="320.0" x2="-3" y2="320.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="243.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$20</text>
-<line x1="0" y1="240.0" x2="-3" y2="240.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="163.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$30</text>
-<line x1="0" y1="160.0" x2="-3" y2="160.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="83.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$40</text>
-<line x1="0" y1="80.0" x2="-3" y2="80.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="3.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$50</text>
-<line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#000000" stroke-width="1" />
-<text x="300.0" y="426.0" font-size="12" fill="#000000" text-anchor="middle" dominant-baseline="middle">X Axis</text>
-<text x="-33.0" y="200.0" font-size="12" fill="#000000" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -33.0 200.0)">Primary Y Axis</text>
+<svg xmlns='http://www.w3.org/2000/svg' width='852.8' height='492.2' viewBox="-66.19999999999999 -39.0 852.8 492.2"><rect x='-66.19999999999999' y='-39.0' width='852.8' height='492.2' rx='10' ry='10' fill='#404040' /><g visibility ='visible' ><path d="M 79.0909090909091 200.0 h 30 v 50.0 h -30 z M 188.1818181818182 150.0 h 30 v 100.0 h -30 z M 297.2727272727273 400.0 h 30 v -150.0 h -30 z M 406.3636363636364 50.0 h 30 v 200.0 h -30 z M 515.4545454545455 0.0 h 30 v 250.0 h -30 z " fill="#73bed3" />
+<line x1="0" y1="0" x2="0" y2="400" stroke="#ffffff" stroke-width="1" />
+<line x1="0" y1="250.0" x2="600" y2="250.0" stroke="#ffffff" stroke-width="1" />
+<text x="94.0909090909091" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 94.0909090909091 405)">A</text>
+<text x="203.1818181818182" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 203.1818181818182 405)">B</text>
+<text x="312.2727272727273" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 312.2727272727273 405)">C</text>
+<text x="421.3636363636364" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 421.3636363636364 405)">D</text>
+<text x="530.4545454545455" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 530.4545454545455 405)">E</text>
+<text x="-5" y="403.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$-30</text>
+<line x1="0" y1="400.0" x2="-3" y2="400.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="353.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$-20</text>
+<line x1="0" y1="350.0" x2="-3" y2="350.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="303.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$-10</text>
+<line x1="0" y1="300.0" x2="-3" y2="300.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="253.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$0</text>
+<line x1="0" y1="250.0" x2="-3" y2="250.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="203.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$10</text>
+<line x1="0" y1="200.0" x2="-3" y2="200.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="153.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$20</text>
+<line x1="0" y1="150.0" x2="-3" y2="150.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="103.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$30</text>
+<line x1="0" y1="100.0" x2="-3" y2="100.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="53.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$40</text>
+<line x1="0" y1="50.0" x2="-3" y2="50.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="3.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$50</text>
+<line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#ffffff" stroke-width="1" />
+<text x="300.0" y="426.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">X Axis</text>
+<text x="-39.0" y="200.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -39.0 200.0)">Primary Y Axis</text>
+<text x="300.0" y="-19.0" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="text-top">Categorical Graph 1</text>
+<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' /><set attributeName='visibility' to='visible' begin='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7.click' /><set attributeName='visibility' to='hidden' begin='graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e.click;graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95.click;graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00.click;' /></g><g visibility ='hidden' ><path d="M 79.0909090909091 240.0 h 30 v 160.0 h -30 z M 188.1818181818182 320.0 h 30 v 80.0 h -30 z M 297.2727272727273 160.0 h 30 v 240.0 h -30 z M 406.3636363636364 0.0 h 30 v 400.0 h -30 z M 515.4545454545455 320.0 h 30 v 80.0 h -30 z " fill="#73bed3" />
+<line x1="0" y1="0" x2="0" y2="400" stroke="#ffffff" stroke-width="1" />
+<line x1="0" y1="400.0" x2="600" y2="400.0" stroke="#ffffff" stroke-width="1" />
+<text x="94.0909090909091" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 94.0909090909091 405)">A</text>
+<text x="203.1818181818182" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 203.1818181818182 405)">B</text>
+<text x="312.2727272727273" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 312.2727272727273 405)">C</text>
+<text x="421.3636363636364" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 421.3636363636364 405)">D</text>
+<text x="530.4545454545455" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 530.4545454545455 405)">E</text>
+<text x="-5" y="403.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$0</text>
+<line x1="0" y1="400.0" x2="-3" y2="400.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="323.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$10</text>
+<line x1="0" y1="320.0" x2="-3" y2="320.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="243.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$20</text>
+<line x1="0" y1="240.0" x2="-3" y2="240.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="163.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$30</text>
+<line x1="0" y1="160.0" x2="-3" y2="160.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="83.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$40</text>
+<line x1="0" y1="80.0" x2="-3" y2="80.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="3.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$50</text>
+<line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#ffffff" stroke-width="1" />
+<text x="300.0" y="426.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">X Axis</text>
+<text x="-33.0" y="200.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -33.0 200.0)">Primary Y Axis</text>
 <rect x="610" y="0" width="10" height="10" fill="#73bed3" />
-<text x="625.0" y="6.666666666666666" font-size="10" fill="#000000" text-anchor="start" dominant-baseline="middle">Legend Label</text>
-<text x="300.0" y="-19.0" font-size="16" fill="#000000" text-anchor="middle" dominant-baseline="text-top">Categorical Graph 2</text>
-<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' /><set attributeName='visibility' to='visible' begin='graph_2_fed75539_fd59_430e_bb07_c3ed262141e5.click' /><set attributeName='visibility' to='hidden' begin='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4.click;graph_3_16669421_1e09_4800_bab4_f5b443308e52.click;graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054.click;' /></g><g visibility ='hidden' ><path d="M 79.0909090909091 320.0 h 30 v 80.0 h -30 z M 188.1818181818182 200.0 h 30 v 200.0 h -30 z M 297.2727272727273 160.0 h 30 v 240.0 h -30 z M 406.3636363636364 80.0 h 30 v 320.0 h -30 z M 515.4545454545455 0.0 h 30 v 400.0 h -30 z " fill="#73bed3" />
-<line x1="0" y1="0" x2="0" y2="400" stroke="#000000" stroke-width="1" />
-<line x1="0" y1="400.0" x2="600" y2="400.0" stroke="#000000" stroke-width="1" />
-<text x="94.0909090909091" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 94.0909090909091 405)">A</text>
-<text x="203.1818181818182" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 203.1818181818182 405)">B</text>
-<text x="312.2727272727273" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 312.2727272727273 405)">C</text>
-<text x="421.3636363636364" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 421.3636363636364 405)">D</text>
-<text x="530.4545454545455" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 530.4545454545455 405)">E</text>
-<text x="-5" y="403.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$0</text>
-<line x1="0" y1="400.0" x2="-3" y2="400.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="323.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$10</text>
-<line x1="0" y1="320.0" x2="-3" y2="320.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="243.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$20</text>
-<line x1="0" y1="240.0" x2="-3" y2="240.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="163.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$30</text>
-<line x1="0" y1="160.0" x2="-3" y2="160.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="83.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$40</text>
-<line x1="0" y1="80.0" x2="-3" y2="80.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="3.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$50</text>
-<line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#000000" stroke-width="1" />
-<text x="300.0" y="426.0" font-size="12" fill="#000000" text-anchor="middle" dominant-baseline="middle">X Axis</text>
-<text x="-33.0" y="200.0" font-size="12" fill="#000000" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -33.0 200.0)">Primary Y Axis</text>
-<text x="300.0" y="-19.0" font-size="16" fill="#000000" text-anchor="middle" dominant-baseline="text-top">Categorical Graph 3</text>
-<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' /><set attributeName='visibility' to='visible' begin='graph_3_16669421_1e09_4800_bab4_f5b443308e52.click' /><set attributeName='visibility' to='hidden' begin='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4.click;graph_2_fed75539_fd59_430e_bb07_c3ed262141e5.click;graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054.click;' /></g><g visibility ='hidden' ><path d="M 79.0909090909091 320.0 h 30 v 80.0 h -30 z M 188.1818181818182 320.0 h 30 v 80.0 h -30 z M 297.2727272727273 320.0 h 30 v 80.0 h -30 z M 406.3636363636364 0.0 h 30 v 400.0 h -30 z M 515.4545454545455 360.0 h 30 v 40.0 h -30 z " fill="#73bed3" />
-<line x1="0" y1="0" x2="0" y2="400" stroke="#000000" stroke-width="1" />
-<line x1="0" y1="400.0" x2="600" y2="400.0" stroke="#000000" stroke-width="1" />
-<text x="94.0909090909091" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 94.0909090909091 405)">A</text>
-<text x="203.1818181818182" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 203.1818181818182 405)">B</text>
-<text x="312.2727272727273" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 312.2727272727273 405)">C</text>
-<text x="421.3636363636364" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 421.3636363636364 405)">D</text>
-<text x="530.4545454545455" y="405" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 530.4545454545455 405)">E</text>
-<text x="-5" y="403.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$0</text>
-<line x1="0" y1="400.0" x2="-3" y2="400.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="323.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$10</text>
-<line x1="0" y1="320.0" x2="-3" y2="320.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="243.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$20</text>
-<line x1="0" y1="240.0" x2="-3" y2="240.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="163.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$30</text>
-<line x1="0" y1="160.0" x2="-3" y2="160.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="83.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$40</text>
-<line x1="0" y1="80.0" x2="-3" y2="80.0" stroke="#000000" stroke-width="1" />
-<text x="-5" y="3.0" font-size="10" fill="#000000" text-anchor="end" dominant-baseline="text-bottom">$50</text>
-<line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#000000" stroke-width="1" />
-<text x="300.0" y="426.0" font-size="12" fill="#000000" text-anchor="middle" dominant-baseline="middle">X Axis</text>
-<text x="-33.0" y="200.0" font-size="12" fill="#000000" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -33.0 200.0)">Primary Y Axis</text>
-<text x="300.0" y="-19.0" font-size="16" fill="#000000" text-anchor="middle" dominant-baseline="text-top">Categorical Graph 4</text>
-<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' /><set attributeName='visibility' to='visible' begin='graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054.click' /><set attributeName='visibility' to='hidden' begin='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4.click;graph_2_fed75539_fd59_430e_bb07_c3ed262141e5.click;graph_3_16669421_1e09_4800_bab4_f5b443308e52.click;' /></g><g id='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4' transform='translate(705.8 0)'><rect width='60.8' height='22.0' rx='11.0' ry='11.0' fill='#73bed3'><set attributeName='fill' to='#73bed3' begin='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4.click' /><set attributeName='fill' to='#c7cfcc' begin='graph_2_fed75539_fd59_430e_bb07_c3ed262141e5.click;graph_3_16669421_1e09_4800_bab4_f5b443308e52.click;graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054.click;' /></rect><text x='30.4' y='11.0' text-anchor='middle' dominant-baseline='middle' font-size='10'>Graph 1</text></g><g id='graph_2_fed75539_fd59_430e_bb07_c3ed262141e5' transform='translate(705.8 27.0)'><rect width='60.8' height='22.0' rx='11.0' ry='11.0' fill='#c7cfcc'><set attributeName='fill' to='#73bed3' begin='graph_2_fed75539_fd59_430e_bb07_c3ed262141e5.click' /><set attributeName='fill' to='#c7cfcc' begin='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4.click;graph_3_16669421_1e09_4800_bab4_f5b443308e52.click;graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054.click;' /></rect><text x='30.4' y='11.0' text-anchor='middle' dominant-baseline='middle' font-size='10'>Graph 2</text></g><g id='graph_3_16669421_1e09_4800_bab4_f5b443308e52' transform='translate(705.8 54.0)'><rect width='60.8' height='22.0' rx='11.0' ry='11.0' fill='#c7cfcc'><set attributeName='fill' to='#73bed3' begin='graph_3_16669421_1e09_4800_bab4_f5b443308e52.click' /><set attributeName='fill' to='#c7cfcc' begin='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4.click;graph_2_fed75539_fd59_430e_bb07_c3ed262141e5.click;graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054.click;' /></rect><text x='30.4' y='11.0' text-anchor='middle' dominant-baseline='middle' font-size='10'>Graph 3</text></g><g id='graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054' transform='translate(705.8 81.0)'><rect width='60.8' height='22.0' rx='11.0' ry='11.0' fill='#c7cfcc'><set attributeName='fill' to='#73bed3' begin='graph_4_e8302004_fcb7_4bb8_a294_63815fdaa054.click' /><set attributeName='fill' to='#c7cfcc' begin='graph_1_53f8fca6_9f8c_462c_8268_2e9c8db51df4.click;graph_2_fed75539_fd59_430e_bb07_c3ed262141e5.click;graph_3_16669421_1e09_4800_bab4_f5b443308e52.click;' /></rect><text x='30.4' y='11.0' text-anchor='middle' dominant-baseline='middle' font-size='10'>Graph 4</text></g></svg>
+<text x="625.0" y="6.666666666666666" font-size="10" fill="#ffffff" text-anchor="start" dominant-baseline="middle">Legend Label</text>
+<text x="300.0" y="-19.0" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="text-top">Categorical Graph 2</text>
+<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' /><set attributeName='visibility' to='visible' begin='graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e.click' /><set attributeName='visibility' to='hidden' begin='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7.click;graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95.click;graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00.click;' /></g><g visibility ='hidden' ><path d="M 79.0909090909091 320.0 h 30 v 80.0 h -30 z M 188.1818181818182 200.0 h 30 v 200.0 h -30 z M 297.2727272727273 160.0 h 30 v 240.0 h -30 z M 406.3636363636364 80.0 h 30 v 320.0 h -30 z M 515.4545454545455 0.0 h 30 v 400.0 h -30 z " fill="#73bed3" />
+<line x1="0" y1="0" x2="0" y2="400" stroke="#ffffff" stroke-width="1" />
+<line x1="0" y1="400.0" x2="600" y2="400.0" stroke="#ffffff" stroke-width="1" />
+<text x="94.0909090909091" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 94.0909090909091 405)">A</text>
+<text x="203.1818181818182" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 203.1818181818182 405)">B</text>
+<text x="312.2727272727273" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 312.2727272727273 405)">C</text>
+<text x="421.3636363636364" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 421.3636363636364 405)">D</text>
+<text x="530.4545454545455" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 530.4545454545455 405)">E</text>
+<text x="-5" y="403.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$0</text>
+<line x1="0" y1="400.0" x2="-3" y2="400.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="323.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$10</text>
+<line x1="0" y1="320.0" x2="-3" y2="320.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="243.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$20</text>
+<line x1="0" y1="240.0" x2="-3" y2="240.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="163.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$30</text>
+<line x1="0" y1="160.0" x2="-3" y2="160.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="83.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$40</text>
+<line x1="0" y1="80.0" x2="-3" y2="80.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="3.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$50</text>
+<line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#ffffff" stroke-width="1" />
+<text x="300.0" y="426.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">X Axis</text>
+<text x="-33.0" y="200.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -33.0 200.0)">Primary Y Axis</text>
+<text x="300.0" y="-19.0" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="text-top">Categorical Graph 3</text>
+<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' /><set attributeName='visibility' to='visible' begin='graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95.click' /><set attributeName='visibility' to='hidden' begin='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7.click;graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e.click;graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00.click;' /></g><g visibility ='hidden' ><path d="M 79.0909090909091 320.0 h 30 v 80.0 h -30 z M 188.1818181818182 320.0 h 30 v 80.0 h -30 z M 297.2727272727273 320.0 h 30 v 80.0 h -30 z M 406.3636363636364 0.0 h 30 v 400.0 h -30 z M 515.4545454545455 360.0 h 30 v 40.0 h -30 z " fill="#73bed3" />
+<line x1="0" y1="0" x2="0" y2="400" stroke="#ffffff" stroke-width="1" />
+<line x1="0" y1="400.0" x2="600" y2="400.0" stroke="#ffffff" stroke-width="1" />
+<text x="94.0909090909091" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 94.0909090909091 405)">A</text>
+<text x="203.1818181818182" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 203.1818181818182 405)">B</text>
+<text x="312.2727272727273" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 312.2727272727273 405)">C</text>
+<text x="421.3636363636364" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 421.3636363636364 405)">D</text>
+<text x="530.4545454545455" y="405" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="middle" transform="rotate(-90 530.4545454545455 405)">E</text>
+<text x="-5" y="403.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$0</text>
+<line x1="0" y1="400.0" x2="-3" y2="400.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="323.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$10</text>
+<line x1="0" y1="320.0" x2="-3" y2="320.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="243.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$20</text>
+<line x1="0" y1="240.0" x2="-3" y2="240.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="163.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$30</text>
+<line x1="0" y1="160.0" x2="-3" y2="160.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="83.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$40</text>
+<line x1="0" y1="80.0" x2="-3" y2="80.0" stroke="#ffffff" stroke-width="1" />
+<text x="-5" y="3.0" font-size="10" fill="#ffffff" text-anchor="end" dominant-baseline="text-bottom">$50</text>
+<line x1="0" y1="0.0" x2="-3" y2="0.0" stroke="#ffffff" stroke-width="1" />
+<text x="300.0" y="426.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">X Axis</text>
+<text x="-33.0" y="200.0" font-size="12" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 -33.0 200.0)">Primary Y Axis</text>
+<text x="300.0" y="-19.0" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="text-top">Categorical Graph 4</text>
+<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' /><set attributeName='visibility' to='visible' begin='graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00.click' /><set attributeName='visibility' to='hidden' begin='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7.click;graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e.click;graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95.click;' /></g><g id='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7' transform='translate(705.8 0)'><rect width='60.8' height='22.0' rx='11.0' ry='11.0' fill='#73bed3'><set attributeName='fill' to='#73bed3' begin='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7.click' /><set attributeName='fill' to='#c7cfcc' begin='graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e.click;graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95.click;graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00.click;' /></rect><text x='30.4' y='11.0' text-anchor='middle' dominant-baseline='middle' font-size='10'>Graph 1</text></g><g id='graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e' transform='translate(705.8 27.0)'><rect width='60.8' height='22.0' rx='11.0' ry='11.0' fill='#c7cfcc'><set attributeName='fill' to='#73bed3' begin='graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e.click' /><set attributeName='fill' to='#c7cfcc' begin='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7.click;graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95.click;graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00.click;' /></rect><text x='30.4' y='11.0' text-anchor='middle' dominant-baseline='middle' font-size='10'>Graph 2</text></g><g id='graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95' transform='translate(705.8 54.0)'><rect width='60.8' height='22.0' rx='11.0' ry='11.0' fill='#c7cfcc'><set attributeName='fill' to='#73bed3' begin='graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95.click' /><set attributeName='fill' to='#c7cfcc' begin='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7.click;graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e.click;graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00.click;' /></rect><text x='30.4' y='11.0' text-anchor='middle' dominant-baseline='middle' font-size='10'>Graph 3</text></g><g id='graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00' transform='translate(705.8 81.0)'><rect width='60.8' height='22.0' rx='11.0' ry='11.0' fill='#c7cfcc'><set attributeName='fill' to='#73bed3' begin='graph_4_7d0b5a06_8428_49d7_a4d9_38a2c667ae00.click' /><set attributeName='fill' to='#c7cfcc' begin='graph_1_ac3be542_5c74_4a9a_9292_3dbc3cbad2c7.click;graph_2_ba047bb3_e7c2_4a74_9971_10a6b300e13e.click;graph_3_0a3d9d91_6383_4f6d_bbaa_1d83a55ebd95.click;' /></rect><text x='30.4' y='11.0' text-anchor='middle' dominant-baseline='middle' font-size='10'>Graph 4</text></g></svg>

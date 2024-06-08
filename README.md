@@ -77,6 +77,7 @@ graph1 = CategoricalGraph(
     title="Categorical Graph 1",
     watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
     primary_tick_prefix="$",
+    background_color="#404040",
 )
 
 graph1.x_labels = ["A", "B", "C", "D", "E"]
@@ -92,6 +93,7 @@ graph2 = CategoricalGraph(
     title="Categorical Graph 2",
     watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
     primary_tick_prefix="$",
+    background_color="#404040",
 )
 
 graph2.x_labels = ["A", "B", "C", "D", "E"]
@@ -107,6 +109,7 @@ graph3 = CategoricalGraph(
     title="Categorical Graph 3",
     watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
     primary_tick_prefix="$",
+    background_color="#404040",
 )
 
 graph3.x_labels = ["A", "B", "C", "D", "E"]
@@ -122,6 +125,7 @@ graph4 = CategoricalGraph(
     title="Categorical Graph 4",
     watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
     primary_tick_prefix="$",
+    background_color="#404040",
 )
 
 graph4.x_labels = ["A", "B", "C", "D", "E"]
@@ -148,7 +152,9 @@ print(f"\n<object type='image/svg+xml' data='{svg_base64}' />")
 print(toggle.render())
 ```
 
-<object type="image/svg+xml" data="https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_toggle_graph.svg" />
+![Toggle graph example](https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_toggle_graph.svg)
+
+The interactive elements of the above graph are not useable in this Markdown doc.
 
 ### Ribbon Graph
 
