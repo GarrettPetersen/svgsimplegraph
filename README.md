@@ -152,7 +152,7 @@ print(f"\n<object type='image/svg+xml' data='{svg_base64}' />")
 print(toggle.render())
 ```
 
-[Toggle graph example](https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_toggle_graph.svg)
+![Toggle graph example](https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_toggle_graph.svg)
 
 The interactive elements of the above graph are not useable in this Markdown doc.
 
