@@ -12,6 +12,7 @@ def test_toggle_graph():
         title="Categorical Graph 1",
         watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
         primary_tick_prefix="$",
+        background_color="#404040",
     )
 
     graph1.x_labels = ["A", "B", "C", "D", "E"]
@@ -27,6 +28,7 @@ def test_toggle_graph():
         title="Categorical Graph 2",
         watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
         primary_tick_prefix="$",
+        background_color="#404040",
     )
 
     graph2.x_labels = ["A", "B", "C", "D", "E"]
@@ -42,6 +44,7 @@ def test_toggle_graph():
         title="Categorical Graph 3",
         watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
         primary_tick_prefix="$",
+        background_color="#404040",
     )
 
     graph3.x_labels = ["A", "B", "C", "D", "E"]
@@ -57,6 +60,7 @@ def test_toggle_graph():
         title="Categorical Graph 4",
         watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
         primary_tick_prefix="$",
+        background_color="#404040",
     )
 
     graph4.x_labels = ["A", "B", "C", "D", "E"]
