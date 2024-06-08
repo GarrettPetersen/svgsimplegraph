@@ -1,4 +1,17 @@
 import math
+import re
+
+
+def to_snake_case(text):
+    # Convert to lowercase and replace spaces with underscores
+    text = text.lower().replace(" ", "_")
+    # Replace non-alphanumeric characters with underscores
+    text = re.sub(r"[^a-zA-Z0-9_]", "_", text)
+    # Remove consecutive underscores
+    text = re.sub(r"_+", "_", text)
+    # Remove leading and trailing underscores
+    text = text.strip("_")
+    return text
 
 
 def polar_to_cartesian(angle, radius, x=0, y=0):
