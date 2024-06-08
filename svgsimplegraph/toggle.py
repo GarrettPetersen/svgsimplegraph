@@ -11,7 +11,7 @@ class ToggleGraph:
     creates an interactive SVG with buttons that switch between them.
     """
 
-    def __init__(self):
+    def __init__(self, button_position="right", button_font_size=10):
         self.graphs = []
         self.labels = []
         self.label_ids = []
@@ -34,6 +34,14 @@ class ToggleGraph:
         self.x_right_padding = 0
         self.y_top_padding = 0
         self.y_bottom_padding = 0
+        self.button_position = button_position
+        assert button_position in [
+            "left",
+            "right",
+            "top",
+            "bottom",
+        ], f"Invalid button_position: {button_position}"
+        self.button_font_size = button_font_size
 
     def add_graph(self, graph: CategoricalGraph, label: str, is_default: bool = False):
         # Enforce type hint
@@ -101,7 +109,7 @@ class ToggleGraph:
         for label in self.labels:
             # Track the widest label for button width
             estimated_x, estimated_y = estimate_text_dimensions(
-                label, 10, self.font_width_estimate_multiplier
+                label, self.button_font_size, self.font_width_estimate_multiplier
             )
             self.widest_label = max(
                 estimated_x,
@@ -126,34 +134,71 @@ class ToggleGraph:
                     label_ids_that_deactivate += f"{label_id}.click;"
             svg_elements_str += f"<set attributeName='visibility' to='hidden' begin='{label_ids_that_deactivate}' /></g>"
 
-        button_x_position = self.most_extreme_dimensions["right"] + self.element_spacing
+        button_width = 2 * self.element_spacing + self.widest_label
+        button_height = self.element_spacing + self.tallest_label
+
+        button_x_position = 0
         button_y_position = 0
+        if self.button_position == "right":
+            button_x_position = (
+                self.most_extreme_dimensions["right"] + self.element_spacing
+            )
+            button_y_position = 0
+        elif self.button_position == "left":
+            button_x_position = (
+                self.most_extreme_dimensions["left"]
+                - self.element_spacing
+                - button_width
+            )
+            button_y_position = 0
+        elif self.button_position == "top":
+            button_x_position = 0
+            button_y_position = (
+                self.most_extreme_dimensions["top"]
+                - button_height
+                - 2 * self.element_spacing
+            )
+        elif self.button_position == "bottom":
+            button_x_position = 0
+            button_y_position = (
+                self.most_extreme_dimensions["bottom"] + self.element_spacing
+            )
+
         for index, (label, label_id) in enumerate(zip(self.labels, self.label_ids)):
             # Draw buttons
-            svg_elements_str += f"<g id='{label_id}' transform='translate({button_x_position} {button_y_position})'>"
-            width = 2 * self.element_spacing + self.widest_label
-            height = self.element_spacing + self.tallest_label
+            svg_elements_str += f"<g id='{label_id}' transform='translate({button_x_position} {button_y_position})' cursor='pointer'>"
             color = self.colors[0] if index == self.default else self.colors[1]
             label_ids_that_deactivate = ""
             for other_label_id in self.label_ids:
                 if label_id != other_label_id:
                     label_ids_that_deactivate += f"{other_label_id}.click;"
             svg_elements_str += (
-                f"<rect width='{width}' height='{height}' rx='{height/2}' ry='{height/2}' fill='{color}'>"
+                f"<rect width='{button_width}' height='{button_height}' rx='{button_height/2}' ry='{button_height/2}' fill='{color}'>"
                 + f"<set attributeName='fill' to='{self.colors[0]}' begin='{label_id}.click' />"
                 + f"<set attributeName='fill' to='{self.colors[1]}' begin='{label_ids_that_deactivate}' /></rect>"
-                + f"<text x='{width/2}' y='{height/2}' text-anchor='middle' dominant-baseline='middle' font-size='10'>{label}</text></g>"
+                + f"<text x='{button_width/2}' y='{button_height/2}' text-anchor='middle' dominant-baseline='middle' font-size='{self.button_font_size}'>{label}</text></g>"
             )
 
-            button_y_position += self.tallest_label + 1.5 * self.element_spacing
+            # Update most extreme dimensions
+            self.most_extreme_dimensions["left"] = min(
+                self.most_extreme_dimensions["left"], button_x_position
+            )
+            self.most_extreme_dimensions["top"] = min(
+                self.most_extreme_dimensions["top"], button_y_position
+            )
+            self.most_extreme_dimensions["right"] = max(
+                self.most_extreme_dimensions["right"], button_x_position + button_width
+            )
+            self.most_extreme_dimensions["bottom"] = max(
+                self.most_extreme_dimensions["bottom"],
+                button_y_position + button_height,
+            )
 
-        self.most_extreme_dimensions["right"] = (
-            button_x_position + 2 * self.element_spacing + self.widest_label
-        )
-        self.most_extreme_dimensions["bottom"] = max(
-            self.most_extreme_dimensions["bottom"],
-            button_y_position - 0.5 * self.element_spacing,
-        )
+            # Move the position for the next button
+            if self.button_position in ["right", "left"]:
+                button_y_position += self.tallest_label + 1.5 * self.element_spacing
+            elif self.button_position in ["top", "bottom"]:
+                button_x_position += button_width + 1.5 * self.element_spacing
 
         viewbox_width = (
             self.most_extreme_dimensions["right"]
