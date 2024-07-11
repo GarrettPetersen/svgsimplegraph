@@ -235,7 +235,7 @@ def test_categorical_graph():
         legend_position="top",
     )
 
-    graph.x_labels = [f"Label {i}" for i in range(5)]
+    graph.x_labels = [f"Label {i}" for i in range(12)]
     graph.x_axis_label = "X Axis"
     graph.primary_y_axis_label = "Primary Y Axis"
     graph.secondary_y_axis_label = "Secondary Y Axis"
@@ -263,3 +263,19 @@ def test_categorical_graph():
     print(f"\n<img src='{stacked_base64}' />")
 
     print(svg_code)
+
+    # This is deliberately too short. The rest should all display.
+    graph.visible_x_labels = [1, 0, 1, 0, 1, 0]
+
+    stacked_base64 = graph.to_base64_src()
+    svg_code = graph.render()
+
+    print(f"\n<img src='{stacked_base64}' />")
+
+    # This is too long on purpose
+    graph.visible_x_labels = [1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1]
+
+    stacked_base64 = graph.to_base64_src()
+    svg_code = graph.render()
+
+    print(f"\n<img src='{stacked_base64}' />")

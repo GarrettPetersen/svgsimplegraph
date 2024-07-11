@@ -140,6 +140,7 @@ class CategoricalGraph(BaseGraph):
         secondary_tick_suffix="",
         legend_position="right",
         line_curvature=0,
+        visible_x_labels=[],
     ):
         super().__init__(
             width=width,
@@ -187,6 +188,7 @@ class CategoricalGraph(BaseGraph):
         self.horizontal_lines = []
         self.vertical_lines = []
         self.stroke_width = []
+        self.visible_x_labels = visible_x_labels
 
     def add_series(
         self,
@@ -789,22 +791,29 @@ class CategoricalGraph(BaseGraph):
 
         # Draw x tick labels
         for index, label in enumerate(self.x_labels):
-            x = (
-                (index + 0.5) * bar_spacing
-                + (bar_spacing - total_bars_width) / 2
-                + bar_width * (bar_series_across - 1) / 2
-            )
-            y = self.height + 5
-            if label is not None and self.rotate_x_labels:
-                self.svg_elements.append(
-                    self._generate_text(
-                        label, x, y, anchor="end", fill=self.text_color, rotation=-90
+            # If visible_x_labels have been set, only draw ones specified
+            if index >= len(self.visible_x_labels) or self.visible_x_labels[index]:
+                x = (
+                    (index + 0.5) * bar_spacing
+                    + (bar_spacing - total_bars_width) / 2
+                    + bar_width * (bar_series_across - 1) / 2
+                )
+                y = self.height + 5
+                if label is not None and self.rotate_x_labels:
+                    self.svg_elements.append(
+                        self._generate_text(
+                            label,
+                            x,
+                            y,
+                            anchor="end",
+                            fill=self.text_color,
+                            rotation=-90,
+                        )
                     )
-                )
-            elif label is not None and not self.rotate_x_labels:
-                self.svg_elements.append(
-                    self._generate_text(label, x, y + 10, fill=self.text_color)
-                )
+                elif label is not None and not self.rotate_x_labels:
+                    self.svg_elements.append(
+                        self._generate_text(label, x, y + 10, fill=self.text_color)
+                    )
 
         # Draw primary y-axis ticks and values
         for tick_value in primary_ticks:
