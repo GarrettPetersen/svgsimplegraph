@@ -141,6 +141,7 @@ class CategoricalGraph(BaseGraph):
         legend_position="right",
         line_curvature=0,
         visible_x_labels=[],
+        enable_tooltip=False,
     ):
         super().__init__(
             width=width,
@@ -189,6 +190,8 @@ class CategoricalGraph(BaseGraph):
         self.vertical_lines = []
         self.stroke_width = []
         self.visible_x_labels = visible_x_labels
+        self.enable_tooltip = enable_tooltip
+        self.js_functions = []
 
     def add_series(
         self,
@@ -420,6 +423,34 @@ class CategoricalGraph(BaseGraph):
         has_secondary = any(self.secondary)
         max_value_secondary = None
         min_value_secondary = None
+
+        if self.enable_tooltip:
+            self.js_functions = [
+                "function showTooltip(evt, texts, tooltipId, x, y) {"
+                + "var tooltip = document.getElementById(tooltipId);"
+                + "tooltip.setAttribute('x', x);"
+                + "tooltip.setAttribute('y', y);"
+                + "texts.forEach((text, index) => {"
+                + "var tspan = document.getElementById(tooltipId + index);"
+                + "if (tspan) {"
+                + "tspan.textContent = text;"
+                + "}"
+                + "});"
+                + "tooltip.setAttribute('visibility', 'visible');"
+                + "}",
+                "function hideTooltip(tooltipId) {"
+                + "var tooltip = document.getElementById(tooltipId);"
+                + "tooltip.setAttribute('visibility', 'hidden');"
+                "}",
+            ]
+            # To do:
+            # - Draw a tooltip box along with the legend, on a top layer
+            # - Assign the box a uuid id and store it
+            # - Add a transparent layer above the graph
+            # - Add mouseover bars over each bar area
+            # - Have each bar trigger the above functions on mouseover and mouseout
+            # - Also shade the bars on mouseover
+
         if self.stacked:
             bar_series_indices = [
                 i for i, series in enumerate(self.series_types) if series[0] == "bar"
