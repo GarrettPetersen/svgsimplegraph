@@ -281,8 +281,25 @@ def test_categorical_graph():
 
     print(f"\n<img src='{stacked_base64}' />")
 
-    # This is too long on purpose
     graph.enable_tooltip = True
+
+    stacked_base64 = graph.to_base64_src()
+    svg_code = graph.render()
+
+    # This allows JS to execute
+    print(f"\n<object data='{stacked_base64}' type='image/svg+xml'></object>")
+
+    graph.stacked = False
+
+    stacked_base64 = graph.to_base64_src()
+    svg_code = graph.render()
+
+    # This allows JS to execute
+    print(f"\n<object data='{stacked_base64}' type='image/svg+xml'></object>")
+
+    # Too big on purpose; will just be the max
+    graph.bar_width = 100
+    graph.stacked = True
 
     stacked_base64 = graph.to_base64_src()
     svg_code = graph.render()
