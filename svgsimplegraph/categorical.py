@@ -1383,7 +1383,9 @@ class CategoricalGraph(BaseGraph):
         # Add the tooltips
         if self.enable_tooltip:
             self.tooltip_elements = (
-                [f"<g id='{self.tooltip_id}'>"] + self.tooltip_elements + ["</g>"]
+                [f"<g id='{self.tooltip_id}' visibility='hidden'>"]
+                + self.tooltip_elements
+                + ["</g>"]
             )
             self.svg_elements.extend(self.tooltip_elements)
             self.svg_elements.extend(self.event_listener_elements)
