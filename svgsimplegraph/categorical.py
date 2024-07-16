@@ -993,7 +993,9 @@ class CategoricalGraph(BaseGraph):
         if self.enable_tooltip:
             # Tooltip title (empty, the JS will fill it with legend labels)
             self.tooltip_elements.append(
-                f"<text font-size='10' fill='{self.text_color}' x='{self.element_spacing}' y='{self.element_spacing}' id='{self.tooltip_id}0'></text>"
+                f"<text font-size='10' fill='{self.text_color}' "
+                + f"x='{self.element_spacing}' y='{self.element_spacing}' "
+                + f"id='{self.tooltip_id}0' dominant-baseline='middle'></text>"
             )
 
             longest_x_label = 0
@@ -1059,7 +1061,7 @@ class CategoricalGraph(BaseGraph):
                 self.tooltip_elements.append(
                     f"<text font-size='10' x='{legend_x + legend_rect_size + self.element_spacing + longest_label}' "
                     + f"y='{legend_y + (2 / 3) * legend_rect_size}' fill='{self.text_color}' "
-                    + f"anchor='start' id='{self.tooltip_id}{index+1}'></text>"
+                    + f"anchor='start' id='{self.tooltip_id}{index+1}' dominant-baseline='middle'></text>"
                 )
                 legend_y += self.element_spacing + legend_rect_size
 
