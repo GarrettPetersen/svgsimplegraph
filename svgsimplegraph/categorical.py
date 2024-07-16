@@ -430,6 +430,7 @@ class CategoricalGraph(BaseGraph):
         self.dot_paths = {}
         self.longest_value = 0
         self.total_tooltip_width = 0
+        self.total_tooltip_height = 0
         graph_width = self.width
         has_secondary = any(self.secondary)
         max_value_secondary = None
@@ -1078,10 +1079,11 @@ class CategoricalGraph(BaseGraph):
                 + longest_label
                 + self.longest_value,
             )
+            self.total_tooltip_height = legend_y
             self.tooltip_elements[0] = (
                 f"<rect fill='{self.background_color}' x='0' y='0' "
                 + f"width='{self.total_tooltip_width}' "
-                + f"height='{legend_y}' />"
+                + f"height='{self.total_tooltip_height}' />"
             )
 
         # Draw legend
@@ -1390,6 +1392,9 @@ class CategoricalGraph(BaseGraph):
             self.most_extreme_dimensions["right"] = max(
                 self.most_extreme_dimensions["right"],
                 self.width + self.total_tooltip_width - 0.5 * bar_spacing,
+            )
+            self.most_extreme_dimensions["bottom"] = max(
+                self.most_extreme_dimensions["bottom"], self.total_tooltip_height
             )
 
         return self._generate_svg()
