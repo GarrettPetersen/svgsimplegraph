@@ -5,6 +5,7 @@ from .utils import match_ticks
 from .utils import estimate_text_dimensions
 import math
 import numbers
+import uuid
 
 
 def stacked_bar_range(data, series_types, secondary, maximum, minimum):
@@ -192,6 +193,9 @@ class CategoricalGraph(BaseGraph):
         self.visible_x_labels = visible_x_labels
         self.enable_tooltip = enable_tooltip
         self.js_functions = []
+        self.tooltip_elements = []
+        self.tooltip_width = 0
+        self.tooltip_height = 0
 
     def add_series(
         self,
@@ -416,6 +420,11 @@ class CategoricalGraph(BaseGraph):
 
     def render(self):
         self._reset_graph()
+        self.event_listener_elements = []
+        self.tooltip_elements = [""]  # Keep the 0 index free for the background
+        self.tooltip_width = 0
+        self.tooltip_height = 0
+        self.tooltip_id = uuid.uuid4().hex
         self.line_paths = {}
         self.bar_paths = {}
         self.dot_paths = {}
@@ -552,10 +561,23 @@ class CategoricalGraph(BaseGraph):
 
         for sub_index in range(num_categories):
             bar_count = 0
+            tooltip_texts = [
+                self.x_labels[sub_index]
+            ]  # Include the x-axis label in the tooltip
+
             for index in range(num_series):
                 value = self.data[index][sub_index]
 
                 secondary_value = self.secondary[index]
+
+                if secondary_value:
+                    tooltip_texts.append(
+                        f"{self.secondary_tick_prefix}{human_readable_number(value)}{self.secondary_tick_suffix}"
+                    )
+                else:
+                    tooltip_texts.append(
+                        f"{self.primary_tick_prefix}{human_readable_number(value)}{self.primary_tick_suffix}"
+                    )
 
                 series_type, print_values = self.series_types[index]
 
@@ -658,7 +680,12 @@ class CategoricalGraph(BaseGraph):
                             value, value_x, value_y, fill=self.text_color
                         )
                     )
-
+            if self.enable_tooltip:
+                self.event_listener_elements.append(
+                    f'<rect fill="rgba(0, 0, 0, 0)" x="{(0.5 + sub_index) * bar_spacing}" y="0" width="{bar_spacing}" height="{self.height}" '
+                    + f"onmouseover=\"showTooltip(evt, {tooltip_texts}, '{self.tooltip_id}', {(0.5 + sub_index + 1) * bar_spacing}, 0); this.style.opacity = 0.1;\" "
+                    + f"onmouseout=\"hideTooltip('{self.tooltip_id}'); this.style.opacity = 0;\" />"
+                )
         # Draw bars
         for index, bars in self.bar_paths.items():
             self.svg_elements.append(self._draw_bar_path(bars, self.colors[index]))
