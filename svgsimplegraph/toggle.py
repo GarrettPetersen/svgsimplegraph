@@ -23,6 +23,7 @@ class ToggleGraph:
             "bottom": 0,
         }
         self.defs = []
+        self.js_functions = []
         self.svg_elements = []
         self.background_color = None
         self.element_spacing = None
@@ -63,6 +64,7 @@ class ToggleGraph:
             "bottom": 0,
         }
         self.defs = set()
+        self.js_functions = set()
         self.svg_elements = []
         self.widest_label = 0
 
@@ -73,6 +75,7 @@ class ToggleGraph:
             # Render the graph to generate its SVG elements
             graph.render()
             self.defs.update(graph.defs)
+            self.js_functions.update(graph.js_functions)
             self.svg_elements.append(graph.svg_elements)
 
             # Track the biggest dimensions of all graphs
@@ -120,6 +123,14 @@ class ToggleGraph:
         defs_str = ""
         if self.defs:
             defs_str = "<defs>" + "\n".join(self.defs) + "</defs>"
+
+        js_functions_str = ""
+        if self.js_functions:
+            js_functions_str = (
+                "<script type='text/javascript'><![CDATA["
+                + "\n".join(self.js_functions)
+                + "]]></script>"
+            )
 
         svg_elements_str = ""
         for index, this_svg_elements in enumerate(self.svg_elements):
@@ -231,6 +242,7 @@ class ToggleGraph:
         svg = (
             f"<svg xmlns='http://www.w3.org/2000/svg' width='{viewbox_width}' height='{viewbox_height}' {viewbox_param}>"
             + defs_str
+            + js_functions_str
             + background_rect
             + svg_elements_str
             + "</svg>"

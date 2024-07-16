@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as f:
     long_description = f.read()
 
-VERSION = "1.1.0"
+VERSION = "2.0.0"
 DESCRIPTION = "Simple SVG graphing package"
 
 setup(

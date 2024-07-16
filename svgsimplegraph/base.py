@@ -68,6 +68,7 @@ class BaseGraph:
         self.title = title
         self.title_font_size = title_font_size or 16
         self.defs = []
+        self.js_functions = []
         self.svg_elements = []
         self.element_spacing = element_spacing or 10
         self.watermark = watermark
@@ -97,6 +98,7 @@ class BaseGraph:
         dominant_baseline="middle",
         rotation=None,
         additional_attributes=None,
+        update_dimensions=True,
     ):
         if isinstance(text, int) or isinstance(text, float):
             text = human_readable_number(text)
@@ -166,19 +168,20 @@ class BaseGraph:
             left, right = min(xs), max(xs)
             top, bottom = min(ys), max(ys)
 
-        # Update the most extreme dimensions
-        self.most_extreme_dimensions["left"] = min(
-            self.most_extreme_dimensions["left"], left
-        )
-        self.most_extreme_dimensions["right"] = max(
-            self.most_extreme_dimensions["right"], right
-        )
-        self.most_extreme_dimensions["top"] = min(
-            self.most_extreme_dimensions["top"], top
-        )
-        self.most_extreme_dimensions["bottom"] = max(
-            self.most_extreme_dimensions["bottom"], bottom
-        )
+        if update_dimensions:
+            # Update the most extreme dimensions
+            self.most_extreme_dimensions["left"] = min(
+                self.most_extreme_dimensions["left"], left
+            )
+            self.most_extreme_dimensions["right"] = max(
+                self.most_extreme_dimensions["right"], right
+            )
+            self.most_extreme_dimensions["top"] = min(
+                self.most_extreme_dimensions["top"], top
+            )
+            self.most_extreme_dimensions["bottom"] = max(
+                self.most_extreme_dimensions["bottom"], bottom
+            )
 
         return text_element
 
@@ -252,9 +255,19 @@ class BaseGraph:
         if self.defs:
             defs_str = "<defs>" + "\n".join(self.defs) + "</defs>"
         svg_elements_str = "\n".join(self.svg_elements)
+
+        js_functions_str = ""
+        if self.js_functions:
+            js_functions_str = (
+                "<script type='text/javascript'><![CDATA["
+                + "\n".join(self.js_functions)
+                + "]]></script>"
+            )
+
         svg = (
             f"<svg xmlns='http://www.w3.org/2000/svg' width='{viewbox_width}' height='{viewbox_height}' {viewbox_param}>"
             + defs_str
+            + js_functions_str
             + background_rect
             + svg_elements_str
             + "</svg>"

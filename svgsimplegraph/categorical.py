@@ -428,6 +428,8 @@ class CategoricalGraph(BaseGraph):
         self.line_paths = {}
         self.bar_paths = {}
         self.dot_paths = {}
+        self.longest_value = 0
+        self.total_tooltip_width = 0
         graph_width = self.width
         has_secondary = any(self.secondary)
         max_value_secondary = None
@@ -435,10 +437,9 @@ class CategoricalGraph(BaseGraph):
 
         if self.enable_tooltip:
             self.js_functions = [
-                "function showTooltip(evt, texts, tooltipId, x, y) {"
+                "function showTooltip(texts, tooltipId, x, y) {"
                 + "var tooltip = document.getElementById(tooltipId);"
-                + "tooltip.setAttribute('x', x);"
-                + "tooltip.setAttribute('y', y);"
+                + "tooltip.setAttribute('transform', `translate(${x}, ${y})`);"
                 + "texts.forEach((text, index) => {"
                 + "var tspan = document.getElementById(tooltipId + index);"
                 + "if (tspan) {"
@@ -570,14 +571,26 @@ class CategoricalGraph(BaseGraph):
 
                 secondary_value = self.secondary[index]
 
-                if secondary_value:
-                    tooltip_texts.append(
-                        f"{self.secondary_tick_prefix}{human_readable_number(value)}{self.secondary_tick_suffix}"
+                if value is None or math.isnan(value):
+                    tooltip_texts.append("")
+                elif secondary_value:
+                    tooltip_value_text = f"{self.secondary_tick_prefix}{human_readable_number(value)}{self.secondary_tick_suffix}"
+                    self.longest_value = max(
+                        self.longest_value,
+                        estimate_text_dimensions(
+                            tooltip_value_text, 10, self.font_width_estimate_multiplier
+                        )[0],
                     )
+                    tooltip_texts.append(tooltip_value_text)
                 else:
-                    tooltip_texts.append(
-                        f"{self.primary_tick_prefix}{human_readable_number(value)}{self.primary_tick_suffix}"
+                    tooltip_value_text = f"{self.primary_tick_prefix}{human_readable_number(value)}{self.primary_tick_suffix}"
+                    self.longest_value = max(
+                        self.longest_value,
+                        estimate_text_dimensions(
+                            tooltip_value_text, 10, self.font_width_estimate_multiplier
+                        )[0],
                     )
+                    tooltip_texts.append(tooltip_value_text)
 
                 series_type, print_values = self.series_types[index]
 
@@ -682,10 +695,11 @@ class CategoricalGraph(BaseGraph):
                     )
             if self.enable_tooltip:
                 self.event_listener_elements.append(
-                    f'<rect fill="rgba(0, 0, 0, 0)" x="{(0.5 + sub_index) * bar_spacing}" y="0" width="{bar_spacing}" height="{self.height}" '
-                    + f"onmouseover=\"showTooltip(evt, {tooltip_texts}, '{self.tooltip_id}', {(0.5 + sub_index + 1) * bar_spacing}, 0); this.style.opacity = 0.1;\" "
+                    f'<rect fill="#000000" opacity="0" x="{(sub_index) * bar_spacing}" y="0" width="{bar_spacing}" height="{self.height}" '
+                    + f"onmouseover=\"showTooltip({tooltip_texts}, '{self.tooltip_id}', {(sub_index + 1) * bar_spacing}, 0); this.style.opacity = 0.1;\" "
                     + f"onmouseout=\"hideTooltip('{self.tooltip_id}'); this.style.opacity = 0;\" />"
                 )
+
         # Draw bars
         for index, bars in self.bar_paths.items():
             self.svg_elements.append(self._draw_bar_path(bars, self.colors[index]))
@@ -973,6 +987,101 @@ class CategoricalGraph(BaseGraph):
                     fill=self.text_color,
                     rotation=-90,
                 )
+            )
+
+        if self.enable_tooltip:
+            # Tooltip title (empty, the JS will fill it with legend labels)
+            self.tooltip_elements.append(
+                f"<text font-size='10' fill='{self.text_color}' x='{self.element_spacing}' y='{self.element_spacing}' id='{self.tooltip_id}0'></text>"
+            )
+
+            longest_x_label = 0
+            for x_label in self.x_labels:
+                longest_x_label = max(
+                    longest_x_label,
+                    estimate_text_dimensions(
+                        x_label, 10, self.font_width_estimate_multiplier
+                    )[0],
+                )
+
+            legend_rect_size = 10
+            legend_x = self.element_spacing
+            legend_y = self.element_spacing * 2 + 10
+            longest_label = 0
+
+            for index, label in enumerate(self.legend_labels):
+                longest_label = max(
+                    longest_label,
+                    estimate_text_dimensions(
+                        label, 10, self.font_width_estimate_multiplier
+                    )[0],
+                )
+
+            for index, label in enumerate(self.legend_labels):
+                series_type, _ = self.series_types[index]
+                if series_type == "dot":
+                    self.tooltip_elements.append(
+                        self._draw_dot(
+                            legend_x + legend_rect_size / 2,
+                            legend_y + legend_rect_size / 2,
+                            radius=5,
+                            fill=self.colors[index],
+                        )
+                    )
+                elif series_type == "line":
+                    self.tooltip_elements.append(
+                        self._draw_line(
+                            legend_x,
+                            legend_y + legend_rect_size / 2,
+                            legend_x + legend_rect_size,
+                            legend_y + legend_rect_size / 2,
+                            stroke=self.colors[index],
+                            stroke_width=self.stroke_width[index],
+                        )
+                    )
+                else:  # series_type == "bar"
+                    self.tooltip_elements.append(
+                        f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" '
+                        + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
+                    )
+                if label is not None:
+                    self.tooltip_elements.append(
+                        self._generate_text(
+                            label,
+                            legend_x + legend_rect_size + self.element_spacing / 2,
+                            legend_y + (2 / 3) * legend_rect_size,
+                            fill=self.text_color,
+                            anchor="start",
+                            update_dimensions=False,
+                        )
+                    )
+                self.tooltip_elements.append(
+                    f"<text font-size='10' x='{legend_x + legend_rect_size + self.element_spacing + longest_label}' "
+                    + f"y='{legend_y + (2 / 3) * legend_rect_size}' fill='{self.text_color}' "
+                    + f"anchor='start' id='{self.tooltip_id}{index+1}'></text>"
+                )
+                legend_y += self.element_spacing + legend_rect_size
+
+                # Commenting this out: the tooltip may be very long!
+                # if legend_y + legend_rect_size > self.height:
+                #     legend_y = 0
+                #     legend_x = (
+                #         max(self.width, self.most_extreme_dimensions["right"])
+                #         + (2 * self.element_spacing) / 3
+                #     )
+            # Draw tooltip background
+            self.total_tooltip_width = max(
+                2 * self.element_spacing + longest_x_label,
+                legend_x
+                + legend_rect_size
+                + 2 * self.element_spacing
+                + longest_label
+                + self.longest_value,
+            )
+            self.tooltip_elements[0] = (
+                f"<rect fill='{self.background_color}' x='0' y='0' "
+                + f"width='{self.total_tooltip_width}' "
+                + f"height='{legend_y}' />"
             )
 
         # Draw legend
@@ -1268,5 +1377,19 @@ class CategoricalGraph(BaseGraph):
                     f"Invalid legend position: {self.legend_position}. "
                     + "Must be 'right', 'left', 'top', or 'bottom'."
                 )
+
+        # Add the tooltips
+        if self.enable_tooltip:
+            self.tooltip_elements = (
+                [f"<g id='{self.tooltip_id}'>"] + self.tooltip_elements + ["</g>"]
+            )
+            self.svg_elements.extend(self.tooltip_elements)
+            self.svg_elements.extend(self.event_listener_elements)
+
+            # Make sure there's enough space for the tooltip
+            self.most_extreme_dimensions["right"] = max(
+                self.most_extreme_dimensions["right"],
+                self.width + self.total_tooltip_width - 0.5 * bar_spacing,
+            )
 
         return self._generate_svg()
