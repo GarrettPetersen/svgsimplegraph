@@ -695,9 +695,14 @@ class CategoricalGraph(BaseGraph):
                         )
                     )
             if self.enable_tooltip:
+                x = (
+                    sub_index * bar_spacing
+                    + (bar_spacing - total_bars_width) / 2
+                    + bar_width * (bar_series_across - 1) / 2
+                )
                 self.event_listener_elements.append(
-                    f'<rect fill="#000000" opacity="0" x="{(sub_index) * bar_spacing}" y="0" width="{bar_spacing}" height="{self.height}" '
-                    + f"onmouseover=\"showTooltip({tooltip_texts}, '{self.tooltip_id}', {(sub_index + 1) * bar_spacing}, 0); this.style.opacity = 0.1;\" "
+                    f'<rect fill="#000000" opacity="0" x="{x}" y="0" width="{bar_spacing}" height="{self.height}" '
+                    + f"onmouseover=\"showTooltip({tooltip_texts}, '{self.tooltip_id}', {x + bar_spacing}, 0); this.style.opacity = 0.1;\" "
                     + f"onmouseout=\"hideTooltip('{self.tooltip_id}'); this.style.opacity = 0;\" />"
                 )
 
