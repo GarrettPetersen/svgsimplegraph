@@ -5,13 +5,17 @@ This is a simple little graphing package for making graphs and exporting them as
 You can also upload the SVGs to your GitHub account as Gists, so they may be embedded in any website!
 
 ## Installing svgsimplegraph
+
 Install svgsimplegraph by typing
+
 ```
 pip install svgsimplegraph
 ```
+
 in your terminal.
 
 ## Graph Types
+
 ### Categorical Graph
 
 The categorical graph is for data that comes in distinct categories. It can generate a bar chart, a stacked bar chart, dots, or lines.
@@ -59,6 +63,7 @@ print(f"\n<img src='{svg_base64}' />")
 raw_svg = graph.render()
 print(raw_svg)
 ```
+
 ![Example categorical graph](https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_categorical.svg)
 
 ### Toggle Graph
@@ -195,14 +200,17 @@ print(f"\n<img src='{svg_base64}' />")
 raw_svg = graph.render()
 print(raw_svg)
 ```
+
 ![Example ribbon graph](https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_ribbon.svg)
 
 ### Bubble and Arrow Graph
+
 The bubble and arrow graph is for displaying relationships between nodes in a network.
 
 The user adds bubbles, which are displayed in clockwise order around a larger circle. Then the user can add arrows that exit from one bubble and enter another. Arrow width is scaled to show more important connections.
 
 Here's an example:
+
 ```
 from svgsimplegraph import BubbleAndArrowGraph
 
@@ -253,6 +261,7 @@ print(f"\n<img src='{svg_base64}' />")
 raw_svg = graph.render()
 print(raw_svg)
 ```
+
 ![Example bubble and arrow graph](https://github.com/GarrettPetersen/svgsimplegraph/blob/master/images/example_bubble_and_arrow.svg)
 
 ## GitHub Gist integration

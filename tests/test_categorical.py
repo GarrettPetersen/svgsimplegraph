@@ -233,6 +233,7 @@ def test_categorical_graph():
         stacked=True,
         line_curvature=0.5,
         legend_position="top",
+        background_color="#ffffff",
     )
 
     graph.x_labels = [f"Label {i}" for i in range(12)]
@@ -279,3 +280,12 @@ def test_categorical_graph():
     svg_code = graph.render()
 
     print(f"\n<img src='{stacked_base64}' />")
+
+    # This is too long on purpose
+    graph.enable_tooltip = True
+
+    stacked_base64 = graph.to_base64_src()
+    svg_code = graph.render()
+
+    # This allows JS to execute
+    print(f"\n<object data='{stacked_base64}' type='image/svg+xml'></object>")

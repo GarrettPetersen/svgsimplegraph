@@ -13,6 +13,7 @@ def test_toggle_graph():
         watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
         primary_tick_prefix="$",
         background_color="#404040",
+        enable_tooltip=True,
     )
 
     graph1.x_labels = ["A", "B", "C", "D", "E"]
@@ -45,6 +46,7 @@ def test_toggle_graph():
         watermark="<rect x='250' y='150' width='100' height='100' fill='rgba(255, 0, 0, 0.5)' />",
         primary_tick_prefix="$",
         background_color="#404040",
+        enable_tooltip=True,
     )
 
     graph3.x_labels = ["A", "B", "C", "D", "E"]
