@@ -196,6 +196,8 @@ class CategoricalGraph(BaseGraph):
         self.tooltip_elements = []
         self.tooltip_width = 0
         self.tooltip_height = 0
+        self.lower_errors = []
+        self.upper_errors = []
 
     def add_series(
         self,
@@ -205,6 +207,8 @@ class CategoricalGraph(BaseGraph):
         print_values=False,
         secondary=False,
         stroke_width=1,
+        lower_error=[],
+        upper_error=[],
     ):
         # Deal with NaN values besides None (e.g. np.nan)
         cleaned_series = [
@@ -215,7 +219,38 @@ class CategoricalGraph(BaseGraph):
             )
             for value in series
         ]
+        len_series = len(series)
+        cleaned_lower_error = [
+            (
+                value
+                if isinstance(value, numbers.Number) and not math.isnan(value)
+                else None
+            )
+            for value in lower_error
+        ]
+
+        # add None data points in case the user adds too few lower errors
+        if len(cleaned_lower_error) > len_series:
+            lower_len_diff = len(cleaned_lower_error) - len_series
+            cleaned_lower_error = cleaned_lower_error + [None] * lower_len_diff
+
+        cleaned_upper_error = [
+            (
+                value
+                if isinstance(value, numbers.Number) and not math.isnan(value)
+                else None
+            )
+            for value in upper_error
+        ]
+
+        # add None data points in case the user adds too few upper errors
+        if len(cleaned_upper_error) > len_series:
+            lower_len_diff = len(cleaned_upper_error) - len_series
+            cleaned_upper_error = cleaned_upper_error + [None] * lower_len_diff
+
         self.data.append(cleaned_series)
+        self.lower_errors.append(cleaned_lower_error)
+        self.upper_errors.append(cleaned_upper_error)
         self.legend_labels.append(legend_label or None)
         self.series_types.append((series_type, print_values))
         self.secondary.append(secondary)
@@ -393,6 +428,9 @@ class CategoricalGraph(BaseGraph):
     def _draw_line_path(self, points, stroke="black", stroke_width=1, curvature=0):
         path_data = self._make_line_path(points, curvature)
         return f'<path d="{path_data}" stroke="{stroke}" stroke-width="{stroke_width}" fill="none"/>'
+
+    def _draw_error_bar(self, top, bottom, x, stroke="black", stroke_width=1):
+        return f'<path d="M {x} {top} L {x} {bottom}" stroke="{stroke}" stroke-width="{stroke_width}" />'
 
     def _make_bar_path(self, bars):
         path_data = ""
@@ -1047,7 +1085,7 @@ class CategoricalGraph(BaseGraph):
                             stroke_width=self.stroke_width[index],
                         )
                     )
-                else:  # series_type == "bar"
+                elif series_type == "bar":
                     self.tooltip_elements.append(
                         f'<rect x="{legend_x}" y="{legend_y}" width="{legend_rect_size}" '
                         + f'height="{legend_rect_size}" fill="{self.colors[index]}" />'
@@ -1189,7 +1227,7 @@ class CategoricalGraph(BaseGraph):
                                     stroke_width=self.stroke_width[index],
                                 )
                             )
-                        else:  # series_type == "bar"
+                        elif series_type == "bar":
                             self.most_extreme_dimensions["left"] = min(
                                 self.most_extreme_dimensions["left"],
                                 legend_x,
@@ -1248,7 +1286,7 @@ class CategoricalGraph(BaseGraph):
                                     stroke_width=self.stroke_width[index],
                                 )
                             )
-                        else:  # series_type == "bar"
+                        elif series_type == "bar":
                             self.most_extreme_dimensions["top"] = min(
                                 self.most_extreme_dimensions["top"],
                                 legend_y,
@@ -1330,7 +1368,7 @@ class CategoricalGraph(BaseGraph):
                                     stroke_width=self.stroke_width[index],
                                 )
                             )
-                        else:  # series_type == "bar"
+                        elif series_type == "bar":
                             self.most_extreme_dimensions["bottom"] = max(
                                 self.most_extreme_dimensions["bottom"],
                                 legend_y + legend_rect_size,

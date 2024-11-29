@@ -187,10 +187,10 @@ class BaseGraph:
 
     def _reset_graph(self):
         self.most_extreme_dimensions = {
-            "left": self.width,
-            "right": 0,
-            "top": self.height,
-            "bottom": 0,
+            "left": 0,
+            "right": self.width,
+            "top": 0,
+            "bottom": self.height,
         }
         self.defs = []
         self.svg_elements = []
